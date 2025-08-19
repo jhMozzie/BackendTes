@@ -1,0 +1,36 @@
+### CREATE User1
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "username": "testuser",
+  "password": "password123"
+}
+
+### CREATE User1
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "test2@example.com",
+  "username": "testuse2r",
+  "password": "password123"
+}
+
+### GET All Users
+GET http://localhost:3000/api/users
+
+### GET User by ID
+GET http://localhost:3000/api/users/1
+
+### UPDATE User
+PUT http://localhost:3000/api/users/1
+Content-Type: application/json
+
+{
+  "username": "newusername"
+}
+
+### DELETE User
+DELETE http://localhost:3000/api/users/1
