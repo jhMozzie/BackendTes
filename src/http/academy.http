@@ -1,0 +1,38 @@
+### CREATE Academy (requires an existing user ID)
+# Reemplaza 1 con el ID del usuario que acabas de crear
+POST http://localhost:3000/api/academies
+Content-Type: application/json
+
+{
+  "name": "Academía de Artes Marciales 'Los Dragones'",
+  "userId": 3
+}
+
+### CREATE Academy (requires an existing user ID)
+POST http://localhost:3000/api/academies
+Content-Type: application/json
+
+{
+  "name": "Academía de Artes Marciales 'Titatoks'",
+  "userId": 2
+}
+
+### GET All Academies
+GET http://localhost:3000/api/academies
+
+### GET Academy by ID
+# Reemplaza 1 con el ID de la academia que quieras ver
+GET http://localhost:3000/api/academies/1
+
+### UPDATE Academy
+# Reemplaza 1 con el ID de la academia
+PUT http://localhost:3000/api/academies/1
+Content-Type: application/json
+
+{
+  "name": "Academia de Lucha 'Los Tigres'"
+}
+
+### DELETE Academy
+# Reemplaza 1 con el ID de la academia
+DELETE http://localhost:3000/api/academies/1

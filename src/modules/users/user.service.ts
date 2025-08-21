@@ -10,12 +10,12 @@ export class UserService {
     return newUser;
   }
 
-  // READ (Todos)
+  // READ (All)
   async getAll() {
     return prisma.user.findMany();
   }
 
-  // READ (Por ID)
+  // READ (By ID)
   async getById(id: number) {
     return prisma.user.findUnique({ where: { id } });
   }

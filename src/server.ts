@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import userRoutes from './modules/users/user.route';
+import academyRoutes from './modules/academies/academy.route';
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.get('/', (_req, res) => {
 
 // Rutas
 app.use('/api/users', userRoutes);
+app.use('/api/academies', academyRoutes);
 
 export default app;

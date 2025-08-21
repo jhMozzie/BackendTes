@@ -1,5 +1,22 @@
-node_modules
-# Keep environment variables out of version control
-.env
+# Node
+node_modules/
+dist/
+build/
+*.log
 
+# Environment
+.env
+.env.local
+
+# Prisma
+prisma/dev.db
+prisma/migrations/
+prisma/.env
 /src/generated/prisma
+.prisma/
+
+# Sistema
+.DS_Store
+
+# Docker
+docker-compose.override.yml

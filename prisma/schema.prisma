@@ -17,7 +17,38 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   email String @unique
-  username String?
+  username String
   password String
+  // For MVP purposes, this field acts as a simple role flag
+  isAdmin Boolean @default(false)
+  // 1:N relation with Academy
+  academies Academy[]
+  // 1:N relation with Student
+  students Student[]
+  
 }
+
+model Academy{
+  id Int @id @default(autoincrement())
+  name String
+  // Foreign key for the 1:N relation with User
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  // 1:N relation with Student
+  students Student[]
+}
+
+model Student{
+  id Int @id @default(autoincrement())
+  firstname String
+  lastname String
+  birthdate DateTime
+  // Foreign key for the 1:N relation with User
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  // Foreign key for the 1:N relation with Academy
+  academyId Int
+  academy Academy @relation(fields: [academyId], references: [id])
+}
+
 

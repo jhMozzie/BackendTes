@@ -8,14 +8,15 @@ Content-Type: application/json
   "password": "password123"
 }
 
-### CREATE User1
+### CREATE User2
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
   "email": "test2@example.com",
   "username": "testuse2r",
-  "password": "password123"
+  "password": "password123",
+  "isAdmin": true
 }
 
 ### GET All Users

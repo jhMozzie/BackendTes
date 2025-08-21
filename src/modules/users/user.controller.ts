@@ -1,5 +1,3 @@
-// src/modules/user/user.controller.ts
-
 import { Request, Response } from 'express';
 import { UserService } from './user.service';
 import { CreateUserPayload, UpdateUserPayload } from './user.types';
@@ -9,11 +7,14 @@ const userService = new UserService();
 export class UserController {
 
   // CREATE
-  async create(req: Request<{}, {}, CreateUserPayload>, res: Response) {
+  async create(req: Request<CreateUserPayload>, res: Response) {
     try {
       const newUser = await userService.create(req.body);
       return res.status(201).json(newUser);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        return res.status(409).json({ message: 'Email already exists' });
+      }
       console.error(error);
       return res.status(500).json({ message: 'Error creating user' });
     }
