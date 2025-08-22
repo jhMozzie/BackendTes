@@ -1,0 +1,43 @@
+### CREATE Student
+POST http://localhost:3000/api/students
+Content-Type: application/json
+
+{
+"firstname": "Juan",
+"lastname": "Pérez",
+"birthdate": "1995-10-26T00:00:00.000Z",
+"userId": 1,
+"academyId": 3
+}
+
+### CREATE Another Student
+POST http://localhost:3000/api/students
+Content-Type: application/json
+
+{
+"firstname": "María",
+"lastname": "Gómez",
+"birthdate": "2000-05-15T00:00:00.000Z",
+"userId": 2,
+"academyId": 3
+}
+
+### GET All Students
+GET http://localhost:3000/api/students
+
+### GET Student by ID
+### Reemplaza 1 con el ID del estudiante que quieras ver
+GET http://localhost:3000/api/students/9
+
+### UPDATE Student
+### Reemplaza 1 con el ID del estudiante
+PUT http://localhost:3000/api/students/9
+Content-Type: application/json
+
+{
+"firstname": "Roberto"
+}
+
+### DELETE Student
+### Reemplaza 1 con el ID del estudiante
+DELETE http://localhost:3000/api/students/1

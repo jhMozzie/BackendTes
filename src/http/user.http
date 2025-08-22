@@ -35,3 +35,13 @@ Content-Type: application/json
 
 ### DELETE User
 DELETE http://localhost:3000/api/users/1
+
+### CREATE User for Academy (needed for userId)
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "academy_admin@example.com",
+  "username": "academy_admin",
+  "password": "password123"
+}
