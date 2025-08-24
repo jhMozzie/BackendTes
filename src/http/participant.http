@@ -1,0 +1,30 @@
+### CREATE Participant
+# Asegúrate de que los IDs del estudiante y del campeonato existan
+POST http://localhost:3000/api/participants
+Content-Type: application/json
+
+{
+  "studentId": 8,
+  "championshipId": 1
+}
+
+### CREATE Participant
+# Asegúrate de que los IDs del estudiante y del campeonato existan
+POST http://localhost:3000/api/participants
+Content-Type: application/json
+
+{
+  "studentId": 9,
+  "championshipId": 1
+}
+
+### GET All Participants
+GET http://localhost:3000/api/participants
+
+### GET Participant by ID
+# Reemplaza 1 con el ID del participante que desees ver
+GET http://localhost:3000/api/participants/3
+
+### DELETE Participant
+# Reemplaza 1 con el ID del participante que desees eliminar
+DELETE http://localhost:3000/api/participants/3

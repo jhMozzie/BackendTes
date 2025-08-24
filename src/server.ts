@@ -6,6 +6,10 @@ import morgan from 'morgan';
 import userRoutes from './modules/users/user.route';
 import academyRoutes from './modules/academies/academy.route';
 import studentRoutes from './modules/students/student.route';
+import championshipRoutes from './modules/championships/championship.route';
+import categoryRoutes from './modules/categories/category.route';
+import categoryOnChampionshipRoutes from './modules/categoriesOnChampionship/categoryOnChampionship.route';
+import participantRoutes from './modules/participants/participant.route';
 
 const app = express();
 
@@ -23,5 +27,9 @@ app.get('/', (_req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/academies', academyRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/championships', championshipRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/categoriesOnChampionships', categoryOnChampionshipRoutes);
+app.use('/api/participants', participantRoutes);
 
 export default app;

@@ -1,0 +1,12 @@
+### ADD Category to Championship
+# Asegúrate de que los IDs del campeonato y la categoría existan
+POST http://localhost:3000/api/categoriesOnChampionships
+Content-Type: application/json
+
+{
+  "championshipId": 1,
+  "categoryId": 1
+}
+### REMOVE Category from Championship
+# Asegúrate de que los IDs del campeonato y la categoría existan
+DELETE http://localhost:3000/api/categories-on-championships/1/1

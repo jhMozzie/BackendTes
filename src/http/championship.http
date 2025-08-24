@@ -1,0 +1,40 @@
+### CREATE Championship 1
+POST http://localhost:3000/api/championships
+Content-Type: application/json
+
+{
+  "name": "Torneo de Taekwondo Nacional",
+  "startDate": "2025-09-10T00:00:00.000Z",
+  "location": "Gimnasio Nacional"
+}
+
+### CREATE Championship 2
+POST http://localhost:3000/api/championships
+Content-Type: application/json
+
+{
+  "name": "Campeonato Interescolar de Judo",
+  "startDate": "2025-10-25T00:00:00.000Z",
+  "location": "Centro de Deportes Comunitario"
+}
+
+### GET All Championships
+# Reemplaza 1 con el ID del campeonato que desees ver
+GET http://localhost:3000/api/championships
+
+### GET Championship by ID
+# Reemplaza 1 con el ID del campeonato que desees ver
+GET http://localhost:3000/api/championships/1
+
+### UPDATE Championship
+# Reemplaza 1 con el ID del campeonato que desees actualizar
+PUT http://localhost:3000/api/championships/1
+Content-Type: application/json
+
+{
+  "name": "Torneo Nacional de Karate-do"
+}
+
+### DELETE Championship
+# Reemplaza 1 con el ID del campeonato que desees eliminar
+DELETE http://localhost:3000/api/championships/2

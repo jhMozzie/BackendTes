@@ -49,6 +49,47 @@ model Student{
   // Foreign key for the 1:N relation with Academy
   academyId Int
   academy Academy @relation(fields: [academyId], references: [id])
+  // 1:N relation with Participant  
+  participants Participant[]
+}
+
+model Championship{
+  id Int @id @default(autoincrement())
+  name String
+  startDate DateTime
+  location String
+  // N:N relation with Category via CategoriesOnChampionships
+  categories CategoriesOnChampionships[]
+  // N:N relation with Student via Participant
+  participants Participant[]
+}
+
+model Category{
+  id Int @id @default(autoincrement())
+  name String
+  // N:N relation with Championship via CategoriesOnChampionships
+  championships CategoriesOnChampionships[]
+}
+
+model CategoriesOnChampionships {
+  championshipId Int
+  categoryId     Int
+
+  championship Championship @relation(fields: [championshipId], references: [id])
+  category     Category     @relation(fields: [categoryId], references: [id])
+
+  @@id([championshipId, categoryId])
+}
+
+model Participant {
+  id             Int       @id @default(autoincrement())
+  studentId      Int
+  championshipId Int
+
+  student      Student      @relation(fields: [studentId], references: [id])
+  championship Championship @relation(fields: [championshipId], references: [id])
+
+  @@unique([studentId, championshipId])
 }
 
 
