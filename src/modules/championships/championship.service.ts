@@ -4,27 +4,27 @@ import { CreateChampionshipPayload, UpdateChampionshipPayload } from "./champion
 const prisma = new PrismaClient();
 
 export class ChampionshipService {
-    async create(data: CreateChampionshipPayload){
+    async create(data: CreateChampionshipPayload) {
         return prisma.championship.create({
-            data:{
+            data: {
                 ...data,
                 startDate: new Date(data.startDate),
             }
         });
     }
 
-    async getAll(){
+    async getAll() {
         return prisma.championship.findMany({
-            include:{
+            include: {
                 categories: true,
                 participants: true,
             }
         });
     }
 
-    async getById(id: number){
+    async getById(id: number) {
         return prisma.championship.findUnique({
-            where: {id},
+            where: { id },
             include: {
                 categories: true,
                 participants: true,
@@ -32,17 +32,26 @@ export class ChampionshipService {
         })
     }
 
-    async update(id: number, data: UpdateChampionshipPayload){
+    // --- FUNCIÓN CORREGIDA ---
+    async update(id: number, data: UpdateChampionshipPayload) {
+        // Separa los campos que no son relaciones
+        const { name, startDate, location } = data;
+
+        // Construye el objeto de datos solo con los campos que quieres actualizar
+        const updateData = {
+            name,
+            location,
+            // Convierte la fecha solo si existe
+            startDate: startDate ? new Date(startDate) : undefined,
+        };
+
         return prisma.championship.update({
             where: { id },
-            data: {
-                ...data,
-                startDate: data.startDate ? new Date(data.startDate) : undefined,
-            }
-        })
+            data: updateData, // Pasa solo los datos del campeonato
+        });
     }
-
-    async delete(id: number){
-        return prisma.championship.delete({where: {id}});
+    
+    async delete(id: number) {
+        return prisma.championship.delete({ where: { id } });
     }
 }

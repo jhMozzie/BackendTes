@@ -13,6 +13,12 @@ import participantRoutes from './modules/participants/participant.route';
 
 const app = express();
 
+// Cors Configuration
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}))
+
 // Middlewares
 app.use(cors());
 app.use(express.json());
