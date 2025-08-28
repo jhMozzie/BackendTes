@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
   "name": "Academía de Artes Marciales 'Los Dragones'",
-  "userId": 3
+  "userId": 1
 }
 
 ### CREATE Academy (requires an existing user ID)

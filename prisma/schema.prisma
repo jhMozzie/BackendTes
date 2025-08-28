@@ -15,81 +15,88 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  username String
-  password String
-  // For MVP purposes, this field acts as a simple role flag
-  isAdmin Boolean @default(false)
-  // 1:N relation with Academy
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  username  String
+  password  String
+  isAdmin   Boolean   @default(false)
+  // Un usuario (dueño de academia) puede tener una o varias academias
   academies Academy[]
-  // 1:N relation with Student
-  students Student[]
-  
+  // Un usuario (dueño) puede registrar directamente a sus alumnos
+  students  Student[]
 }
 
-model Academy{
-  id Int @id @default(autoincrement())
-  name String
-  // Foreign key for the 1:N relation with User
-  userId Int
-  user User @relation(fields: [userId], references: [id])
-  // 1:N relation with Student
+model Academy {
+  id      Int    @id @default(autoincrement())
+  name    String
+  // Relación con el usuario dueño de la academia
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
+  // Una academia tiene muchos alumnos
   students Student[]
+  // <<< CAMBIO AQUÍ: Una academia organiza varios campeonatos (según tu diagrama)
+  championships Championship[]
 }
 
-model Student{
-  id Int @id @default(autoincrement())
+model Student {
+  id        Int        @id @default(autoincrement())
   firstname String
-  lastname String
+  lastname  String
   birthdate DateTime
-  // Foreign key for the 1:N relation with User
-  userId Int
-  user User @relation(fields: [userId], references: [id])
-  // Foreign key for the 1:N relation with Academy
+  // Relación con el usuario que lo registró
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id])
+  // Relación con la academia a la que pertenece
   academyId Int
-  academy Academy @relation(fields: [academyId], references: [id])
-  // 1:N relation with Participant  
+  academy   Academy    @relation(fields: [academyId], references: [id])
+  // Un alumno puede ser participante en varias categorías de campeonatos
   participants Participant[]
 }
 
-model Championship{
-  id Int @id @default(autoincrement())
-  name String
+model Championship {
+  id        Int                  @id @default(autoincrement())
+  name      String
   startDate DateTime
-  location String
-  // N:N relation with Category via CategoriesOnChampionships
-  categories CategoriesOnChampionships[]
-  // N:N relation with Student via Participant
-  participants Participant[]
+  location  String
+  // <<< CAMBIO AQUÍ: Relación con la academia que organiza el campeonato
+  academyId Int
+  academy   Academy              @relation(fields: [academyId], references: [id])
+  // <<< CAMBIO AQUÍ: Un campeonato tiene muchas categorías/divisiones
+  categories ChampionshipCategory[]
 }
 
-model Category{
-  id Int @id @default(autoincrement())
-  name String
-  // N:N relation with Championship via CategoriesOnChampionships
-  championships CategoriesOnChampionships[]
-}
-
-model CategoriesOnChampionships {
+// <<< MODELO NUEVO Y CENTRAL PARA TU LÓGICA >>>
+// Este modelo reemplaza a 'Category' y 'CategoriesOnChampionships'
+// Representa la tabla 'CampeonatosCategoria' de tu diagrama
+model ChampionshipCategory {
+  id             Int       @id @default(autoincrement())
+  code           String?   // El '?' lo hace opcional si puede ser nulo
+  modality       String
+  ageRange       String
+  ageCategory    String
+  gender         String
+  skillLevel     String
+  // Relación con el campeonato al que pertenece esta categoría
   championshipId Int
-  categoryId     Int
+  championship   Championship @relation(fields: [championshipId], references: [id])
+  // Una categoría tiene muchos participantes
+  participants   Participant[]
 
-  championship Championship @relation(fields: [championshipId], references: [id])
-  category     Category     @relation(fields: [categoryId], references: [id])
-
-  @@id([championshipId, categoryId])
+  // Opcional: Para evitar crear la misma categoría dos veces en un mismo campeonato
+  @@unique([championshipId, modality, ageRange, gender, skillLevel])
 }
+
 
 model Participant {
-  id             Int       @id @default(autoincrement())
-  studentId      Int
-  championshipId Int
+  id   Int     @id @default(autoincrement())
+  studentId Int
+  // <<< CAMBIO CLAVE AQUÍ >>>
+  // El participante se une a una CATEGORÍA específica, no a todo el campeonato
+  championshipCategoryId Int
+  
+  student              Student             @relation(fields: [studentId], references: [id])
+  championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id])
 
-  student      Student      @relation(fields: [studentId], references: [id])
-  championship Championship @relation(fields: [championshipId], references: [id])
-
-  @@unique([studentId, championshipId])
+  // Un alumno solo puede inscribirse una vez en la misma categoría
+  @@unique([studentId, championshipCategoryId])
 }
-
-

@@ -1,40 +1,77 @@
-### CREATE Championship 1
+### =============================================
+### CHAMPIONSHIP ENDPOINTS
+### =============================================
+
+### 1. CREATE Championship (con categorías incluidas)
+# NOTA: Reemplaza el valor de "academyId" con un ID válido de tu tabla de academias.
 POST http://localhost:3000/api/championships
 Content-Type: application/json
 
 {
-  "name": "Torneo de Taekwondo Nacional",
-  "startDate": "2025-09-10T00:00:00.000Z",
-  "location": "Gimnasio Nacional"
+  "name": "Copa Internacional de Karate 2025",
+  "startDate": "2025-11-20T09:00:00.000Z",
+  "location": "Coliseo Dibós",
+  "academyId": 1,
+  "categories": [
+    {
+      "modality": "KUMITE",
+      "ageRange": "14-16 años",
+      "ageCategory": "JUVENIL",
+      "gender": "MASCULINO",
+      "skillLevel": "CINTA NEGRA"
+    },
+    {
+      "modality": "KATA",
+      "ageRange": "14-16 años",
+      "ageCategory": "JUVENIL",
+      "gender": "FEMENINO",
+      "skillLevel": "CINTA MARRON"
+    },
+    {
+      "modality": "KUMITE",
+      "ageRange": "10-12 años",
+      "ageCategory": "INFANTIL",
+      "gender": "MASCULINO",
+      "skillLevel": "CINTA VERDE"
+    }
+  ]
 }
 
-### CREATE Championship 2
+### 2. CREATE Championship (sin categorías iniciales)
+# Se pueden agregar las categorías después.
 POST http://localhost:3000/api/championships
 Content-Type: application/json
 
 {
-  "name": "Campeonato Interescolar de Judo",
-  "startDate": "2025-10-25T00:00:00.000Z",
-  "location": "Centro de Deportes Comunitario"
+  "name": "Torneo de Judo para Principiantes",
+  "startDate": "2025-12-05T09:00:00.000Z",
+  "location": "Dojo Central",
+  "academyId": 1
 }
 
-### GET All Championships
-# Reemplaza 1 con el ID del campeonato que desees ver
+
+### 3. GET All Championships
+# Traerá todos los campeonatos con sus academias, categorías y participantes.
 GET http://localhost:3000/api/championships
 
-### GET Championship by ID
-# Reemplaza 1 con el ID del campeonato que desees ver
-GET http://localhost:3000/api/championships/1
 
-### UPDATE Championship
-# Reemplaza 1 con el ID del campeonato que desees actualizar
+### 4. GET Championship by ID
+# Reemplaza '1' con el ID del campeonato que desees ver.
+GET http://localhost:3000/api/championships/2
+
+
+### 5. UPDATE Championship
+# Reemplaza '1' con el ID del campeonato que desees actualizar.
+# Solo actualiza los campos básicos del campeonato.
 PUT http://localhost:3000/api/championships/1
 Content-Type: application/json
 
 {
-  "name": "Torneo Nacional de Karate-do"
+  "location": "Estadio Nacional de Lima"
 }
 
-### DELETE Championship
-# Reemplaza 1 con el ID del campeonato que desees eliminar
+
+### 6. DELETE Championship
+# Reemplaza '2' con el ID del campeonato que desees eliminar.
+# ¡CUIDADO! Esto fallará si el campeonato ya tiene categorías o participantes.
 DELETE http://localhost:3000/api/championships/2
