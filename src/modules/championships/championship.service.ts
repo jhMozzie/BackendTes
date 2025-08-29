@@ -4,24 +4,41 @@ import { CreateChampionshipPayload, UpdateChampionshipPayload } from "./champion
 const prisma = new PrismaClient();
 
 export class ChampionshipService {
-    async create(data: CreateChampionshipPayload) {
-        // Separamos los datos del campeonato de las categorías opcionales
-        const { categories, ...championshipData } = data;
+    // src/modules/championships/championship.service.ts
 
-        return prisma.championship.create({
-            data: {
-                ...championshipData,
-                startDate: new Date(championshipData.startDate),
-                // --- SOLUCIÓN ERROR 1 ---
-                // El academyId ya viene en 'championshipData'
-                
-                // Si se enviaron categorías, las creamos en la misma transacción
-                categories: {
-                    create: categories // 'categories' es el array de CreateChampionshipCategoryPayload
-                }
-            }
-        });
+// ... (tus imports y la clase)
+
+async create(data: CreateChampionshipPayload) {
+    // 1. Separamos academyId del resto de los datos del campeonato
+    const { categories, academyId, ...championshipData } = data;
+
+    // 2. Verificamos que el academyId se haya proporcionado (buena práctica)
+    if (!academyId) {
+        throw new Error('El ID de la academia es obligatorio.');
     }
+
+    return prisma.championship.create({
+        data: {
+            // 3. Pasamos los datos simples del campeonato (name, location)
+            ...championshipData, 
+            startDate: new Date(championshipData.startDate),
+            
+            // 4. AQUÍ ESTÁ LA CORRECCIÓN: Usamos 'connect' para la relación
+            academy: {
+                connect: {
+                    id: academyId
+                }
+            },
+            
+            // 5. Tu lógica para crear categorías se mantiene igual
+            categories: {
+                create: categories
+            }
+        }
+    });
+}
+
+// ... (el resto de tus funciones: getAll, getById, etc.)
 
     async getAll() {
         return prisma.championship.findMany({
