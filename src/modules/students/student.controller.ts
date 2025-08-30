@@ -19,7 +19,18 @@ export class StudentController {
   // READ ALL
   async getAll(req: Request, res: Response) {
     try {
-      const students = await studentService.getAll();
+      // 1. Leemos los parámetros de la URL (query params)
+      const { academyId } = req.query;
+
+      // 2. Creamos el objeto de filtros que nuestro servicio espera
+      const filters = {
+        // Si academyId existe, lo convertimos a número, si no, es undefined
+        academyId: academyId ? Number(academyId) : undefined
+      };
+
+      // 3. Pasamos el objeto de filtros al servicio
+      const students = await studentService.getAll(filters);
+
       return res.status(200).json(students);
     } catch (error) {
       console.error(error);
