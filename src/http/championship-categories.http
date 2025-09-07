@@ -1,0 +1,39 @@
+### ADD a Category to a specific Championship
+# 1. Make sure you have created a championship first (e.g., using championship.http).
+# 2. Replace the '1' in the URL below with the ID of that championship.
+POST http://localhost:3000/api/championships/1/categories
+Content-Type: application/json
+
+{
+  "modality": "KATA",
+  "ageRange": "14-15 años",
+  "ageCategory": "JUVENIL",
+  "gender": "FEMENINO",
+  "skillLevel": "10-9 KYU",
+  "code": "A34"
+}
+
+### -------------------------------------------
+
+### ADD another Category to the SAME Championship
+# Replace the '1' with the same championship ID.
+# Provide a new, unique code for this category.
+POST http://localhost:3000/api/championships/1/categories
+Content-Type: application/json
+
+{
+  "modality": "KUMITE",
+  "ageRange": "14-15 años",
+  "ageCategory": "JUVENIL",
+  "gender": "MASCULINO",
+  "skillLevel": "10-9 KYU",
+  "code": "B38"
+}
+
+### -------------------------------------------
+
+### REMOVE a specific Category
+# 1. To get the category ID, you can first view the details of a championship.
+# 2. Replace the '1' in the URL below with the ID of the CATEGORY you want to delete.
+DELETE http://localhost:3000/api/championship-categories/1
+

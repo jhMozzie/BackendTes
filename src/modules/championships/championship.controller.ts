@@ -5,9 +5,10 @@ import { CreateChampionshipPayload, UpdateChampionshipPayload } from './champion
 const championshipService = new ChampionshipService();
 
 export class ChampionshipController {
-  async create(req: Request<CreateChampionshipPayload>, res: Response) {
+  async create(req: Request, res: Response) {
     try {
-      const newChampionship = await championshipService.create(req.body);
+      // El 'req.body' ahora será más simple, y el servicio lo manejará correctamente.
+      const newChampionship = await championshipService.create(req.body as CreateChampionshipPayload);
       return res.status(201).json(newChampionship);
     } catch (error) {
       console.error(error);
@@ -53,8 +54,8 @@ export class ChampionshipController {
   async delete(req: Request, res: Response) {
     try {
       const id = parseInt(req.params.id);
-      const deletedChampionship = await championshipService.delete(id);
-      return res.status(200).json(deletedChampionship);
+      await championshipService.delete(id);
+      return res.status(204).send(); // 204 No Content es mejor para un delete exitoso
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Error deleting championship' });
