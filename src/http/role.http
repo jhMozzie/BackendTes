@@ -1,0 +1,40 @@
+### CREATE Role ADMIN
+POST http://localhost:3000/api/roles
+Content-Type: application/json
+
+{
+  "description": "ADMIN"
+}
+
+### CREATE Role COACH
+POST http://localhost:3000/api/roles
+Content-Type: application/json
+
+{
+  "description": "COACH"
+}
+
+### CREATE Role STUDENT
+POST http://localhost:3000/api/roles
+Content-Type: application/json
+
+{
+  "description": "STUDENT"
+}
+
+### GET All Roles
+GET http://localhost:3000/api/roles
+
+### GET Role by ID
+GET http://localhost:3000/api/roles/1
+
+### UPDATE Role
+PUT http://localhost:3000/api/roles/1
+Content-Type: application/json
+
+{
+  "description": "SUPER_ADMIN"
+}
+
+### DELETE Role
+DELETE http://localhost:3000/api/roles/1

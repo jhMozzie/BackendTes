@@ -14,14 +14,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Role {
+  id          Int     @id @default(autoincrement())
+  description String
+  users       User[]
+}
+
 model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique
   username  String
   password  String
-  isAdmin   Boolean   @default(false)
-  // Un usuario (dueño de academia) puede tener una o varias academias
+
+  // Relación con Rol (muchos a uno)
+  roleId    Int
+  role      Role      @relation(fields: [roleId], references: [id])
+
+  // Relación con academias (un usuario puede ser dueño de varias academias)
   academies Academy[]
+
   // Un usuario (dueño) puede registrar directamente a sus alumnos
   students  Student[]
 }
@@ -29,12 +40,15 @@ model User {
 model Academy {
   id      Int    @id @default(autoincrement())
   name    String
+
   // Relación con el usuario dueño de la academia
   userId  Int
   user    User   @relation(fields: [userId], references: [id])
+
   // Una academia tiene muchos alumnos
   students Student[]
-  // <<< CAMBIO AQUÍ: Una academia organiza varios campeonatos (según tu diagrama)
+
+  // Una academia organiza varios campeonatos
   championships Championship[]
 }
 
@@ -43,12 +57,15 @@ model Student {
   firstname String
   lastname  String
   birthdate DateTime
+
   // Relación con el usuario que lo registró
   userId    Int
   user      User       @relation(fields: [userId], references: [id])
+
   // Relación con la academia a la que pertenece
   academyId Int
   academy   Academy    @relation(fields: [academyId], references: [id])
+
   // Un alumno puede ser participante en varias categorías de campeonatos
   participants Participant[]
 }
@@ -58,40 +75,38 @@ model Championship {
   name      String
   startDate DateTime
   location  String
-  // <<< CAMBIO AQUÍ: Relación con la academia que organiza el campeonato
+
+  // Relación con la academia que organiza el campeonato
   academyId Int
   academy   Academy              @relation(fields: [academyId], references: [id])
-  // <<< CAMBIO AQUÍ: Un campeonato tiene muchas categorías/divisiones
+
+  // Un campeonato tiene muchas categorías/divisiones
   categories ChampionshipCategory[]
 }
 
-// <<< MODELO NUEVO Y CENTRAL PARA TU LÓGICA >>>
-// Este modelo reemplaza a 'Category' y 'CategoriesOnChampionships'
-// Representa la tabla 'CampeonatosCategoria' de tu diagrama
 model ChampionshipCategory {
   id             Int       @id @default(autoincrement())
-  code           String?   // El '?' lo hace opcional si puede ser nulo
+  code           String?   // opcional
   modality       String
   ageRange       String
   ageCategory    String
   gender         String
   skillLevel     String
-  // Relación con el campeonato al que pertenece esta categoría
+
+  // Relación con el campeonato
   championshipId Int
   championship   Championship @relation(fields: [championshipId], references: [id])
+
   // Una categoría tiene muchos participantes
   participants   Participant[]
 
-  // Opcional: Para evitar crear la misma categoría dos veces en un mismo campeonato
+  // Evitar duplicados de categorías
   @@unique([championshipId, modality, ageRange, gender, skillLevel])
 }
-
 
 model Participant {
   id   Int     @id @default(autoincrement())
   studentId Int
-  // <<< CAMBIO CLAVE AQUÍ >>>
-  // El participante se une a una CATEGORÍA específica, no a todo el campeonato
   championshipCategoryId Int
   
   student              Student             @relation(fields: [studentId], references: [id])

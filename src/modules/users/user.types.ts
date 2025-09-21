@@ -2,12 +2,12 @@ export interface CreateUserPayload {
     email: string;
     username: string;
     password: string;
-    isAdmin?: boolean; // <-- Payload optional field
-}
-
-export interface UpdateUserPayload {
+    roleId: number; // 👈 nuevo, relación con Role
+  }
+  
+  export interface UpdateUserPayload {
     email?: string;
     username?: string;
-    isAdmin?: boolean; // <-- Payload optional field
-}
-
+    password?: string; // si se envía, se re-hashea
+    roleId?: number;
+  }

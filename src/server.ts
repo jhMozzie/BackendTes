@@ -9,6 +9,8 @@ import studentRoutes from './modules/students/student.route';
 import championshipRoutes from './modules/championships/championship.route';
 import participantRoutes from './modules/participants/participant.route';
 import championshipCategoryRoutes from './modules/championships-categories/championship-categories.routes';
+import roleRoutes from './modules/roles/role.route';
+import authRoutes from './modules/auth/auth.route';
 
 const app = express();
 
@@ -35,5 +37,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/championships', championshipRoutes);
 app.use('/api', championshipCategoryRoutes);
 app.use('/api/participants', participantRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/roles', roleRoutes);
 
 export default app;
