@@ -15,6 +15,9 @@ export class UserService {
         username: userData.username,
         password: hashedPassword,
         roleId: userData.roleId,
+        phone: userData.phone ?? null,
+        birthdate: userData.birthdate ? new Date(userData.birthdate) : null,
+        status: userData.status ?? "Activo",
       },
       include: { role: true },
     });
@@ -24,6 +27,7 @@ export class UserService {
   async getAll() {
     return prisma.user.findMany({
       include: { role: true },
+      orderBy: { id: "asc" },
     });
   }
 
@@ -37,10 +41,14 @@ export class UserService {
 
   // UPDATE
   async update(id: number, data: UpdateUserPayload) {
-    let updateData: any = { ...data };
+    const updateData: any = { ...data };
 
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);
+    }
+
+    if (data.birthdate) {
+      updateData.birthdate = new Date(data.birthdate);
     }
 
     return prisma.user.update({

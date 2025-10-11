@@ -1,51 +1,63 @@
-### CREATE User (ADMIN)
+### 🔹 GET ALL USERS
+GET http://localhost:3000/api/users
+Content-Type: application/json
+
+
+### 🔹 GET USER BY ID
+GET http://localhost:3000/api/users/1
+Content-Type: application/json
+
+
+### 🔹 CREATE USER
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "email": "admin100@example.com",
-  "username": "adminUser",
+  "email": "Admin@example.com",
+  "username": "Carlos Mendoza",
   "password": "123456",
+  "phone": "+51 987 654 321",
+  "birthdate": "1999-07-25",
+  "status": "Activo",
   "roleId": 1
 }
 
-### CREATE User (COACH)
+
+### 🔹 CREATE USER 2
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "email": "coach100@example.com",
-  "username": "coachUser",
-  "password": "123456",
+  "email": "laura@dojo.com",
+  "username": "Laura Martínez",
+  "password": "dojo123",
+  "phone": "+34 611 222 333",
+  "birthdate": "2000-05-10",
+  "status": "Activo",
   "roleId": 2
 }
 
-### CREATE User (STUDENT)
-POST http://localhost:3000/api/users
-Content-Type: application/json
 
-{
-  "email": "student100@example.com",
-  "username": "studentUser",
-  "password": "123456",
-  "roleId": 3
-}
-
-### GET All Users
-GET http://localhost:3000/api/users
-
-### GET User by ID
-GET http://localhost:3000/api/users/1
-
-### UPDATE User
+### 🔹 UPDATE USER (CHANGE STATUS / PHONE)
 PUT http://localhost:3000/api/users/1
 Content-Type: application/json
 
 {
-  "username": "superAdmin",
-  "password": "newPassword123",
-  "roleId": 2
+  "phone": "+51 900 111 222",
+  "status": "Inactivo"
 }
 
-### DELETE User
-DELETE http://localhost:3000/api/users/1
+
+### 🔹 UPDATE USER (CHANGE PASSWORD)
+PUT http://localhost:3000/api/users/2
+Content-Type: application/json
+
+{
+  "password": "newsecurepassword",
+  "status": "Activo"
+}
+
+
+### 🔹 DELETE USER
+DELETE http://localhost:3000/api/users/3
+Content-Type: application/json

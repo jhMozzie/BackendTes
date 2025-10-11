@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -21,53 +18,34 @@ model Role {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  username  String
-  password  String
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  username   String
+  password   String
+  phone      String?
+  birthdate  DateTime? // 👈 Nuevo campo: fecha de nacimiento opcional
+  status     String    @default("Activo") // Activo | Inactivo
 
-  // Relación con Rol (muchos a uno)
-  roleId    Int
-  role      Role      @relation(fields: [roleId], references: [id])
+  roleId     Int
+  role       Role      @relation(fields: [roleId], references: [id])
 
-  // Relación con academias (un usuario puede ser dueño de varias academias)
-  academies Academy[]
-
-  // Un usuario (dueño) puede registrar directamente a sus alumnos
-  students  Student[]
+  academies  Academy[]
+  students   Student[]
 }
 
 model Academy {
   id      Int    @id @default(autoincrement())
   name    String
 
-  // Relación con el usuario dueño de la academia
+  // Relación uno a muchos (una academia organiza varios campeonatos)
   userId  Int
   user    User   @relation(fields: [userId], references: [id])
-
-  // Una academia tiene muchos alumnos
-  students Student[]
-
-  // Una academia organiza varios campeonatos
   championships Championship[]
-}
 
-model Student {
-  id        Int        @id @default(autoincrement())
-  firstname String
-  lastname  String
-  birthdate DateTime
+  // Relación muchos a muchos (una academia puede participar en muchos campeonatos)
+  championshipLinks AcademyOnChampionships[]
 
-  // Relación con el usuario que lo registró
-  userId    Int
-  user      User       @relation(fields: [userId], references: [id])
-
-  // Relación con la academia a la que pertenece
-  academyId Int
-  academy   Academy    @relation(fields: [academyId], references: [id])
-
-  // Un alumno puede ser participante en varias categorías de campeonatos
-  participants Participant[]
+  students Student[]
 }
 
 model Championship {
@@ -76,42 +54,92 @@ model Championship {
   startDate DateTime
   location  String
 
-  // Relación con la academia que organiza el campeonato
+  // Relación directa: campeonato organizado por una academia
   academyId Int
   academy   Academy              @relation(fields: [academyId], references: [id])
 
-  // Un campeonato tiene muchas categorías/divisiones
+  // Relación muchos a muchos: varias academias pueden participar
+  academyLinks AcademyOnChampionships[]
+
   categories ChampionshipCategory[]
+}
+
+model AcademyOnChampionships {
+  id              Int           @id @default(autoincrement())
+  academyId       Int
+  championshipId  Int
+
+  academy         Academy       @relation(fields: [academyId], references: [id])
+  championship    Championship  @relation(fields: [championshipId], references: [id])
+
+  @@unique([academyId, championshipId])
+}
+
+model Student {
+  id         Int        @id @default(autoincrement())
+  firstname  String
+  lastname   String
+  birthdate  DateTime
+  beltId     Int        // 👈 Nuevo: referencia al cinturón (kyu)
+  belt       Belt       @relation(fields: [beltId], references: [id])
+
+  userId     Int
+  user       User       @relation(fields: [userId], references: [id])
+  academyId  Int
+  academy    Academy    @relation(fields: [academyId], references: [id])
+
+  participants Participant[]
 }
 
 model ChampionshipCategory {
   id             Int       @id @default(autoincrement())
-  code           String?   // opcional
-  modality       String
-  ageRange       String
-  ageCategory    String
-  gender         String
-  skillLevel     String
-
-  // Relación con el campeonato
+  code           String?
+  modality       String    // Kata o Kumite
+  gender         String    // Masculino o Femenino
+  beltMinId      Int       // 👈 Nuevo: cinturón mínimo permitido
+  beltMaxId      Int       // 👈 Nuevo: cinturón máximo permitido
+  ageRangeId     Int       // 👈 Nuevo: rango de edad permitido
   championshipId Int
-  championship   Championship @relation(fields: [championshipId], references: [id])
 
-  // Una categoría tiene muchos participantes
+  beltMin        Belt      @relation("MinBelt", fields: [beltMinId], references: [id])
+  beltMax        Belt      @relation("MaxBelt", fields: [beltMaxId], references: [id])
+  ageRange       AgeRange  @relation(fields: [ageRangeId], references: [id])
+  championship   Championship @relation(fields: [championshipId], references: [id])
   participants   Participant[]
 
-  // Evitar duplicados de categorías
-  @@unique([championshipId, modality, ageRange, gender, skillLevel])
+  @@unique([championshipId, modality, gender, ageRangeId, beltMinId, beltMaxId])
 }
 
 model Participant {
-  id   Int     @id @default(autoincrement())
-  studentId Int
-  championshipCategoryId Int
-  
+  id                      Int  @id @default(autoincrement())
+  studentId               Int
+  championshipCategoryId  Int
+
   student              Student             @relation(fields: [studentId], references: [id])
   championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id])
 
-  // Un alumno solo puede inscribirse una vez en la misma categoría
   @@unique([studentId, championshipCategoryId])
+}
+
+// =============================================
+// NUEVAS TABLAS BASE PARA AUTOMATIZAR CATEGORÍAS
+// =============================================
+
+// 🥋 Cinturones / Kyu Levels
+model Belt {
+  id        Int       @id @default(autoincrement())
+  name      String    // Blanco, Amarillo, Naranja, Verde, Azul, Marrón, Negro
+  kyuLevel  Int       // 10 = Blanco ... 1 = Marrón, 0 = Negro
+  students  Student[]
+  minBeltCategories ChampionshipCategory[] @relation("MinBelt")
+  maxBeltCategories ChampionshipCategory[] @relation("MaxBelt")
+}
+
+// 👶 Rangos Etarios (para categorías)
+model AgeRange {
+  id         Int      @id @default(autoincrement())
+  label      String   // Ej: "8-9 años"
+  minAge     Int
+  maxAge     Int
+  categories ChampionshipCategory[]
 }

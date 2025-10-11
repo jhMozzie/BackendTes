@@ -3,7 +3,7 @@ POST http://localhost:3000/api/roles
 Content-Type: application/json
 
 {
-  "description": "ADMIN"
+  "description": "Admin"
 }
 
 ### CREATE Role COACH
@@ -11,7 +11,7 @@ POST http://localhost:3000/api/roles
 Content-Type: application/json
 
 {
-  "description": "COACH"
+  "description": "Coach"
 }
 
 ### CREATE Role STUDENT
@@ -19,7 +19,7 @@ POST http://localhost:3000/api/roles
 Content-Type: application/json
 
 {
-  "description": "STUDENT"
+  "description": "Student"
 }
 
 ### GET All Roles

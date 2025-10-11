@@ -12,21 +12,21 @@ export class UserController {
       return res.status(201).json(newUser);
     } catch (error: any) {
       if (error.code === "P2002") {
-        return res.status(409).json({ message: "Email already exists" });
+        return res.status(409).json({ message: "El correo ya está registrado" });
       }
-      console.error(error);
-      return res.status(500).json({ message: "Error creating user" });
+      console.error("Error creando usuario:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
     }
   }
 
   // READ ALL
-  async getAll(req: Request, res: Response) {
+  async getAll(_req: Request, res: Response) {
     try {
       const users = await userService.getAll();
       return res.status(200).json(users);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Error fetching users" });
+      console.error("Error obteniendo usuarios:", error);
+      return res.status(500).json({ message: "Error obteniendo usuarios" });
     }
   }
 
@@ -34,14 +34,19 @@ export class UserController {
   async getById(req: Request, res: Response) {
     try {
       const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+
       const user = await userService.getById(userId);
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: "Usuario no encontrado" });
       }
+
       return res.status(200).json(user);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Error fetching user" });
+      console.error("Error obteniendo usuario:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
     }
   }
 
@@ -49,14 +54,18 @@ export class UserController {
   async update(req: Request, res: Response) {
     try {
       const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+
       const updatedUser = await userService.update(
         userId,
         req.body as UpdateUserPayload
       );
       return res.status(200).json(updatedUser);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Error updating user" });
+      console.error("Error actualizando usuario:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
     }
   }
 
@@ -64,11 +73,15 @@ export class UserController {
   async delete(req: Request, res: Response) {
     try {
       const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+
       const deletedUser = await userService.delete(userId);
       return res.status(200).json(deletedUser);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Error deleting user" });
+      console.error("Error eliminando usuario:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
     }
   }
 }
