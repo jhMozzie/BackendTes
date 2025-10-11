@@ -19,15 +19,28 @@ export class UserService {
         birthdate: userData.birthdate ? new Date(userData.birthdate) : null,
         status: userData.status ?? "Activo",
       },
-      include: { role: true },
+      include: {
+        role: {
+          select: {
+            id: true,
+            description: true, // 👈 devuelve solo lo necesario para el frontend
+          },
+        },
+      },
     });
   }
 
   // READ (All)
   async getAll() {
     return prisma.user.findMany({
-      include: { role: true },
-      orderBy: { id: "asc" },
+      include: {
+        role: {
+          select: {
+            id: true,
+            description: true, // 👈 Solo el campo que necesitas
+          },
+        },
+      },
     });
   }
 
@@ -35,7 +48,14 @@ export class UserService {
   async getById(id: number) {
     return prisma.user.findUnique({
       where: { id },
-      include: { role: true },
+      include: {
+        role: {
+          select: {
+            id: true,
+            description: true,
+          },
+        },
+      },
     });
   }
 
@@ -54,7 +74,14 @@ export class UserService {
     return prisma.user.update({
       where: { id },
       data: updateData,
-      include: { role: true },
+      include: {
+        role: {
+          select: {
+            id: true,
+            description: true,
+          },
+        },
+      },
     });
   }
 
