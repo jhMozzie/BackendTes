@@ -1,6 +1,8 @@
 import { PrismaClient } from "@/generated/prisma";
 import bcrypt from "bcryptjs";
 import { CreateUserPayload, UpdateUserPayload } from "./user.types";
+import { PaginationParams } from "../common/pagination/pagination.types";
+import { paginate } from "../common/pagination/pagination.helper";
 
 const prisma = new PrismaClient();
 
@@ -88,5 +90,28 @@ export class UserService {
   // DELETE
   async delete(id: number) {
     return prisma.user.delete({ where: { id } });
+  }
+
+  // GET ALL PAGINATED + FILTER BY ROLE
+  async getAllPaginated(params: PaginationParams & { role?: string }) {
+    const where: any = {};
+
+    if (params.role && params.role !== "all") {
+      where.role = {
+        is: {
+          description: params.role,
+        },
+      };
+    }
+
+    return paginate(prisma.user, params, {
+      where,
+      include: {
+        role: {
+          select: { id: true, description: true },
+        },
+      },
+      // orderBy: { id: "asc" },
+    });
   }
 }

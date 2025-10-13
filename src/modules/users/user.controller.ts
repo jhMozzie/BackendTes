@@ -71,4 +71,22 @@ export class UserController {
       return res.status(500).json({ message: "Error deleting user" });
     }
   }
+
+  // GET ALL PAGINATED
+  async getAllPaginated(req: Request, res: Response) {
+  try {
+    const { page = "1", limit = "10", role = "all" } = req.query;
+
+    const data = await userService.getAllPaginated({
+      page: Number(page),
+      limit: Number(limit),
+      role: String(role),
+    });
+
+    return res.json(data);
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+}
 }
