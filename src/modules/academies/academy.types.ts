@@ -3,7 +3,7 @@ export interface CreateAcademyPayload {
     userId: number;
 }
 
-export interface UdpateAcademyPayload{
+export interface UpdateAcademyPayload{
     name?: string;
     userId?: number;
 }
