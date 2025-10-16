@@ -83,8 +83,8 @@ model Student {
   beltId     Int        // 👈 Nuevo: referencia al cinturón (kyu)
   belt       Belt       @relation(fields: [beltId], references: [id])
 
-  userId     Int
-  user       User       @relation(fields: [userId], references: [id])
+  userId     Int?
+  user       User?       @relation(fields: [userId], references: [id])
   academyId  Int
   academy    Academy    @relation(fields: [academyId], references: [id])
 

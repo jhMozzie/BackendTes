@@ -1,79 +1,101 @@
-import { Request, Response } from 'express';
-import { StudentService } from './student.service';
-import { CreateStudentPayload, UpdateStudentPayload } from './student.types';
-
-const studentService = new StudentService();
+import { Request, Response } from "express";
+import { StudentService } from "./student.service";
+import { CreateStudentPayload, UpdateStudentPayload } from "@/types";
 
 export class StudentController {
-  // CREATE
-  async create(req: Request<CreateStudentPayload>, res: Response) {
+  private studentService = new StudentService();
+
+  // 🏗️ CREATE
+  create = async (req: Request<{}, {}, CreateStudentPayload>, res: Response) => {
     try {
-      const newStudent = await studentService.create(req.body);
+      const newStudent = await this.studentService.create(req.body);
       return res.status(201).json(newStudent);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error creating student' });
+    } catch (error: any) {
+      console.error("❌ Error creating student:", error);
+      return res.status(500).json({
+        message: "Error creating student",
+        details: error.message,
+      });
     }
-  }
+  };
 
-  // READ ALL
-  async getAll(req: Request, res: Response) {
+  // 📋 READ ALL (paginado + filtro opcional academyId)
+  getAll = async (req: Request, res: Response) => {
     try {
-      // 1. Leemos los parámetros de la URL (query params)
-      const { academyId } = req.query;
+      const { page = "1", limit = "10", academyId } = req.query;
 
-      // 2. Creamos el objeto de filtros que nuestro servicio espera
-      const filters = {
-        // Si academyId existe, lo convertimos a número, si no, es undefined
-        academyId: academyId ? Number(academyId) : undefined
-      };
+      const pageNum = parseInt(page as string, 10);
+      const limitNum = parseInt(limit as string, 10);
+      const academyIdNum = academyId ? Number(academyId) : undefined;
 
-      // 3. Pasamos el objeto de filtros al servicio
-      const students = await studentService.getAll(filters);
+      const result = await this.studentService.getAllPaginated({
+        page: pageNum,
+        limit: limitNum,
+        academyId: academyIdNum,
+      });
 
-      return res.status(200).json(students);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error fetching students' });
+      return res.status(200).json(result);
+    } catch (error: any) {
+      console.error("❌ Error getting students:", error);
+      return res.status(500).json({
+        message: "Error getting students",
+        details: error.message,
+      });
     }
-  }
+  };
 
-  // READ BY ID
-  async getById(req: Request, res: Response) {
+  // 🔍 READ BY ID
+  getById = async (req: Request, res: Response) => {
     try {
-      const studentId = parseInt(req.params.id);
-      const student = await studentService.getById(studentId);
+      const id = parseInt(req.params.id, 10);
+      const student = await this.studentService.getById(id);
+
       if (!student) {
-        return res.status(404).json({ message: 'Student not found' });
+        return res.status(404).json({ message: "Student not found" });
       }
+
       return res.status(200).json(student);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error fetching student' });
+    } catch (error: any) {
+      console.error("❌ Error getting student:", error);
+      return res.status(500).json({
+        message: "Error getting student",
+        details: error.message,
+      });
     }
-  }
+  };
 
-  // UPDATE
-  async update(req: Request, res: Response) {
+  // ✏️ UPDATE
+  update = async (req: Request, res: Response) => {
     try {
-      const studentId = parseInt(req.params.id);
-      const updatedStudent = await studentService.update(studentId, req.body as UpdateStudentPayload);
+      const id = parseInt(req.params.id, 10);
+      const updatedStudent = await this.studentService.update(
+        id,
+        req.body as UpdateStudentPayload
+      );
+
       return res.status(200).json(updatedStudent);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error updating student' });
+    } catch (error: any) {
+      console.error("❌ Error updating student:", error);
+      return res.status(500).json({
+        message: "Error updating student",
+        details: error.message,
+      });
     }
-  }
+  };
 
-  // DELETE
-  async delete(req: Request, res: Response) {
+  // ❌ DELETE
+  delete = async (req: Request, res: Response) => {
     try {
-      const studentId = parseInt(req.params.id);
-      const deletedStudent = await studentService.delete(studentId);
+      const id = parseInt(req.params.id, 10);
+      const deletedStudent = await this.studentService.delete(id);
+
       return res.status(200).json(deletedStudent);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error deleting student' });
+    } catch (error: any) {
+      console.error("❌ Error deleting student:", error);
+      return res.status(500).json({
+        message: "Error deleting student",
+        details: error.message,
+      });
     }
-  }
+  };
 }

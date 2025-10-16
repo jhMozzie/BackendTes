@@ -16,17 +16,27 @@ async function main() {
   ];
 
   for (const role of roles) {
-    const existing = await prisma.role.findFirst({ where: { description: role.description } });
+    const existing = await prisma.role.findFirst({
+      where: { description: role.description },
+    });
     if (!existing) {
       await prisma.role.create({ data: role });
       console.log(`✅ Rol creado: ${role.description}`);
     }
   }
 
-  const adminRole = await prisma.role.findFirst({ where: { description: "Administrador" } });
-  const coachRole = await prisma.role.findFirst({ where: { description: "Entrenador" } });
-  const studentRole = await prisma.role.findFirst({ where: { description: "Estudiante" } });
-  if (!adminRole || !coachRole || !studentRole) throw new Error("❌ Faltan roles base.");
+  const adminRole = await prisma.role.findFirst({
+    where: { description: "Administrador" },
+  });
+  const coachRole = await prisma.role.findFirst({
+    where: { description: "Entrenador" },
+  });
+  const studentRole = await prisma.role.findFirst({
+    where: { description: "Estudiante" },
+  });
+
+  if (!adminRole || !coachRole || !studentRole)
+    throw new Error("❌ Faltan roles base.");
 
   // =====================================================
   // 2️⃣ Crear Cinturones (Belts)
@@ -43,14 +53,17 @@ async function main() {
     { name: "Marrón", kyuLevel: 3 },
     { name: "Marrón", kyuLevel: 2 },
     { name: "Marrón", kyuLevel: 1 },
-    { name: "Negro", kyuLevel: 1 },
+    { name: "Negro", kyuLevel: 0 },
   ];
 
   for (const belt of belts) {
-    const existingBelt = await prisma.belt.findFirst({ where: { name: belt.name } });
+    // ✅ Corrección aplicada: buscar por kyuLevel (no por name)
+    const existingBelt = await prisma.belt.findFirst({
+      where: { kyuLevel: belt.kyuLevel },
+    });
     if (!existingBelt) {
       await prisma.belt.create({ data: belt });
-      console.log(`🥋 Cinturón creado: ${belt.name}`);
+      console.log(`🥋 Cinturón creado: ${belt.name} (${belt.kyuLevel}° Kyu)`);
     }
   }
 
@@ -64,7 +77,10 @@ async function main() {
   const adminPasswordPlain = "123456";
   const adminPasswordHash = await bcrypt.hash(adminPasswordPlain, 10);
 
-  const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: adminEmail },
+  });
+
   if (!existingAdmin) {
     await prisma.user.create({
       data: {
@@ -132,7 +148,7 @@ async function main() {
   }
 
   // =====================================================
-  // 5️⃣ Crear 12 Estudiantes (3 por cada academia, edad 16-17 años)
+  // 5️⃣ Crear 12 Estudiantes (3 por cada academia)
   // =====================================================
   const studentPasswordPlain = "123456";
   const studentNames = [
@@ -201,7 +217,9 @@ async function main() {
       });
 
       console.log(
-        `🎓 Estudiante creado: ${firstname} ${lastname} (${email}) → Edad aprox: ${2025 - birthYear}, Cinturón: ${randomBelt.name}`
+        `🎓 Estudiante creado: ${firstname} ${lastname} (${email}) → Edad aprox: ${
+          2025 - birthYear
+        }, Cinturón: ${randomBelt.name}`
       );
       studentIndex++;
     }

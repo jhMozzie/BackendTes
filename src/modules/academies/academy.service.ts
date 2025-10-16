@@ -26,6 +26,19 @@ export class AcademyService {
     return newAcademy;
   }
 
+    // 📋 READ ALL (simple) → para selects del frontend
+  async getAll() {
+    const academies = await prisma.academy.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+      // orderBy: { id: "asc" },
+    });
+
+    return academies;
+  }
+
   // 📋 READ (All paginated)
   async getAllPaginated(params: PaginationParams) {
     const result = await paginate<

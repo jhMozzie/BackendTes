@@ -6,18 +6,21 @@ const router = Router();
 const controller = new UserController();
 
 // ✅ Ruta principal con paginación
-router.get("/", (req, res) => controller.getAllPaginated(req, res));
+router.get("/", controller.getAllPaginated);
+
+// 📋 Obtener todos los usuarios (sin paginación, opcional si la usas)
+router.get("/all", controller.getAll);
 
 // 🔍 Obtener usuario por ID
-router.get("/:id", (req, res) => controller.getById(req, res));
+router.get("/:id", controller.getById);
 
 // ➕ Crear nuevo usuario
-router.post("/", (req, res) => controller.create(req, res));
+router.post("/", controller.create);
 
 // ✏️ Actualizar usuario
-router.put("/:id", (req, res) => controller.update(req, res));
+router.put("/:id", controller.update);
 
 // ❌ Eliminar usuario
-router.delete("/:id", (req, res) => controller.delete(req, res));
+router.delete("/:id", controller.delete);
 
 export default router;
