@@ -226,6 +226,84 @@ async function main() {
   }
 
   console.log("🎉 Seed completado con éxito!");
+
+    // =====================================================
+  // 6️⃣ Crear Campeonatos (Championships)
+  // =====================================================
+  console.log("🏆 Creando campeonatos...");
+
+  const championshipsData = [
+    {
+      name: "Campeonato Nacional Universitario 2025",
+      startDate: new Date("2025-03-15"),
+      location: "Estadio Nacional",
+      district: "Jesús María",
+      province: "Lima",
+      country: "Perú",
+      image: "",
+      status: "Activo",
+      academyId: academies[0].id,
+    },
+    {
+      name: "Copa Metropolitana de Karate",
+      startDate: new Date("2025-04-10"),
+      location: "Coliseo Eduardo Dibós",
+      district: "San Borja",
+      province: "Lima",
+      country: "Perú",
+      image: "",
+      status: "Próximo",
+      academyId: academies[1].id,
+    },
+    {
+      name: "Torneo Juvenil Primavera 2025",
+      startDate: new Date("2025-05-05"),
+      location: "Polideportivo de Miraflores",
+      district: "Miraflores",
+      province: "Lima",
+      country: "Perú",
+      image: "",
+      status: "Inscripción Abierta",
+      academyId: academies[2].id,
+    },
+    {
+      name: "Copa San Luis de Karate",
+      startDate: new Date("2025-06-20"),
+      location: "Complejo Deportivo San Luis",
+      district: "San Luis",
+      province: "Lima",
+      country: "Perú",
+      image: "",
+      status: "Planificación",
+      academyId: academies[3].id,
+    },
+    {
+      name: "Campeonato Internacional de Lima 2025",
+      startDate: new Date("2025-07-15"),
+      location: "Villa Deportiva Nacional (VIDENA)",
+      district: "San Luis",
+      province: "Lima",
+      country: "Perú",
+      image: "",
+      status: "Planificación",
+      academyId: academies[4].id,
+    },
+  ];
+
+  for (const champ of championshipsData) {
+    const existing = await prisma.championship.findFirst({
+      where: { name: champ.name },
+    });
+
+    if (!existing) {
+      await prisma.championship.create({ data: champ });
+      console.log(`✅ Campeonato creado: ${champ.name}`);
+    } else {
+      console.log(`⚠️ Campeonato ya existente: ${champ.name}`);
+    }
+  }
+
+  console.log("🎯 Campeonatos cargados correctamente.");
 }
 
 main()

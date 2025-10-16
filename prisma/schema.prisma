@@ -49,19 +49,21 @@ model Academy {
 }
 
 model Championship {
-  id        Int                  @id @default(autoincrement())
-  name      String
-  startDate DateTime
-  location  String
+  id          Int      @id @default(autoincrement())
+  name        String
+  startDate   DateTime
+  location    String         // 🏟️ Lugar o recinto (ej. "Estadio Nacional")
+  district    String?        // 🏙️ Distrito o ciudad (ej. "Jesús María")
+  province    String?        // 🌆 Provincia o región (ej. "Lima")
+  country     String?        // 🌎 País (ej. "Perú")
+  image       String?        // 🖼️ Ruta de imagen (frontend o bucket)
+  status      String @default("Planificación") // 📊 Estado del campeonato
 
-  // Relación directa: campeonato organizado por una academia
-  academyId Int
-  academy   Academy              @relation(fields: [academyId], references: [id])
-
-  // Relación muchos a muchos: varias academias pueden participar
+  // 🔗 Relaciones
+  academyId   Int
+  academy     Academy   @relation(fields: [academyId], references: [id])
   academyLinks AcademyOnChampionships[]
-
-  categories ChampionshipCategory[]
+  categories  ChampionshipCategory[]
 }
 
 model AcademyOnChampionships {
