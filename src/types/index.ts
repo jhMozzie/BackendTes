@@ -9,6 +9,9 @@ export * from "@/modules/academies/academy.types"
 // 🥋 Tipos de estudiantes
 export * from "@/modules/students/student.types"
 
+// 🥋 Tipos de campeonatos
+export * from "@/modules/championships/championship.types"
+
 // 🥋 Tipos de belts
 export * from "@/modules/belts/belt.types"
 

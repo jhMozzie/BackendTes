@@ -56,6 +56,7 @@ model Championship {
   district    String?        // 🏙️ Distrito o ciudad (ej. "Jesús María")
   province    String?        // 🌆 Provincia o región (ej. "Lima")
   country     String?        // 🌎 País (ej. "Perú")
+  description String?        // 👈 AÑADE ESTA LÍNEA (Texto opcional)
   image       String?        // 🖼️ Ruta de imagen (frontend o bucket)
   status      String @default("Planificación") // 📊 Estado del campeonato
 

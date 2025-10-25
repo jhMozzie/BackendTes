@@ -1,39 +1,50 @@
-### ADD a Category to a specific Championship
-# 1. Make sure you have created a championship first (e.g., using championship.http).
-# 2. Replace the '1' in the URL below with the ID of that championship.
+### championships-categories.http
+
+### -------------------------------------------
+### GET All Categories for a Championship (Simple List)
+# Obtiene todas las categorías (sin paginar) para el campeonato con ID=1
+GET http://localhost:3000/api/championships/1/categories/all
+
+### -------------------------------------------
+### GET Paginated Categories for a Championship
+# Obtiene las categorías paginadas para el campeonato con ID=1 (Página 1, 5 por página)
+GET http://localhost:3000/api/championships/1/categories?page=1&limit=5
+
+### -------------------------------------------
+### CREATE a New Category
+# Crea una nueva categoría para el campeonato con ID=1
+# ASEGÚRATE que beltMinId, beltMaxId, ageRangeId existan en tu BD.
 POST http://localhost:3000/api/championships/1/categories
 Content-Type: application/json
 
 {
-  "modality": "KATA",
-  "ageRange": "14-15 años",
-  "ageCategory": "JUVENIL",
-  "gender": "FEMENINO",
-  "skillLevel": "10-9 KYU",
-  "code": "A34"
+  "code": "TEST_KATA_U14_M",
+  "modality": "Kata",
+  "gender": "Masculino",
+  "beltMinId": 9,      # Ejemplo: ID para Marrón 3er Kyu
+  "beltMaxId": 12,     # Ejemplo: ID para Negro
+  "ageRangeId": 1       # Ejemplo: ID para U14 (12-13 años)
 }
 
 ### -------------------------------------------
+### GET One Category by ID
+# Obtiene los detalles de la categoría con ID=10 (AJUSTA ESTE ID)
+GET http://localhost:3000/api/championship-categories/10
 
-### ADD another Category to the SAME Championship
-# Replace the '1' with the same championship ID.
-# Provide a new, unique code for this category.
-POST http://localhost:3000/api/championships/1/categories
+### -------------------------------------------
+### UPDATE a Category
+# Actualiza la categoría con ID=10 (AJUSTA ESTE ID)
+PUT http://localhost:3000/api/championship-categories/10
 Content-Type: application/json
 
 {
-  "modality": "KUMITE",
-  "ageRange": "14-15 años",
-  "ageCategory": "JUVENIL",
-  "gender": "MASCULINO",
-  "skillLevel": "10-9 KYU",
-  "code": "B38"
+  "code": "TEST_KATA_U14_M_UPDATED",
+  "modality": "Kumite"
 }
 
 ### -------------------------------------------
+### DELETE a Category
+# Elimina la categoría con ID=10 (AJUSTA ESTE ID)
+DELETE http://localhost:3000/api/championship-categories/10
 
-### REMOVE a specific Category
-# 1. To get the category ID, you can first view the details of a championship.
-# 2. Replace the '1' in the URL below with the ID of the CATEGORY you want to delete.
-DELETE http://localhost:3000/api/championship-categories/1
-
+### -------------------------------------------

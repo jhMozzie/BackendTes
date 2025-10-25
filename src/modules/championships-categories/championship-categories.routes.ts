@@ -1,19 +1,56 @@
 import { Router } from "express";
 import { ChampionshipCategoryController } from "./championship-categories.controller";
+// Opcional: Importar middlewares si los usas
+// import { authMiddleware } from "@/middlewares/auth";
 
 const router = Router();
 const controller = new ChampionshipCategoryController();
 
-// --- NUEVA RUTA AÑADIDA ---
-// Ruta para LISTAR todas las categorías de un campeonato específico
-// Ejemplo: GET /api/championships/1/categories
-router.get('/championships/:championshipId/categories', controller.getAllByChampionship);
+// --- Rutas Anidadas bajo /championships/:championshipId ---
+
+// GET .../categories/all - Obtiene TODAS las categorías (sin paginar)
+router.get(
+    '/championships/:championshipId/categories/all',
+    // authMiddleware, // Ejemplo
+    controller.getAllByChampionship // Llama al método correcto
+);
+
+// GET .../categories - Obtiene categorías PAGINADAS (ruta principal)
+router.get(
+    '/championships/:championshipId/categories',
+    // authMiddleware,
+    controller.getPaginatedByChampionship // Llama al método de paginación
+);
+
+// POST .../categories - Crea una NUEVA categoría
+router.post(
+    '/championships/:championshipId/categories',
+    // authMiddleware,
+    controller.create
+);
 
 
-// Ruta para AÑADIR una categoría a un campeonato específico
-router.post('/championships/:championshipId/categories', controller.create);
+// --- Rutas Específicas para UNA Categoría (/championship-categories/:categoryId) ---
 
-// Ruta para ELIMINAR una categoría específica por su ID
-router.delete('/championship-categories/:categoryId', controller.delete);
+// GET /championship-categories/:categoryId - Obtener detalles de UNA categoría
+router.get(
+    '/championship-categories/:categoryId',
+    // authMiddleware,
+    controller.getById // <-- RUTA AÑADIDA
+);
+
+// PUT /championship-categories/:categoryId - Actualizar UNA categoría
+router.put(
+    '/championship-categories/:categoryId',
+    // authMiddleware,
+    controller.update // <-- RUTA AÑADIDA
+);
+
+// DELETE /championship-categories/:categoryId - Eliminar UNA categoría
+router.delete(
+    '/championship-categories/:categoryId',
+    // authMiddleware,
+    controller.delete
+);
 
 export default router;
