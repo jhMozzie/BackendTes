@@ -1,30 +1,44 @@
-### CREATE Participant
-# Asegúrate de que los IDs del estudiante y del campeonato existan
+### -------------------------------------------
+### CREATE 1. Inscribir Estudiante en KATA
+# Inscribe al estudiante 1 en la categoría 9 (Kata Senior Masc)
+# NOTA: Ajusta studentId y championshipCategoryId si usas IDs diferentes.
 POST http://localhost:3000/api/participants
 Content-Type: application/json
 
 {
-  "studentId": 8,
-  "championshipId": 1
+  "studentId": 1,
+  "championshipCategoryId": 9
 }
 
-### CREATE Participant
-# Asegúrate de que los IDs del estudiante y del campeonato existan
+### -------------------------------------------
+### CREATE 2. Inscribir Estudiante en KUMITE
+# Inscribe al estudiante 1 en la categoría 41 (Kumite Senior Masc -75kg)
 POST http://localhost:3000/api/participants
 Content-Type: application/json
 
 {
-  "studentId": 9,
-  "championshipId": 1
+  "studentId": 1,
+  "championshipCategoryId": 41
 }
 
-### GET All Participants
-GET http://localhost:3000/api/participants
+### -------------------------------------------
+### GET Paginated (Con Filtro por Campeonato)
+# Obtiene los participantes del campeonato ID=1 (paginados: página 1, límite 5)
+GET http://localhost:3000/api/participants?championshipId=1&page=1&limit=5
 
-### GET Participant by ID
-# Reemplaza 1 con el ID del participante que desees ver
-GET http://localhost:3000/api/participants/3
+### -------------------------------------------
+### GET Paginated (Con Filtro por Categoría y Campeonato)
+# Obtiene solo los participantes de la categoría ID=9 (Kata Senior Masc)
+GET http://localhost:3000/api/participants?championshipId=1&categoryId=9&page=1&limit=5
 
-### DELETE Participant
-# Reemplaza 1 con el ID del participante que desees eliminar
-DELETE http://localhost:3000/api/participants/3
+### -------------------------------------------
+### GET Participant Details by ID
+# Obtiene los detalles de la inscripción (participante) con ID=1
+GET http://localhost:3000/api/participants/1
+
+### -------------------------------------------
+### DELETE a Participant
+# Elimina la inscripción con ID=1
+DELETE http://localhost:3000/api/participants/1
+
+### -------------------------------------------

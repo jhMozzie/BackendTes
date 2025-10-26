@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma";
+import { PrismaClient, Student, Academy, Championship, Prisma } from "../src/generated/prisma";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -15,7 +15,7 @@ async function main() {
     { description: "Entrenador" },
     { description: "Estudiante" },
   ];
-  // 👇 CORRECCIÓN: Usamos findFirst + create (quitamos upsert)
+  // Usamos findFirst + create
   for (const role of roles) {
     const existing = await prisma.role.findFirst({
       where: { description: role.description },
@@ -48,6 +48,8 @@ async function main() {
     }
   }
   const allBelts = await prisma.belt.findMany();
+  const blackBelt = allBelts.find(b => b.kyuLevel === 0);
+  if (!blackBelt) throw new Error("❌ No se encontró el cinturón Negro (kyuLevel 0).");
   console.log("✅ Cinturones asegurados.");
 
   // =====================================================
@@ -56,7 +58,7 @@ async function main() {
   console.log("👑 Creando usuario administrador...");
   const adminEmail = "admin@academy.com";
   const adminPasswordPlain = "123456";
-  await prisma.user.upsert({ // upsert aquí está bien porque 'email' es @unique
+  await prisma.user.upsert({
     where: { email: adminEmail }, update: {},
     create: {
       email: adminEmail, username: "adminPrincipal", password: await bcrypt.hash(adminPasswordPlain, 10),
@@ -69,21 +71,20 @@ async function main() {
   // 4️⃣ Crear 5 Coaches y Academias
   // =====================================================
   console.log("🏋️ Creando coaches y academias...");
-  const academies = [];
+  const academies: Academy[] = [];
   const coachPasswordPlain = "123456";
   const coachPhones = ["+51 901...", "+51 902...", "+51 903...", "+51 904...", "+51 905..."];
 
   for (let i = 1; i <= 5; i++) {
     const email = `dojo${i}@academy.com`;
     const username = `dojo${i}`;
-    const coachUser = await prisma.user.upsert({ // upsert aquí está bien (email @unique)
+    const coachUser = await prisma.user.upsert({
       where: { email: email }, update: {},
       create: {
         email, username, password: await bcrypt.hash(coachPasswordPlain, 10),
         phone: coachPhones[i-1], birthdate: new Date(`198${i}-0${i}-15`), status: "Activo", roleId: coachRole.id,
       },
     });
-    // Usamos findFirst + create para Academy (ya que userId no es @unique en Academy)
     let academy = await prisma.academy.findFirst({ where: { userId: coachUser.id } });
     if (!academy) {
       academy = await prisma.academy.create({ data: { name: `Academia Dojo ${i}`, userId: coachUser.id } });
@@ -94,59 +95,100 @@ async function main() {
   console.log("✅ Coaches y Academias asegurados.");
 
   // =====================================================
-  // 5️⃣ Crear Estudiantes
+  // 5️⃣ Crear Estudiantes Senior para Pruebas
   // =====================================================
-  console.log("🎓 Creando estudiantes...");
+  console.log("🎓 Creando estudiantes Senior para pruebas...");
   const studentPasswordPlain = "123456";
-  const studentNames = [
-    ["Carlos", "Ramírez"], ["Lucía", "Gonzales"], ["Andrés", "Salazar"], ["María", "Fernández"],
-    ["José", "Torres"], ["Camila", "López"], ["Santiago", "Huamán"], ["Valeria", "Quispe"],
-    ["Renato", "Cruz"], ["Fiorella", "Campos"], ["Matías", "Arias"], ["Diana", "Mendoza"],
+  const seniorMaleNames = [
+    ["Juan", "Pérez"], ["Carlos", "Ruiz"], ["Miguel", "Sanz"],
+    ["Pedro", "López"], ["Luis", "García"], ["Javier", "Morales"]
   ];
-  let studentIndex = 0;
-  for (const academy of academies) {
-    for (let j = 0; j < 3; j++) {
-      if (studentIndex >= studentNames.length) break;
-      const [firstname, lastname] = studentNames[studentIndex];
-      const email = `${firstname.toLowerCase()}.${lastname.toLowerCase()}@example.com`;
-      const birthYear = 2010 + Math.floor(Math.random() * 8);
-      const birthdate = new Date(birthYear, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+  const seniorFemaleNames = [
+    ["Ana", "Sánchez"], ["María", "González"], ["Lucía", "Fernández"],
+    ["Elena", "Díaz"], ["Sofía", "Romero"], ["Carla", "Navarro"]
+  ];
+  
+  const seniorMaleStudents: Student[] = [];
+  const seniorFemaleStudents: Student[] = [];
 
-      const studentUser = await prisma.user.upsert({ // upsert aquí está bien (email @unique)
-        where: { email }, update: {},
-        create: {
-          email, username: `${firstname}${lastname}`, password: await bcrypt.hash(studentPasswordPlain, 10),
-          birthdate, status: "Activo", roleId: studentRole.id,
+  // Crear 6 Estudiantes Masculinos Senior (Academia 1)
+  for (const [firstname, lastname] of seniorMaleNames) {
+    const email = `${firstname.toLowerCase()}.${lastname.toLowerCase()}@pro.example.com`;
+    const birthdate = new Date("1998-05-10"); // Senior
+
+    const studentUser = await prisma.user.upsert({
+      where: { email }, update: {},
+      create: {
+        email, username: `${firstname}${lastname}Pro`, password: await bcrypt.hash(studentPasswordPlain, 10),
+        birthdate, status: "Activo", roleId: studentRole.id,
+      },
+    });
+
+    const existingStudent = await prisma.student.findFirst({ where: { userId: studentUser.id } });
+    let student: Student;
+    if (existingStudent) {
+      student = await prisma.student.update({
+        where: { id: existingStudent.id },
+        data: { beltId: blackBelt.id, academyId: academies[0].id },
+      });
+    } else {
+      student = await prisma.student.create({
+        data: {
+          firstname, lastname, birthdate, beltId: blackBelt.id, 
+          userId: studentUser.id, academyId: academies[0].id,
         },
       });
-      const randomBelt = allBelts[Math.floor(Math.random() * allBelts.length)];
-      // Usamos findFirst + create/update para Student (ya que userId no es @unique en Student)
-      const existingStudent = await prisma.student.findFirst({ where: { userId: studentUser.id } });
-      if (existingStudent) {
-        await prisma.student.update({ where: { id: existingStudent.id }, data: { beltId: randomBelt.id, academyId: academy.id } });
-      } else {
-        await prisma.student.create({ data: { firstname, lastname, birthdate, beltId: randomBelt.id, userId: studentUser.id, academyId: academy.id } });
-      }
-      console.log(`   Estudiante asegurado: ${firstname} ${lastname}`);
-      studentIndex++;
     }
+    seniorMaleStudents.push(student);
+    console.log(`   Estudiante Senior Masc. asegurado: ${firstname} ${lastname}`);
   }
-  console.log("✅ Estudiantes asegurados.");
+
+  // Crear 6 Estudiantes Femeninos Senior (Academia 2)
+  for (const [firstname, lastname] of seniorFemaleNames) {
+    const email = `${firstname.toLowerCase()}.${lastname.toLowerCase()}@pro.example.com`;
+    const birthdate = new Date("1999-07-15"); // Senior
+
+    const studentUser = await prisma.user.upsert({
+      where: { email }, update: {},
+      create: {
+        email, username: `${firstname}${lastname}Pro`, password: await bcrypt.hash(studentPasswordPlain, 10),
+        birthdate, status: "Activo", roleId: studentRole.id,
+      },
+    });
+    
+    const existingStudent = await prisma.student.findFirst({ where: { userId: studentUser.id } });
+    let student: Student;
+    if (existingStudent) {
+      student = await prisma.student.update({
+        where: { id: existingStudent.id },
+        data: { beltId: blackBelt.id, academyId: academies[1].id },
+      });
+    } else {
+      student = await prisma.student.create({
+        data: {
+          firstname, lastname, birthdate, beltId: blackBelt.id,
+          userId: studentUser.id, academyId: academies[1].id,
+        },
+      });
+    }
+    seniorFemaleStudents.push(student);
+    console.log(`   Estudiante Senior Fem. asegurada: ${firstname} ${lastname}`);
+  }
+  console.log("✅ 12 Estudiantes Senior (6M/6F) asegurados.");
 
   // =====================================================
   // 6️⃣ Crear Campeonatos (Championships)
   // =====================================================
   console.log("🏆 Creando campeonatos...");
-  const championshipsData = [
+  const championshipsData: Prisma.ChampionshipUncheckedCreateInput[] = [
     { name: "Campeonato Nacional Universitario 2025", startDate: new Date("2025-03-15"), location: "Estadio Nacional", district: "Jesús María", province: "Lima", country: "Perú", description: "El evento cumbre...", image: "", status: "Activo", academyId: academies[0].id },
     { name: "Copa Metropolitana de Karate", startDate: new Date("2025-04-10"), location: "Coliseo Eduardo Dibós", district: "San Borja", province: "Lima", country: "Perú", description: "Competencia abierta...", image: "", status: "Próximo", academyId: academies[1].id },
     { name: "Torneo Juvenil Primavera 2025", startDate: new Date("2025-05-05"), location: "Polideportivo de Miraflores", district: "Miraflores", province: "Lima", country: "Perú", description: "¡La nueva generación...", image: "", status: "Inscripción Abierta", academyId: academies[2].id },
     { name: "Copa San Luis de Karate", startDate: new Date("2025-06-20"), location: "Complejo Deportivo San Luis", district: "San Luis", province: "Lima", country: "Perú", description: "Torneo local...", image: "", status: "Planificación", academyId: academies[3].id },
     { name: "Campeonato Internacional de Lima 2025", startDate: new Date("2025-07-15"), location: "Villa Deportiva Nacional (VIDENA)", district: "San Luis", province: "Lima", country: "Perú", description: "Evento de talla internacional...", image: "", status: "Planificación", academyId: academies[4].id },
   ];
-  const createdChampionships = [];
+  const createdChampionships: Championship[] = [];
   for (const champ of championshipsData) {
-    // Usamos findFirst + create/update para Championship (asumiendo que 'name' no es @unique)
     let dbChamp = await prisma.championship.findFirst({ where: { name: champ.name } });
     if (dbChamp) {
       dbChamp = await prisma.championship.update({
@@ -172,7 +214,6 @@ async function main() {
   ];
   const ageRangesMap = new Map<string, number>();
   for (const range of ageRangesData) {
-    // 👇 CORRECCIÓN: Usamos findFirst + create/update (ya que 'label' no es @unique)
     let dbRange = await prisma.ageRange.findFirst({ where: { label: range.label } });
     if (dbRange) {
       dbRange = await prisma.ageRange.update({ where: { id: dbRange.id }, data: range });
@@ -188,7 +229,6 @@ async function main() {
   // =====================================================
   console.log("🔍 Obteniendo IDs necesarios...");
   const brownBelt3Kyu = await prisma.belt.findFirstOrThrow({ where: { kyuLevel: 3 } });
-  const blackBelt = await prisma.belt.findFirstOrThrow({ where: { kyuLevel: 0 } });
   const targetChampionshipId = createdChampionships[0].id;
   console.log(`   IDs obtenidos para Campeonato ${targetChampionshipId}, Cinturones ${brownBelt3Kyu.id}-${blackBelt.id}`);
 
@@ -199,7 +239,7 @@ async function main() {
   
   const categoryDefinitions = [
     // --- KATA ---
-    { code: "A1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kata" }, // weight es undefined
+    { code: "A1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kata" },
     { code: "A2", ageLabel: "U14 (12-13 años)", gender: "Femenino", modality: "Kata" },
     { code: "A3", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kata" },
     { code: "A4", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kata" },
@@ -209,9 +249,9 @@ async function main() {
     { code: "A8", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kata" },
     { code: "A9", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kata" },
     { code: "A10", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kata" },
-
+  
     // --- KUMITE U14 ---
-    { code: "B1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-40kg" }, // weight está definido
+    { code: "B1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-40kg" },
     { code: "B2", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-45kg" },
     { code: "B3", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-50kg" },
     { code: "B4", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-55kg" },
@@ -275,7 +315,6 @@ async function main() {
       continue;
     }
 
-    // 👇 CORRECCIÓN 1: 'weight' se añade aquí, con 'null' para Kata
     const categoryUniqueData = {
       championshipId: targetChampionshipId,
       modality: catDef.modality,
@@ -283,26 +322,18 @@ async function main() {
       ageRangeId: ageRangeId,
       beltMinId: brownBelt3Kyu.id,
       beltMaxId: blackBelt.id,
-      weight: catDef.weight ?? null, // <-- Añadimos weight (será null si catDef.weight es undefined)
+      weight: catDef.weight ?? null,
     };
     
-    // 'categoryFullData' ahora también incluye 'weight'
-    const categoryFullData = {
-      ...categoryUniqueData,
-      code: catDef.code,
-    };
+    const categoryFullData = { ...categoryUniqueData, code: catDef.code };
 
-    // 👇 ===== CORRECCIÓN AQUÍ =====
-    // 1. Buscar si la categoría (por su combinación única) ya existe
-    //    Cambiamos 'findUnique' por 'findFirst'
+    // Usamos findFirst porque findUnique da error con 'null' en la clave
     const existingCategory = await prisma.championshipCategory.findFirst({
-      where: categoryUniqueData, // Pasamos el objeto de búsqueda directamente
+      where: categoryUniqueData,
       select: { id: true, code: true }
     });
-    // ===== FIN DE LA CORRECCIÓN =====
 
     if (existingCategory) {
-      // 2. Si existe, verificar si el código es diferente y ACTUALIZAR
       if (existingCategory.code !== catDef.code) {
         await prisma.championshipCategory.update({
           where: { id: existingCategory.id },
@@ -311,16 +342,77 @@ async function main() {
         categoriesUpdatedCount++;
       }
     } else {
-      // 3. Si no existe, CREAR
       await prisma.championshipCategory.create({
-        data: categoryFullData, // 'categoryFullData' ya contiene 'weight'
+        data: categoryFullData,
       });
       categoriesCreatedCount++;
     }
   }
-
   console.log(`✅ Categorías procesadas: ${categoriesCreatedCount} creadas, ${categoriesUpdatedCount} actualizadas.`);
   console.log(`✅ Total de ${categoryDefinitions.length} categorías aseguradas con códigos A*/B*.`);
+
+
+  // =====================================================
+  // 🔟 NUEVO: Crear Participantes (Participants)
+  // =====================================================
+  console.log("🏃‍♂️ Inscribiendo participantes Senior...");
+  let participantsCreatedCount = 0;
+  
+  const ageRangeSeniorId = ageRangesMap.get("Senior (18+ años)");
+  if (!ageRangeSeniorId) throw new Error("❌ No se encontró el AgeRange Senior.");
+
+  // Buscamos las 4 categorías Senior (usamos findFirstOrThrow para asegurar que existen)
+  const kataMascSenior = await prisma.championshipCategory.findFirstOrThrow({
+    where: { championshipId: targetChampionshipId, code: "A9" } // Kata Masc Senior
+  });
+  const kataFemSenior = await prisma.championshipCategory.findFirstOrThrow({
+    where: { championshipId: targetChampionshipId, code: "A10" } // Kata Fem Senior
+  });
+  const kumiteMascSenior = await prisma.championshipCategory.findFirstOrThrow({
+    where: { championshipId: targetChampionshipId, code: "B41" } // Kumite Masc Senior -75kg
+  });
+  const kumiteFemSenior = await prisma.championshipCategory.findFirstOrThrow({
+    where: { championshipId: targetChampionshipId, code: "B46" } // Kumite Fem Senior -61kg
+  });
+  console.log("   IDs de categorías Senior objetivo obtenidos.");
+
+  // Inscribir 6 Hombres en Kata Senior (A9)
+  for (let i = 0; i < 6; i++) {
+    const studentId = seniorMaleStudents[i].id;
+    await prisma.participant.upsert({
+      where: { studentId_championshipCategoryId: { studentId: studentId, championshipCategoryId: kataMascSenior.id } },
+      update: {}, create: { studentId: studentId, championshipCategoryId: kataMascSenior.id },
+    });
+    participantsCreatedCount++;
+  }
+  // Inscribir 6 Hombres en Kumite Senior (B41)
+  for (let i = 0; i < 6; i++) {
+    const studentId = seniorMaleStudents[i].id;
+    await prisma.participant.upsert({
+      where: { studentId_championshipCategoryId: { studentId: studentId, championshipCategoryId: kumiteMascSenior.id } },
+      update: {}, create: { studentId: studentId, championshipCategoryId: kumiteMascSenior.id },
+    });
+    participantsCreatedCount++;
+  }
+  // Inscribir 6 Mujeres en Kata Senior (A10)
+  for (let i = 0; i < 6; i++) {
+    const studentId = seniorFemaleStudents[i].id;
+    await prisma.participant.upsert({
+      where: { studentId_championshipCategoryId: { studentId: studentId, championshipCategoryId: kataFemSenior.id } },
+      update: {}, create: { studentId: studentId, championshipCategoryId: kataFemSenior.id },
+    });
+    participantsCreatedCount++;
+  }
+  // Inscribir 6 Mujeres en Kumite Senior (B46)
+  for (let i = 0; i < 6; i++) {
+    const studentId = seniorFemaleStudents[i].id;
+    await prisma.participant.upsert({
+      where: { studentId_championshipCategoryId: { studentId: studentId, championshipCategoryId: kumiteFemSenior.id } },
+      update: {}, create: { studentId: studentId, championshipCategoryId: kumiteFemSenior.id },
+    });
+    participantsCreatedCount++;
+  }
+  console.log(`✅ ${participantsCreatedCount} inscripciones (Participantes) creadas/aseguradas.`);
 
 
   // =====================================================

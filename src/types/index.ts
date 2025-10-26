@@ -15,5 +15,8 @@ export * from "@/modules/championships/championship.types"
 // 🥋 Tipos de belts
 export * from "@/modules/belts/belt.types"
 
+// 🥋 Tipos de participants
+export * from "@/modules/participants/participant.types"
+
 // 📄 Tipos de paginación común
 export * from "@/modules/common/pagination/pagination.types"
