@@ -1,29 +1,62 @@
 ### championships-categories.http
+# Pruebas para el módulo de categorías (con campo 'weight')
 
 ### -------------------------------------------
-### GET All Categories for a Championship (Simple List)
+### GET All Categories (Simple List)
 # Obtiene todas las categorías (sin paginar) para el campeonato con ID=1
 GET http://localhost:3000/api/championships/1/categories/all
 
 ### -------------------------------------------
-### GET Paginated Categories for a Championship
-# Obtiene las categorías paginadas para el campeonato con ID=1 (Página 1, 5 por página)
+### GET Paginated Categories
+# Obtiene las categorías paginadas para el campeonato con ID=1
 GET http://localhost:3000/api/championships/1/categories?page=1&limit=5
 
 ### -------------------------------------------
-### CREATE a New Category
-# Crea una nueva categoría para el campeonato con ID=1
-# ASEGÚRATE que beltMinId, beltMaxId, ageRangeId existan en tu BD.
+### CREATE a New Category (KATA - Sin peso / weight: null)
+# Crea una categoría de Kata (weight es null o no se envía)
 POST http://localhost:3000/api/championships/1/categories
 Content-Type: application/json
 
 {
-  "code": "TEST_KATA_U14_M",
-  "modality": "Kata",
+  "code": "A1_TEST_KUMITE",
+  "modality": "Kumite",
   "gender": "Masculino",
-  "beltMinId": 9,      # Ejemplo: ID para Marrón 3er Kyu
-  "beltMaxId": 12,     # Ejemplo: ID para Negro
-  "ageRangeId": 1       # Ejemplo: ID para U14 (12-13 años)
+  "beltMinId": 9,
+  "beltMaxId": 12,
+  "ageRangeId": 1,
+  "weight": null
+}
+
+### -------------------------------------------
+### CREATE a New Category (KUMITE - Con peso)
+# Crea una categoría de Kumite (weight tiene valor)
+POST http://localhost:3000/api/championships/1/categories
+Content-Type: application/json
+
+{
+  "code": "B1_TEST_KUMITE",
+  "modality": "Kumite",
+  "gender": "Masculino",
+  "weight": "-40kg",
+  "beltMinId": 9,
+  "beltMaxId": 12,
+  "ageRangeId": 1
+}
+
+### -------------------------------------------
+### CREATE a New Category (KUMITE - Open / Sin peso)
+# Crea una categoría de Kumite Open (weight es null)
+POST http://localhost:3000/api/championships/1/categories
+Content-Type: application/json
+
+{
+  "code": "KUM_OPEN_TEST",
+  "modality": "Kumite",
+  "gender": "Masculino",
+  "weight": null,
+  "beltMinId": 7,
+  "beltMaxId": 10,
+  "ageRangeId": 5
 }
 
 ### -------------------------------------------
@@ -38,13 +71,13 @@ PUT http://localhost:3000/api/championship-categories/10
 Content-Type: application/json
 
 {
-  "code": "TEST_KATA_U14_M_UPDATED",
-  "modality": "Kumite"
+  "code": "KATA_UPDATED_CODE",
+  "weight": "-65kg"
 }
 
 ### -------------------------------------------
 ### DELETE a Category
 # Elimina la categoría con ID=10 (AJUSTA ESTE ID)
-DELETE http://localhost:3000/api/championship-categories/10
+DELETE http://localhost:3000/api/championship-categories/59
 
 ### -------------------------------------------

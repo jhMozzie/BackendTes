@@ -15,8 +15,11 @@ async function main() {
     { description: "Entrenador" },
     { description: "Estudiante" },
   ];
+  // 👇 CORRECCIÓN: Usamos findFirst + create (quitamos upsert)
   for (const role of roles) {
-    const existing = await prisma.role.findFirst({ where: { description: role.description } });
+    const existing = await prisma.role.findFirst({
+      where: { description: role.description },
+    });
     if (!existing) {
       await prisma.role.create({ data: role });
     }
@@ -53,7 +56,7 @@ async function main() {
   console.log("👑 Creando usuario administrador...");
   const adminEmail = "admin@academy.com";
   const adminPasswordPlain = "123456";
-  await prisma.user.upsert({
+  await prisma.user.upsert({ // upsert aquí está bien porque 'email' es @unique
     where: { email: adminEmail }, update: {},
     create: {
       email: adminEmail, username: "adminPrincipal", password: await bcrypt.hash(adminPasswordPlain, 10),
@@ -73,13 +76,14 @@ async function main() {
   for (let i = 1; i <= 5; i++) {
     const email = `dojo${i}@academy.com`;
     const username = `dojo${i}`;
-    const coachUser = await prisma.user.upsert({
+    const coachUser = await prisma.user.upsert({ // upsert aquí está bien (email @unique)
       where: { email: email }, update: {},
       create: {
         email, username, password: await bcrypt.hash(coachPasswordPlain, 10),
         phone: coachPhones[i-1], birthdate: new Date(`198${i}-0${i}-15`), status: "Activo", roleId: coachRole.id,
       },
     });
+    // Usamos findFirst + create para Academy (ya que userId no es @unique en Academy)
     let academy = await prisma.academy.findFirst({ where: { userId: coachUser.id } });
     if (!academy) {
       academy = await prisma.academy.create({ data: { name: `Academia Dojo ${i}`, userId: coachUser.id } });
@@ -108,7 +112,7 @@ async function main() {
       const birthYear = 2010 + Math.floor(Math.random() * 8);
       const birthdate = new Date(birthYear, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
 
-      const studentUser = await prisma.user.upsert({
+      const studentUser = await prisma.user.upsert({ // upsert aquí está bien (email @unique)
         where: { email }, update: {},
         create: {
           email, username: `${firstname}${lastname}`, password: await bcrypt.hash(studentPasswordPlain, 10),
@@ -116,6 +120,7 @@ async function main() {
         },
       });
       const randomBelt = allBelts[Math.floor(Math.random() * allBelts.length)];
+      // Usamos findFirst + create/update para Student (ya que userId no es @unique en Student)
       const existingStudent = await prisma.student.findFirst({ where: { userId: studentUser.id } });
       if (existingStudent) {
         await prisma.student.update({ where: { id: existingStudent.id }, data: { beltId: randomBelt.id, academyId: academy.id } });
@@ -141,6 +146,7 @@ async function main() {
   ];
   const createdChampionships = [];
   for (const champ of championshipsData) {
+    // Usamos findFirst + create/update para Championship (asumiendo que 'name' no es @unique)
     let dbChamp = await prisma.championship.findFirst({ where: { name: champ.name } });
     if (dbChamp) {
       dbChamp = await prisma.championship.update({
@@ -166,6 +172,7 @@ async function main() {
   ];
   const ageRangesMap = new Map<string, number>();
   for (const range of ageRangesData) {
+    // 👇 CORRECCIÓN: Usamos findFirst + create/update (ya que 'label' no es @unique)
     let dbRange = await prisma.ageRange.findFirst({ where: { label: range.label } });
     if (dbRange) {
       dbRange = await prisma.ageRange.update({ where: { id: dbRange.id }, data: range });
@@ -189,10 +196,10 @@ async function main() {
   // 9️⃣ Crear Categorías del Campeonato con Códigos A*/B*
   // =====================================================
   console.log("📝 Creando categorías del campeonato con códigos A*/B*...");
-  // 👇 Definiciones con el campo 'code' añadido
+  
   const categoryDefinitions = [
     // --- KATA ---
-    { code: "A1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kata" },
+    { code: "A1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kata" }, // weight es undefined
     { code: "A2", ageLabel: "U14 (12-13 años)", gender: "Femenino", modality: "Kata" },
     { code: "A3", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kata" },
     { code: "A4", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kata" },
@@ -203,8 +210,8 @@ async function main() {
     { code: "A9", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kata" },
     { code: "A10", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kata" },
 
-    // --- KUMITE ---
-    { code: "B1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-40kg" },
+    // --- KUMITE U14 ---
+    { code: "B1", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-40kg" }, // weight está definido
     { code: "B2", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-45kg" },
     { code: "B3", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-50kg" },
     { code: "B4", ageLabel: "U14 (12-13 años)", gender: "Masculino", modality: "Kumite", weight: "-55kg" },
@@ -213,76 +220,108 @@ async function main() {
     { code: "B7", ageLabel: "U14 (12-13 años)", gender: "Femenino", modality: "Kumite", weight: "-47kg" },
     { code: "B8", ageLabel: "U14 (12-13 años)", gender: "Femenino", modality: "Kumite", weight: "-52kg" },
     { code: "B9", ageLabel: "U14 (12-13 años)", gender: "Femenino", modality: "Kumite", weight: "+52kg" },
+    // --- KUMITE CADETE ---
     { code: "B10", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kumite", weight: "-52kg" },
     { code: "B11", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kumite", weight: "-57kg" },
     { code: "B12", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kumite", weight: "-63kg" },
     { code: "B13", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kumite", weight: "-70kg" },
-    { code: "B14", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kumite", weight: "+70kg" }, // Peso WKF
-    { code: "B15", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "-47kg" }, // Re-indexado y peso WKF
-    { code: "B16", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "-54kg" }, // Re-indexado y peso WKF
-    { code: "B17", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "-61kg" }, // Re-indexado y peso WKF
-    { code: "B18", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "+61kg" }, // Re-indexado y peso WKF
-    { code: "B19", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-55kg" }, // Re-indexado
-    { code: "B20", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-61kg" }, // Re-indexado
-    { code: "B21", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-68kg" }, // Re-indexado
-    { code: "B22", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-76kg" }, // Re-indexado
-    { code: "B23", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "+76kg" }, // Re-indexado
-    { code: "B24", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-48kg" }, // Re-indexado
-    { code: "B25", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-53kg" }, // Re-indexado
-    { code: "B26", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-59kg" }, // Re-indexado
-    { code: "B27", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-66kg" }, // Re-indexado
-    { code: "B28", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "+66kg" }, // Re-indexado
-    { code: "B29", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-60kg" }, // Re-indexado
-    { code: "B30", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-67kg" }, // Re-indexado
-    { code: "B31", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-75kg" }, // Re-indexado
-    { code: "B32", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-84kg" }, // Re-indexado
-    { code: "B33", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "+84kg" }, // Re-indexado
-    { code: "B34", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-50kg" }, // Re-indexado
-    { code: "B35", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-55kg" }, // Re-indexado
-    { code: "B36", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-61kg" }, // Re-indexado
-    { code: "B37", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-68kg" }, // Re-indexado
-    { code: "B38", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "+68kg" }, // Re-indexado
-    { code: "B39", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-60kg" }, // Re-indexado
-    { code: "B40", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-67kg" }, // Re-indexado
-    { code: "B41", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-75kg" }, // Re-indexado
-    { code: "B42", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-84kg" }, // Re-indexado
-    { code: "B43", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "+84kg" }, // Re-indexado
-    { code: "B44", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-50kg" }, // Re-indexado
-    { code: "B45", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-55kg" }, // Re-indexado
-    { code: "B46", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-61kg" }, // Re-indexado
-    { code: "B47", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-68kg" }, // Re-indexado
-    { code: "B48", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "+68kg" }, // Re-indexado
+    { code: "B14", ageLabel: "Cadete (14-15 años)", gender: "Masculino", modality: "Kumite", weight: "+70kg" },
+    { code: "B15", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "-47kg" },
+    { code: "B16", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "-54kg" },
+    { code: "B17", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "-61kg" },
+    { code: "B18", ageLabel: "Cadete (14-15 años)", gender: "Femenino", modality: "Kumite", weight: "+61kg" },
+    // --- KUMITE JUNIOR ---
+    { code: "B19", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-55kg" },
+    { code: "B20", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-61kg" },
+    { code: "B21", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-68kg" },
+    { code: "B22", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "-76kg" },
+    { code: "B23", ageLabel: "Junior (16-17 años)", gender: "Masculino", modality: "Kumite", weight: "+76kg" },
+    { code: "B24", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-48kg" },
+    { code: "B25", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-53kg" },
+    { code: "B26", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-59kg" },
+    { code: "B27", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "-66kg" },
+    { code: "B28", ageLabel: "Junior (16-17 años)", gender: "Femenino", modality: "Kumite", weight: "+66kg" },
+    // --- KUMITE SUB-21 ---
+    { code: "B29", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-60kg" },
+    { code: "B30", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-67kg" },
+    { code: "B31", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-75kg" },
+    { code: "B32", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "-84kg" },
+    { code: "B33", ageLabel: "Sub-21 (18-20 años)", gender: "Masculino", modality: "Kumite", weight: "+84kg" },
+    { code: "B34", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-50kg" },
+    { code: "B35", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-55kg" },
+    { code: "B36", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-61kg" },
+    { code: "B37", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "-68kg" },
+    { code: "B38", ageLabel: "Sub-21 (18-20 años)", gender: "Femenino", modality: "Kumite", weight: "+68kg" },
+    // --- KUMITE SENIOR ---
+    { code: "B39", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-60kg" },
+    { code: "B40", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-67kg" },
+    { code: "B41", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-75kg" },
+    { code: "B42", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "-84kg" },
+    { code: "B43", ageLabel: "Senior (18+ años)", gender: "Masculino", modality: "Kumite", weight: "+84kg" },
+    { code: "B44", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-50kg" },
+    { code: "B45", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-55kg" },
+    { code: "B46", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-61kg" },
+    { code: "B47", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "-68kg" },
+    { code: "B48", ageLabel: "Senior (18+ años)", gender: "Femenino", modality: "Kumite", weight: "+68kg" },
   ];
 
   let categoriesCreatedCount = 0;
+  let categoriesUpdatedCount = 0;
+
   for (const catDef of categoryDefinitions) {
     const ageRangeId = ageRangesMap.get(catDef.ageLabel);
     if (!ageRangeId) {
       console.warn(`⚠️ Rango de edad no encontrado: ${catDef.ageLabel}. Saltando cat ${catDef.code}.`);
       continue;
     }
-    const categoryData = {
+
+    // 👇 CORRECCIÓN 1: 'weight' se añade aquí, con 'null' para Kata
+    const categoryUniqueData = {
       championshipId: targetChampionshipId,
       modality: catDef.modality,
       gender: catDef.gender,
       ageRangeId: ageRangeId,
       beltMinId: brownBelt3Kyu.id,
       beltMaxId: blackBelt.id,
-      code: catDef.code, // <-- Usamos el código A*/B*
+      weight: catDef.weight ?? null, // <-- Añadimos weight (será null si catDef.weight es undefined)
     };
-    await prisma.championshipCategory.upsert({
-      where: {
-        championshipId_modality_gender_ageRangeId_beltMinId_beltMaxId: {
-          championshipId: categoryData.championshipId, modality: categoryData.modality, gender: categoryData.gender,
-          ageRangeId: categoryData.ageRangeId, beltMinId: categoryData.beltMinId, beltMaxId: categoryData.beltMaxId,
-        },
-      },
-      update: { code: categoryData.code }, // <-- Actualizamos el código si ya existe
-      create: categoryData,
+    
+    // 'categoryFullData' ahora también incluye 'weight'
+    const categoryFullData = {
+      ...categoryUniqueData,
+      code: catDef.code,
+    };
+
+    // 👇 ===== CORRECCIÓN AQUÍ =====
+    // 1. Buscar si la categoría (por su combinación única) ya existe
+    //    Cambiamos 'findUnique' por 'findFirst'
+    const existingCategory = await prisma.championshipCategory.findFirst({
+      where: categoryUniqueData, // Pasamos el objeto de búsqueda directamente
+      select: { id: true, code: true }
     });
-    categoriesCreatedCount++;
+    // ===== FIN DE LA CORRECCIÓN =====
+
+    if (existingCategory) {
+      // 2. Si existe, verificar si el código es diferente y ACTUALIZAR
+      if (existingCategory.code !== catDef.code) {
+        await prisma.championshipCategory.update({
+          where: { id: existingCategory.id },
+          data: { code: catDef.code },
+        });
+        categoriesUpdatedCount++;
+      }
+    } else {
+      // 3. Si no existe, CREAR
+      await prisma.championshipCategory.create({
+        data: categoryFullData, // 'categoryFullData' ya contiene 'weight'
+      });
+      categoriesCreatedCount++;
+    }
   }
-  console.log(`✅ ${categoriesCreatedCount} categorías aseguradas con códigos A*/B*.`);
+
+  console.log(`✅ Categorías procesadas: ${categoriesCreatedCount} creadas, ${categoriesUpdatedCount} actualizadas.`);
+  console.log(`✅ Total de ${categoryDefinitions.length} categorías aseguradas con códigos A*/B*.`);
+
 
   // =====================================================
   // FIN

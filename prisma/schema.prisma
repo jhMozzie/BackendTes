@@ -13,7 +13,7 @@ datasource db {
 
 model Role {
   id          Int     @id @default(autoincrement())
-  description String
+  description String  @unique
   users       User[]
 }
 
@@ -99,6 +99,7 @@ model ChampionshipCategory {
   code           String?
   modality       String    // Kata o Kumite
   gender         String    // Masculino o Femenino
+  weight         String?   // 👈 1. AÑADE ESTA LÍNEA
   beltMinId      Int       // 👈 Nuevo: cinturón mínimo permitido
   beltMaxId      Int       // 👈 Nuevo: cinturón máximo permitido
   ageRangeId     Int       // 👈 Nuevo: rango de edad permitido
@@ -110,7 +111,8 @@ model ChampionshipCategory {
   championship   Championship @relation(fields: [championshipId], references: [id])
   participants   Participant[]
 
-  @@unique([championshipId, modality, gender, ageRangeId, beltMinId, beltMaxId])
+  // 👇 2. AÑADE 'weight' AL FINAL DE ESTA LÍNEA
+  @@unique([championshipId, modality, gender, ageRangeId, beltMinId, beltMaxId, weight])
 }
 
 model Participant {

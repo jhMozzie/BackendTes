@@ -7,6 +7,7 @@ export interface CreateChampionshipCategoryPayload {
   code?: string;      // Opcional (String?)
   modality: string;   // Requerido (String) - Ej: "Kata" o "Kumite"
   gender: string;     // Requerido (String) - Ej: "Masculino" o "Femenino"
+  weight?: string | null; // Opcional (String?) - Rango de peso, puede ser null
   beltMinId: number;  // Requerido (Int) - ID de un registro Belt
   beltMaxId: number;  // Requerido (Int) - ID de un registro Belt
   ageRangeId: number; // Requerido (Int) - ID de un registro AgeRange

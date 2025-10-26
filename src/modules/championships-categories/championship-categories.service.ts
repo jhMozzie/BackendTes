@@ -1,24 +1,17 @@
-// src/modules/championships-categories/championship-categories.service.ts
-
-// 1. Importaciones de Prisma (igual que en StudentService)
+// 1. Importaciones (corregidas)
 import { Prisma, PrismaClient, ChampionshipCategory } from "@/generated/prisma";
-// 2. Importación del helper paginate (igual que en StudentService)
-import { paginate } from "@/modules/common/pagination/pagination.helper"; // Asegúrate que la ruta sea correcta
-// 3. Importación de PaginationParams (igual que en StudentService, asumiendo que viene de @/types globalmente)
-//    Si viene de pagination.types.ts, ajusta la ruta
-import { PaginationParams } from "@/types"; // O usa: import { PaginationParams } from "@/modules/common/pagination/pagination.types";
-// 4. Importaciones de Payloads específicas de este módulo
+import { paginate } from "@/modules/common/pagination/pagination.helper";
+import { PaginationParams } from "@/types"; // Asumiendo que esta es tu ruta correcta
 import {
   CreateChampionshipCategoryPayload,
   UpdateChampionshipCategoryPayload
 } from "./championship-categories.types";
-// 5. Importamos PaginatedResult porque la función paginate la devuelve
-import { PaginationResult } from "@/modules/common/pagination/pagination.types"; // Asegúrate que la ruta sea correcta
+import { PaginationResult } from "@/modules/common/pagination/pagination.types";
 
 
 const prisma = new PrismaClient();
 
-// Tipo interno para la consulta con includes (se mantiene)
+// Tipo interno para la consulta con includes
 type CategoryWithIncludes = ChampionshipCategory & {
   beltMin: { name: string; kyuLevel: number } | null;
   beltMax: { name: string; kyuLevel: number } | null;
@@ -28,31 +21,107 @@ type CategoryWithIncludes = ChampionshipCategory & {
 
 export class ChampionshipCategoryService {
 
-  // ... (createCategory, updateCategory, deleteCategory, getCategoryById sin cambios en importaciones) ...
-  //     (Asegúrate de que `create` y `update` usen los tipos de payload importados)
-
   /**
    * Crea una nueva categoría para un campeonato.
    */
-  async createCategory(championshipId: number, data: CreateChampionshipCategoryPayload) { // ✅ Usa CreateChampionshipCategoryPayload
+  async createCategory(championshipId: number, data: CreateChampionshipCategoryPayload) {
     return prisma.$transaction(async (tx) => {
-        // ... (validaciones) ...
-        return tx.championshipCategory.create({
-            data: { ...data, championshipId: championshipId },
-            include: { /* ... */ }
+      
+      // Validar código si existe
+      if (data.code) {
+        const existingCode = await tx.championshipCategory.findFirst({
+          where: { championshipId, code: data.code },
         });
+        if (existingCode) {
+          throw new Error(`El código '${data.code}' ya está en uso para este campeonato.`);
+        }
+      }
+
+      // 👇 CORRECCIÓN: Aseguramos que 'weight' sea 'null' si no viene (para Kata)
+      const weight = data.weight ?? null;
+
+      // 👇 CORRECCIÓN: Esta es la validación que te faltaba y que previene el error
+      const existingUnique = await tx.championshipCategory.findFirst({
+        where: {
+          championshipId: championshipId,
+          modality: data.modality,
+          gender: data.gender,
+          ageRangeId: data.ageRangeId,
+          beltMinId: data.beltMinId,
+          beltMaxId: data.beltMaxId,
+          weight: weight, // Usamos la variable 'weight' (que puede ser null)
+        }
+      });
+      
+      // Si ya existe, lanza un error amigable
+      if (existingUnique) {
+        throw new Error('Ya existe una categoría con esta combinación de modalidad, género, edad y cinturones.');
+      }
+      // ----- Fin de la validación -----
+
+      // Si no existe, la crea
+      return tx.championshipCategory.create({
+          data: { 
+            ...data, 
+            weight: weight, // Pasamos el 'weight' procesado
+            championshipId: championshipId 
+          },
+          include: { // Rellenamos el include
+            beltMin: { select: { name: true } },
+            beltMax: { select: { name: true } },
+            ageRange: { select: { label: true } },
+          }
+      });
     });
   }
-   /**
+
+  /**
    * Actualiza una categoría existente.
    */
-  async updateCategory(categoryId: number, data: UpdateChampionshipCategoryPayload) { // ✅ Usa UpdateChampionshipCategoryPayload
+  async updateCategory(categoryId: number, data: UpdateChampionshipCategoryPayload) {
       return prisma.$transaction(async (tx) => {
-          // ... (validaciones) ...
+          // Validar código si se intenta cambiar
+          if (data.code !== undefined) {
+            const categoryToUpdate = await tx.championshipCategory.findUniqueOrThrow({
+                where: { id: categoryId }, select: { championshipId: true }
+            });
+            const existingCode = await tx.championshipCategory.findFirst({
+              where: { championshipId: categoryToUpdate.championshipId, code: data.code, id: { not: categoryId } },
+            });
+            if (existingCode) throw new Error(`El código '${data.code}' ya está en uso.`);
+          }
+
+          // Validar combinación única si se intentan cambiar campos clave
+          if (data.modality || data.gender || data.ageRangeId || data.beltMinId || data.beltMaxId || data.weight !== undefined) {
+              const currentCategory = await tx.championshipCategory.findUniqueOrThrow({ where: { id: categoryId } });
+              const potentialDuplicate = await tx.championshipCategory.findFirst({
+                  where: {
+                      championshipId: currentCategory.championshipId,
+                      modality: data.modality ?? currentCategory.modality,
+                      gender: data.gender ?? currentCategory.gender,
+                      ageRangeId: data.ageRangeId ?? currentCategory.ageRangeId,
+                      beltMinId: data.beltMinId ?? currentCategory.beltMinId,
+                      beltMaxId: data.beltMaxId ?? currentCategory.beltMaxId,
+                      weight: data.weight !== undefined ? (data.weight ?? null) : currentCategory.weight, // Maneja 'weight'
+                      id: { not: categoryId }
+                  }
+              });
+              if (potentialDuplicate) throw new Error('La combinación actualizada ya existe en otra categoría.');
+          }
+
+          // Actualiza el registro
           return tx.championshipCategory.update({
               where: { id: categoryId },
-              data: { ...data },
-              include: { /* ... */ }
+              data: { 
+                ...data,
+                // Asegura que si 'weight' es 'undefined', no se envíe, pero si es 'null', sí se envíe
+                weight: data.weight === undefined ? undefined : (data.weight ?? null)
+              },
+              include: { // Rellenamos el include
+                beltMin: { select: { name: true } },
+                beltMax: { select: { name: true } },
+                ageRange: { select: { label: true } },
+              }
           });
       });
   }
@@ -67,32 +136,37 @@ export class ChampionshipCategoryService {
       include: {
         beltMin: { select: { name: true, kyuLevel: true } },
         beltMax: { select: { name: true, kyuLevel: true } },
-        ageRange: { select: { label: true } },
+        ageRange: { select: { label: true, minAge: true } }, // Añadido minAge
         _count: { select: { participants: true } }
       },
-      orderBy: [ /* ... */ ]
+      orderBy: [ // Rellenamos orderBy
+        { ageRange: { minAge: 'asc' } },
+        { gender: 'asc' },
+        { modality: 'asc' },
+        { weight: 'asc' }, // Añadido 'weight'
+      ]
     });
 
-    // Mapeo directo
+    // Mapeo directo (con 'weight' añadido)
     return categories.map(cat => ({
       id: cat.id, code: cat.code ?? null, modality: cat.modality, gender: cat.gender,
-      ageRangeLabel: cat.ageRange?.label ?? 'N/A', beltMinName: cat.beltMin?.name ?? 'N/A',
-      beltMaxName: cat.beltMax?.name ?? 'N/A', participantCount: cat._count.participants,
+      weight: cat.weight ?? null, // 👈 AÑADIDO
+      ageRangeLabel: cat.ageRange?.label ?? 'N/A',
+      beltMinName: cat.beltMin?.name ?? 'N/A',
+      beltMaxName: cat.beltMax?.name ?? 'N/A',
+      participantCount: cat._count.participants,
     }));
   }
 
   /**
    * Obtiene categorías PAGINADAS para un campeonato, formateadas.
-   * Sigue el patrón de StudentService.
    */
-  // 👇 El tipo de retorno es inferido o Promise<PaginatedResult<any>>
   async getPaginatedCategories(championshipId: number, params: PaginationParams) {
 
     const whereClause: Prisma.ChampionshipCategoryWhereInput = {
       championshipId: championshipId,
     };
 
-    // La llamada a paginate devuelve PaginatedResult<CategoryWithIncludes>
     const result: PaginationResult<CategoryWithIncludes> = await paginate<CategoryWithIncludes>(
       prisma.championshipCategory,
       params,
@@ -104,23 +178,28 @@ export class ChampionshipCategoryService {
           ageRange: { select: { label: true, minAge: true } },
           _count: { select: { participants: true } }
         },
-        orderBy: [ /* ... */ ]
+        orderBy: [ // Rellenamos orderBy
+          { ageRange: { minAge: 'asc' } },
+          { gender: 'asc' },
+          { modality: 'asc' },
+          { weight: 'asc' }, // Añadido 'weight'
+        ]
       }
     );
 
-    // Mapeamos los resultados directamente aquí
+    // Mapeamos los resultados (con 'weight' añadido)
     const data = result.data.map((cat) => ({
       id: cat.id,
       code: cat.code ?? null,
       modality: cat.modality,
       gender: cat.gender,
+      weight: cat.weight ?? null, // 👈 AÑADIDO
       ageRangeLabel: cat.ageRange?.label ?? 'N/A',
       beltMinName: cat.beltMin?.name ?? 'N/A',
       beltMaxName: cat.beltMax?.name ?? 'N/A',
       participantCount: cat._count.participants,
     }));
 
-    // Devolvemos el objeto { data, meta } que coincide con PaginationResult
     return { data, meta: result.meta };
   }
 
@@ -130,7 +209,13 @@ export class ChampionshipCategoryService {
   async getCategoryById(id: number) {
       return prisma.championshipCategory.findUnique({
           where: { id },
-          include: { /* ... */ }
+          include: { // Rellenamos el include
+            beltMin: { select: { id: true, name: true, kyuLevel: true } },
+            beltMax: { select: { id: true, name: true, kyuLevel: true } },
+            ageRange: { select: { id: true, label: true } },
+            championship: { select: { id: true, name: true } },
+            _count: { select: { participants: true } }
+          }
       });
   }
 
