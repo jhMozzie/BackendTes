@@ -17,4 +17,8 @@ router.get('/:id', controller.getById);
 // 4. DELETE /participants/:id (Elimina)
 router.delete('/:id', controller.delete);
 
+// 4. PUT /participants/:id (EDICIÓN INDIVIDUAL: Cambia la categoría de un registro)
+// NOTA: El controlador sigue usando el método 'update', que funciona para PUT/PATCH.
+router.put('/:id', controller.update);
+
 export default router;

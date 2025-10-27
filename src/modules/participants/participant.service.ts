@@ -8,10 +8,8 @@ import { paginate } from "@/modules/common/pagination/pagination.helper";
 import {
   PaginationParams,
   CreateParticipantPayload,
-} from "@/types"; // 👈 Importa todo desde tu archivo global de tipos
-
-// ❌ NO se importa 'PaginatedResult'
-// import { PaginatedResult } from "@/modules/common/pagination/pagination.types";
+  UpdateParticipantPayload // 💡 Asumiendo que este tipo ya existe en tus @/types
+} from "@/types"; 
 
 const prisma = new PrismaClient();
 
@@ -47,13 +45,24 @@ const participantInclude = {
 export class ParticipantService {
   
   /**
-   * Crea una nueva inscripción de participante.
+   * Crea múltiples inscripciones usando transacción.
    */
   async create(data: CreateParticipantPayload) {
-    return prisma.participant.create({ 
-      data,
-      include: participantInclude
+    // 💡 Implementación para manejar múltiples categoryIds
+    const { studentId, categoryIds } = data;
+
+    const creationActions = categoryIds.map(categoryId => {
+      return prisma.participant.create({
+        data: {
+          studentId: studentId, 
+          championshipCategoryId: categoryId,
+        },
+        include: participantInclude,
+      });
     });
+
+    const newParticipants = await prisma.$transaction(creationActions);
+    return newParticipants;
   }
 
   /**
@@ -67,7 +76,6 @@ export class ParticipantService {
 
   /**
    * Obtiene participantes paginados, con filtros.
-   * (Sigue el patrón de StudentService y ChampionshipService)
    */
   async getPaginated(params: PaginationParams & { championshipId?: number; categoryId?: number; studentId?: number }) {
     
@@ -85,7 +93,6 @@ export class ParticipantService {
       };
     }
 
-    // 👇 CORRECCIÓN: Quitamos el tipado explícito 'PaginatedResult'
     const result = await paginate<ParticipantWithIncludes>(
       prisma.participant,
       params, // Contiene page y limit
@@ -128,6 +135,17 @@ export class ParticipantService {
   async getById(id: number) {
     return prisma.participant.findUnique({
       where: { id },
+      include: participantInclude,
+    });
+  }
+
+  /**
+   * 💥 NUEVO: Actualiza la categoría de una inscripción individual.
+   */
+  async update(id: number, payload: UpdateParticipantPayload) {
+    return prisma.participant.update({
+      where: { id },
+      data: { championshipCategoryId: payload.championshipCategoryId },
       include: participantInclude,
     });
   }

@@ -1,44 +1,50 @@
-### -------------------------------------------
-### CREATE 1. Inscribir Estudiante en KATA
-# Inscribe al estudiante 1 en la categoría 9 (Kata Senior Masc)
-# NOTA: Ajusta studentId y championshipCategoryId si usas IDs diferentes.
-POST http://localhost:3000/api/participants
+### 1. LISTAR INSCRIPCIONES PAGINADAS (GET /participants)
+# Propósito: Obtener la lista de inscripciones individuales (lo que alimenta tu tabla).
+# Reemplaza '1' por el ID de tu campeonato.
+
+GET http://localhost:3000/api/participants?championshipId=1&page=1&limit=5 HTTP/1.1
+
+
+### 2. CREAR MÚLTIPLES INSCRIPCIONES (POST /participants)
+# Propósito: Inscribir un estudiante en una o más categorías.
+# El backend debe ejecutar una transacción para los categoryIds.
+# Reemplaza IDs con valores reales.
+
+POST http://localhost:3000/api/participants HTTP/1.1
 Content-Type: application/json
 
 {
-  "studentId": 1,
-  "championshipCategoryId": 9
+    "studentId": 12,
+    "championshipId": 1,
+    "categoryIds": [
+        2,  
+        4
+    ]
 }
 
-### -------------------------------------------
-### CREATE 2. Inscribir Estudiante en KUMITE
-# Inscribe al estudiante 1 en la categoría 41 (Kumite Senior Masc -75kg)
-POST http://localhost:3000/api/participants
+
+### 3. EDICIÓN INDIVIDUAL (PUT /participants/:id)
+# Propósito: Corregir/reemplazar la categoría de una ÚNICA inscripción.
+# El backend usa el ID de la URL (Participant ID) y el JSON (Nuevo Category ID).
+# Reemplaza '101' (Participant ID) y '47' (Nuevo Category ID).
+
+PUT http://localhost:3000/api/participants/101 HTTP/1.1
 Content-Type: application/json
 
 {
-  "studentId": 1,
-  "championshipCategoryId": 41
+    "championshipCategoryId": 47
 }
 
-### -------------------------------------------
-### GET Paginated (Con Filtro por Campeonato)
-# Obtiene los participantes del campeonato ID=1 (paginados: página 1, límite 5)
-GET http://localhost:3000/api/participants?championshipId=1&page=1&limit=5
 
-### -------------------------------------------
-### GET Paginated (Con Filtro por Categoría y Campeonato)
-# Obtiene solo los participantes de la categoría ID=9 (Kata Senior Masc)
-GET http://localhost:3000/api/participants?championshipId=1&categoryId=9&page=1&limit=5
+### 4. OBTENER UNA INSCRIPCIÓN INDIVIDUAL (GET /participants/:id)
+# Propósito: Verificar los detalles de un registro específico.
+# Reemplaza '5' por un ID de la tabla Participant.
 
-### -------------------------------------------
-### GET Participant Details by ID
-# Obtiene los detalles de la inscripción (participante) con ID=1
-GET http://localhost:3000/api/participants/1
+GET http://localhost:3000/api/participants/5 HTTP/1.1
 
-### -------------------------------------------
-### DELETE a Participant
-# Elimina la inscripción con ID=1
-DELETE http://localhost:3000/api/participants/1
 
-### -------------------------------------------
+### 5. ELIMINAR UNA INSCRIPCIÓN (DELETE /participants/:id)
+# Propósito: Eliminar una fila de inscripción individual.
+# Reemplaza '102' por un ID de la tabla Participant.
+
+DELETE http://localhost:3000/api/participants/102 HTTP/1.1

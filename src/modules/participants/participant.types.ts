@@ -1,5 +1,21 @@
+// src/modules/championships/types/participants.types.ts
+
+// ... (ParticipantListParams, Inscription, ParticipantStudentItem, PaginatedParticipantsResponse sin cambios)
+
+/**
+ * Payload para CREAR (inscribir) un participante.
+ * Soporta múltiples categorías (lo que el frontend envía).
+ */
 export interface CreateParticipantPayload {
     studentId: number;
-    // CORRECCIÓN: Se debe enviar el ID de la categoría, no del campeonato.
-    championshipCategoryId: number;
+    championshipId: number; 
+    categoryIds: number[]; // Permite la creación masiva
+}
+
+/**
+ * Payload para ACTUALIZAR una inscripción individual.
+ * Solo se usa para cambiar la categoría de un registro existente.
+ */
+export interface UpdateParticipantPayload {
+    championshipCategoryId: number; // El ID de la nueva categoría
 }
