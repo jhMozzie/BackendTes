@@ -110,6 +110,7 @@ model ChampionshipCategory {
   ageRange       AgeRange  @relation(fields: [ageRangeId], references: [id])
   championship   Championship @relation(fields: [championshipId], references: [id])
   participants   Participant[]
+  matches        Match[]      // Matches (combates) de esta categoría
 
   // 👇 2. AÑADE 'weight' AL FINAL DE ESTA LÍNEA
   @@unique([championshipId, modality, gender, ageRangeId, beltMinId, beltMaxId, weight])
@@ -122,6 +123,11 @@ model Participant {
 
   student              Student             @relation(fields: [studentId], references: [id])
   championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id])
+
+  // Relaciones inversas para los diferentes roles en Match
+  winsAsWinner         Match[] @relation("Winner")
+  matchesAsAkka        Match[] @relation("AkkaParticipant")
+  matchesAsAo          Match[] @relation("AoParticipant")
 
   @@unique([studentId, championshipCategoryId])
 }
@@ -147,4 +153,48 @@ model AgeRange {
   minAge     Int
   maxAge     Int
   categories ChampionshipCategory[]
+}
+
+// Fases del torneo (Ej: Round of 16, Quarter Final, Semi Final, Final)
+model Phase {
+  id          Int      @id @default(autoincrement())
+  description String   // Ej: "Octavos de Final"
+  order       Int      @unique // 1, 2, 3, ... para ordenar
+  matches     Match[]
+}
+
+// 🥋 Combate/Match (Eliminación Simple)
+model Match {
+  id                      Int        @id @default(autoincrement())
+  championshipCategoryId  Int        // La categoría a la que pertenece este bracket
+  phaseId                 Int        // La fase (Octavos, Cuartos, etc.)
+  matchNumber             Int        // Número del combate dentro de la fase (1, 2, 3, ...)
+  status                  String     @default("Pendiente") 
+  winnerId                Int?       // ID del Participant que ganó
+
+  // Participantes (la inscripción del alumno en la categoría)
+  participantAkkaId       Int?       // Akka (Rojo). Null si es un BYE.
+  participantAoId         Int?       // Ao (Azul). Null si es un BYE.
+
+  // Puntuación
+  scoreAkka               Int?       // Puntuación de Akka
+  scoreAo                 Int?       // Puntuación de Ao
+  
+  // Jerarquía del Bracket: ¿A qué combate alimenta este Match?
+  // El ganador de ESTE Match avanza al Match identificado por nextMatchId.
+  nextMatchId             Int?       // El ID del siguiente Match
+  nextMatchSide           String?    // 'Akka' o 'Ao' para indicar si el ganador es Akka o Ao en el nextMatch
+
+  // Relaciones
+  championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id])
+  phase                Phase              @relation(fields: [phaseId], references: [id])
+  winner               Participant?       @relation("Winner", fields: [winnerId], references: [id])
+  participantAkka      Participant?       @relation("AkkaParticipant", fields: [participantAkkaId], references: [id])
+  participantAo        Participant?       @relation("AoParticipant", fields: [participantAoId], references: [id])
+
+  // Nueva relación jerárquica
+  nextMatch            Match?             @relation("NextMatch", fields: [nextMatchId], references: [id], onDelete: SetNull)
+  previousMatches      Match[]            @relation("NextMatch") 
+  
+  @@unique([championshipCategoryId, phaseId, matchNumber])
 }
