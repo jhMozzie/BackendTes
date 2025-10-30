@@ -35,7 +35,7 @@ model User {
 
 model Academy {
   id      Int    @id @default(autoincrement())
-  name    String
+  name    String @unique
 
   // Relación uno a muchos (una academia organiza varios campeonatos)
   userId  Int
@@ -50,7 +50,7 @@ model Academy {
 
 model Championship {
   id          Int      @id @default(autoincrement())
-  name        String
+  name        String   @unique
   startDate   DateTime
   location    String         // 🏟️ Lugar o recinto (ej. "Estadio Nacional")
   district    String?        // 🏙️ Distrito o ciudad (ej. "Jesús María")
@@ -86,7 +86,7 @@ model Student {
   beltId     Int        // 👈 Nuevo: referencia al cinturón (kyu)
   belt       Belt       @relation(fields: [beltId], references: [id])
 
-  userId     Int?
+  userId     Int?       @unique
   user       User?       @relation(fields: [userId], references: [id])
   academyId  Int
   academy    Academy    @relation(fields: [academyId], references: [id])
@@ -139,7 +139,7 @@ model Participant {
 // 🥋 Cinturones / Kyu Levels
 model Belt {
   id        Int       @id @default(autoincrement())
-  name      String    // Blanco, Amarillo, Naranja, Verde, Azul, Marrón, Negro
+  name      String    @unique // Blanco, Amarillo, Naranja, Verde, Azul, Marrón, Negro
   kyuLevel  Int       // 10 = Blanco ... 1 = Marrón, 0 = Negro
   students  Student[]
   minBeltCategories ChampionshipCategory[] @relation("MinBelt")
@@ -149,7 +149,7 @@ model Belt {
 // 👶 Rangos Etarios (para categorías)
 model AgeRange {
   id         Int      @id @default(autoincrement())
-  label      String   // Ej: "8-9 años"
+  label      String   @unique // Ej: "8-9 años"
   minAge     Int
   maxAge     Int
   categories ChampionshipCategory[]

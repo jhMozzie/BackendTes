@@ -1,0 +1,132 @@
+### GET All Phases
+# Obtiene una lista de todas las fases del torneo ordenadas.
+GET http://localhost:3000/api/phases
+
+### -------------------------------------------
+
+### CREATE a new Phase - Octavos de Final
+# Crea una nueva fase de torneo.
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Octavos de Final",
+  "order": 1
+}
+
+### CREATE a new Phase - Cuartos de Final
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Cuartos de Final",
+  "order": 2
+}
+
+### CREATE a new Phase - Semifinal
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Semifinal",
+  "order": 3
+}
+
+### CREATE a new Phase - Final
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Final (Oro)",
+  "order": 4
+}
+
+### CREATE a new Phase - Combate por el Bronce
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Combate por el Bronce",
+  "order": 5
+}
+
+### CREATE a new Phase - Play-In (para brackets impares)
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Play-In",
+  "order": 0
+}
+
+### -------------------------------------------
+
+### UPDATE a Phase
+# Actualiza los datos de una fase existente.
+# Cambia el '1' por el ID de la fase que quieras actualizar.
+PUT http://localhost:3000/api/phases/1
+Content-Type: application/json
+
+{
+  "description": "Octavos de Final (Round of 16)",
+  "order": 1
+}
+
+### UPDATE Phase - Solo descripción
+PUT http://localhost:3000/api/phases/2
+Content-Type: application/json
+
+{
+  "description": "Cuartos de Final (Quarterfinals)"
+}
+
+### UPDATE Phase - Solo orden
+PUT http://localhost:3000/api/phases/3
+Content-Type: application/json
+
+{
+  "order": 10
+}
+
+### -------------------------------------------
+
+### DELETE a Phase
+# Elimina una fase del torneo.
+# ⚠️ CUIDADO: Esto puede afectar los matches asociados.
+# Cambia el '1' por el ID de la fase que quieras eliminar.
+DELETE http://localhost:3000/api/phases/1
+
+### DELETE Phase by ID
+DELETE http://localhost:3000/api/phases/6
+
+### -------------------------------------------
+
+### Error Cases - Testing
+
+### CREATE Phase - Orden duplicado (debería fallar)
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Fase duplicada",
+  "order": 1
+}
+
+### CREATE Phase - Missing required fields (debería fallar)
+POST http://localhost:3000/api/phases
+Content-Type: application/json
+
+{
+  "description": "Fase sin orden"
+}
+
+### UPDATE Phase - ID inválido (debería fallar)
+PUT http://localhost:3000/api/phases/abc
+Content-Type: application/json
+
+{
+  "description": "Test"
+}
+
+### DELETE Phase - ID que no existe (debería fallar)
+DELETE http://localhost:3000/api/phases/999

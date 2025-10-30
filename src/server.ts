@@ -13,6 +13,7 @@ import roleRoutes from './modules/roles/role.route';
 import beltRoutes from './modules/belts/belt.route';
 import authRoutes from './modules/auth/auth.route';
 import phaseRoutes from './modules/phases/phase.route';
+import matchRoutes from './modules/matches/match.route';
 
 const app = express();
 
@@ -43,5 +44,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/belts', beltRoutes);
 app.use('/api/phases', phaseRoutes);
+app.use('/api/matches', matchRoutes);
 
 export default app;

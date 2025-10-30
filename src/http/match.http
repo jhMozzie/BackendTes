@@ -1,0 +1,11 @@
+### 1. GENERAR BRACKETS MASIVAMENTE
+# (Usa el ID del Campeonato)
+POST http://localhost:3000/api/matches/generate/1 HTTP/1.1
+Content-Type: application/json
+
+
+### 2. VER BRACKETS DE UNA CATEGORÍA
+# (Usa el ID de la Categoría. Basado en tu seeder, prueba 1 o 2)
+# Reemplaza '1' por el ID de la categoría (ej. KMS)
+
+GET http://localhost:3000/api/matches/1 HTTP/1.1
