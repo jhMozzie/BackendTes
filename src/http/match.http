@@ -1,11 +1,125 @@
-### 1. GENERAR BRACKETS MASIVAMENTE
-# (Usa el ID del Campeonato)
-POST http://localhost:3000/api/matches/generate/1 HTTP/1.1
+### GENERAR BRACKETS PARA UN CAMPEONATO
+# Genera automáticamente todos los brackets (combates) para todas las categorías de un campeonato.
+# Reemplaza '1' con el ID del campeonato.
+POST http://localhost:3000/api/matches/generate/1
 Content-Type: application/json
 
+### -------------------------------------------
 
-### 2. VER BRACKETS DE UNA CATEGORÍA
-# (Usa el ID de la Categoría. Basado en tu seeder, prueba 1 o 2)
-# Reemplaza '1' por el ID de la categoría (ej. KMS)
+### OBTENER BRACKETS DE UNA CATEGORÍA
+# Obtiene todos los combates (matches) de una categoría específica.
+# ✨ NUEVO: La respuesta ahora incluye información completa de la categoría:
+#    - championshipCategory.modality: "Kata" o "Kumite" ← CRÍTICO para el frontend
+#    - championshipCategory.code: "KMS", etc.
+#    - championshipCategory.gender, weight, beltMin, beltMax, ageRange
+# Reemplaza '1' con el ID de la ChampionshipCategory.
+GET http://localhost:3000/api/matches/1
 
-GET http://localhost:3000/api/matches/1 HTTP/1.1
+### OBTENER BRACKETS - Categoría 2
+GET http://localhost:3000/api/matches/2
+
+### -------------------------------------------
+
+### ACTUALIZAR GANADOR DE UN COMBATE (KATA)
+# Actualiza el ganador y los scores de un combate específico.
+# Para KATA: scoreAkka y scoreAo son las puntuaciones del jurado (ej: 7.5, 8.2)
+# Reemplaza '1' con el ID del Match.
+PATCH http://localhost:3000/api/matches/1/winner
+Content-Type: application/json
+
+{
+  "winnerId": 3,
+  "scoreAkka": 7.8,
+  "scoreAo": 7.2
+}
+
+### ACTUALIZAR GANADOR DE UN COMBATE (KUMITE)
+# Para KUMITE: scoreAkka y scoreAo son los puntos anotados (ej: 5, 2)
+PATCH http://localhost:3000/api/matches/2/winner
+Content-Type: application/json
+
+{
+  "winnerId": 5,
+  "scoreAkka": 5,
+  "scoreAo": 2
+}
+
+### ACTUALIZAR GANADOR - Victoria por Ippon
+PATCH http://localhost:3000/api/matches/3/winner
+Content-Type: application/json
+
+{
+  "winnerId": 7,
+  "scoreAkka": 8,
+  "scoreAo": 0
+}
+
+### ACTUALIZAR GANADOR - Solo ganador (sin scores)
+# Si no envías scores, solo se marca el ganador
+PATCH http://localhost:3000/api/matches/4/winner
+Content-Type: application/json
+
+{
+  "winnerId": 9
+}
+
+### -------------------------------------------
+
+### 📋 EJEMPLO DE RESPUESTA (GET /api/matches/:categoryId)
+### Esta es la estructura que ahora retorna el backend:
+###
+### [
+###   {
+###     "id": 1,
+###     "championshipCategoryId": 1,
+###     "phaseId": 2,
+###     "matchNumber": 1,
+###     "status": "Pendiente",
+###     "winnerId": null,
+###     "participantAkkaId": 5,
+###     "participantAoId": 8,
+###     "scoreAkka": null,
+###     "scoreAo": null,
+###     "nextMatchId": 5,
+###     "nextMatchSide": "Akka",
+###     "championshipCategory": {
+###       "id": 1,
+###       "code": "KMS",
+###       "modality": "Kata",  ← ESTE CAMPO ES CLAVE PARA EL FRONTEND
+###       "gender": "Masculino",
+###       "weight": null,
+###       "beltMin": { "id": 1, "name": "Marrón 3er Kyu", "kyuLevel": 3 },
+###       "beltMax": { "id": 12, "name": "Negro", "kyuLevel": 0 },
+###       "ageRange": { "id": 5, "label": "Senior (18+ años)", "minAge": 18, "maxAge": 99 }
+###     },
+###     "phase": {
+###       "description": "Cuartos de Final",
+###       "order": 2
+###     },
+###     "participantAkka": {
+###       "id": 5,
+###       "studentId": 10,
+###       "championshipCategoryId": 1,
+###       "student": {
+###         "firstname": "Juan",
+###         "lastname": "Pérez",
+###         "academy": { "name": "Academia Dojo 1" }
+###       }
+###     },
+###     "participantAo": {
+###       "id": 8,
+###       "studentId": 15,
+###       "championshipCategoryId": 1,
+###       "student": {
+###         "firstname": "Carlos",
+###         "lastname": "Ruiz",
+###         "academy": { "name": "Academia Dojo 2" }
+###       }
+###     },
+###     "winner": null
+###   }
+### ]
+###
+### 🎯 Uso en el Frontend:
+### const isKata = match.championshipCategory.modality === "Kata";
+### const isKumite = match.championshipCategory.modality === "Kumite";

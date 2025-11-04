@@ -1,0 +1,176 @@
+### CREAR PARTICIPACIÓN (Click en "Participar")
+# Crea la participación inicial cuando la academia hace click en "Participar"
+# El estado inicial será "Participando"
+POST http://localhost:3000/api/academy-championships
+Content-Type: application/json
+
+{
+  "academyId": 1,
+  "championshipId": 1
+}
+
+### CREAR PARTICIPACIÓN - Academia 2
+POST http://localhost:3000/api/academy-championships
+Content-Type: application/json
+
+{
+  "academyId": 2,
+  "championshipId": 1
+}
+
+### CREAR PARTICIPACIÓN - Academia 3
+POST http://localhost:3000/api/academy-championships
+Content-Type: application/json
+
+{
+  "academyId": 3,
+  "championshipId": 1
+}
+
+### -------------------------------------------
+
+### OBTENER PARTICIPACIÓN ESPECÍFICA
+# Verifica el estado actual de la participación de una academia
+GET http://localhost:3000/api/academy-championships/1/1
+
+### -------------------------------------------
+
+### AVANZAR AL SIGUIENTE ESTADO AUTOMÁTICAMENTE
+# Flujo de estados: Participar -> Participando -> PreInscrito -> Confirmado
+# ⚠️ Para pasar a PreInscrito, la academia debe tener al menos un participante inscrito
+
+### Intentar avanzar sin participantes (debería fallar)
+POST http://localhost:3000/api/academy-championships/1/1/advance
+Content-Type: application/json
+
+### Avanzar después de inscribir participantes (debería pasar a PreInscrito)
+# Primero inscribe participantes usando el endpoint de participants
+# Luego ejecuta este request
+POST http://localhost:3000/api/academy-championships/1/1/advance
+Content-Type: application/json
+
+### Avanzar a Confirmado desde PreInscrito
+POST http://localhost:3000/api/academy-championships/1/1/advance
+Content-Type: application/json
+
+### -------------------------------------------
+
+### ACTUALIZAR ESTADO MANUALMENTE
+# Cambiar el estado directamente (uso administrativo)
+PATCH http://localhost:3000/api/academy-championships/1/1/status
+Content-Type: application/json
+
+{
+  "status": "PreInscrito"
+}
+
+### Actualizar a Confirmado
+PATCH http://localhost:3000/api/academy-championships/1/1/status
+Content-Type: application/json
+
+{
+  "status": "Confirmado"
+}
+
+### Actualizar a Participando
+PATCH http://localhost:3000/api/academy-championships/1/1/status
+Content-Type: application/json
+
+{
+  "status": "Participando"
+}
+
+### -------------------------------------------
+
+### OBTENER TODAS LAS PARTICIPACIONES DE UNA ACADEMIA
+# Lista todos los campeonatos en los que participa una academia
+GET http://localhost:3000/api/academy-championships/academy/1
+
+### Academia 2
+GET http://localhost:3000/api/academy-championships/academy/2
+
+### -------------------------------------------
+
+### OBTENER TODAS LAS ACADEMIAS PARTICIPANTES DE UN CAMPEONATO
+# Lista todas las academias que participan en un campeonato
+GET http://localhost:3000/api/academy-championships/championship/1
+
+### -------------------------------------------
+
+### OBTENER ESTADÍSTICAS DE PARTICIPACIÓN
+# Retorna estadísticas del campeonato (total y por estado)
+GET http://localhost:3000/api/academy-championships/championship/1/stats
+
+### -------------------------------------------
+
+### CANCELAR PARTICIPACIÓN
+# Elimina la participación de una academia en un campeonato
+DELETE http://localhost:3000/api/academy-championships/1/1
+
+### -------------------------------------------
+
+### 📋 FLUJO COMPLETO DE EJEMPLO
+
+### 1. Academia hace click en "Participar"
+POST http://localhost:3000/api/academy-championships
+Content-Type: application/json
+
+{
+  "academyId": 1,
+  "championshipId": 1
+}
+
+### 2. Verificar estado (debe ser "Participando")
+GET http://localhost:3000/api/academy-championships/1/1
+
+### 3. Inscribir participantes (usar endpoint de participants)
+# POST http://localhost:3000/api/participants
+# {
+#   "studentId": 1,
+#   "championshipId": 1,
+#   "categoryIds": [1]
+# }
+
+### 4. Avanzar a PreInscrito (automático después de inscribir)
+POST http://localhost:3000/api/academy-championships/1/1/advance
+
+### 5. Verificar cambio de estado (debe ser "PreInscrito")
+GET http://localhost:3000/api/academy-championships/1/1
+
+### 6. Confirmar participación final
+POST http://localhost:3000/api/academy-championships/1/1/advance
+
+### 7. Verificar estado final (debe ser "Confirmado")
+GET http://localhost:3000/api/academy-championships/1/1
+
+### -------------------------------------------
+
+### 📊 EJEMPLO DE RESPUESTAS
+
+### Respuesta de crear participación:
+### {
+###   "id": 1,
+###   "academyId": 1,
+###   "championshipId": 1,
+###   "status": "Participando",
+###   "academy": {
+###     "id": 1,
+###     "name": "Academia Dojo 1"
+###   },
+###   "championship": {
+###     "id": 1,
+###     "name": "Campeonato Nacional Universitario de Karate",
+###     "startDate": "2025-11-15T00:00:00.000Z"
+###   }
+### }
+
+### Respuesta de estadísticas:
+### {
+###   "total": 3,
+###   "byStatus": {
+###     "participar": 0,
+###     "participando": 1,
+###     "preInscrito": 1,
+###     "confirmado": 1
+###   }
+### }

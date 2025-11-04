@@ -40,7 +40,14 @@ export class ParticipantController {
    */
   getAll = async (req: Request, res: Response) => {
     try {
-      const { page = "1", limit = "10", championshipId, categoryId, studentId } = req.query;
+      const { 
+        page = "1", 
+        limit = "10", 
+        championshipId, 
+        categoryId, 
+        studentId,
+        academyId // 🆕 Extraer academyId de query params
+      } = req.query;
 
       const params: PaginationParams = {
         page: parseInt(page as string, 10),
@@ -51,6 +58,7 @@ export class ParticipantController {
         championshipId: championshipId ? Number(championshipId) : undefined,
         categoryId: categoryId ? Number(categoryId) : undefined,
         studentId: studentId ? Number(studentId) : undefined,
+        academyId: academyId ? Number(academyId) : undefined, // 🆕 Pasar al servicio
       };
 
       const result = await this.participantService.getPaginated({ ...params, ...filters });

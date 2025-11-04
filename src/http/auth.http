@@ -3,27 +3,58 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@example.com",
+  "email": "admin@academy.com",
   "password": "123456"
 }
 
-### LOGIN User (COACH)
+### LOGIN User (COACH/DOJO 1)
+# Este usuario tiene una academia asociada
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "coach@example.com",
+  "email": "dojo1@academy.com",
+  "password": "123456"
+}
+
+### LOGIN User (COACH/DOJO 2)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "dojo2@academy.com",
   "password": "123456"
 }
 
 ### LOGIN User (STUDENT)
+# Los estudiantes pueden no tener academyId en la respuesta
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "student@example.com",
+  "email": "juan.pérez0@academy.com",
   "password": "123456"
 }
 
 ### LOGOUT (cierra sesión, en MVP solo devuelve mensaje)
 POST http://localhost:3000/api/auth/logout
+
+### -------------------------------------------
+
+### 📋 EJEMPLO DE RESPUESTA DE LOGIN (con academyId)
+### {
+###   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+###   "user": {
+###     "id": 2,
+###     "email": "dojo1@academy.com",
+###     "username": "dojo1",
+###     "role": "Entrenador",
+###     "academyId": 1  ← NUEVO: ID de la primera academia del usuario (o null)
+###   }
+### }
+###
+### 🎯 Uso en el Frontend:
+### const academyId = response.user.academyId;
+### if (academyId) {
+###   // Usuario tiene academia
+### }

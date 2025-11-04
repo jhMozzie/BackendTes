@@ -9,10 +9,13 @@ export class AuthService {
   async login(payload: LoginPayload): Promise<LoginResponse> {
     const { email, password } = payload;
 
-    // Buscar usuario con su rol
+    // Buscar usuario con su rol y academias
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { role: true },
+      include: { 
+        role: true,
+        academies: true  // 🆕 Incluir academias del usuario
+      },
     });
 
     if (!user) {
@@ -39,6 +42,9 @@ export class AuthService {
         email: user.email,
         username: user.username,
         role: user.role.description,
+        academyId: user.academies[0]?.id ?? null  // 🆕 Primera academia (o null)
+        // Alternativa si necesitas todas las academias:
+        // academies: user.academies.map(a => ({ id: a.id, name: a.name }))
       },
     };
   }

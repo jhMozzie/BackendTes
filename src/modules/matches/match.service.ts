@@ -233,6 +233,18 @@ export class MatchService {
     async getBracketsByCategory(championshipCategoryId: number): Promise<MatchDetails[]> {
         
         const bracketInclude = {
+            championshipCategory: {
+                select: {
+                    id: true,
+                    code: true,
+                    modality: true,  // ← CRÍTICO: Kata o Kumite
+                    gender: true,
+                    weight: true,
+                    beltMin: { select: { id: true, name: true, kyuLevel: true } },
+                    beltMax: { select: { id: true, name: true, kyuLevel: true } },
+                    ageRange: { select: { id: true, label: true, minAge: true, maxAge: true } }
+                }
+            },
             phase: { select: { description: true, order: true } },
             participantAkka: {
                 include: {

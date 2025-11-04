@@ -2,15 +2,31 @@
 # Propósito: Obtener la lista de inscripciones individuales (lo que alimenta tu tabla).
 # Reemplaza '1' por el ID de tu campeonato.
 
-GET http://localhost:3000/api/participants?championshipId=1&page=1&limit=5 HTTP/1.1
+GET http://localhost:3000/api/participants?championshipId=1&page=1&limit=5
 
+### LISTAR INSCRIPCIONES - Filtrar por categoría
+GET http://localhost:3000/api/participants?championshipId=1&categoryId=1&page=1&limit=10
+
+### LISTAR INSCRIPCIONES - Filtrar por estudiante
+GET http://localhost:3000/api/participants?championshipId=1&studentId=5&page=1&limit=10
+
+### 🆕 LISTAR INSCRIPCIONES - Filtrar por academia (para entrenadores)
+# Este filtro muestra solo los participantes de una academia específica
+# Útil cuando un entrenador quiere ver solo a sus estudiantes inscritos
+GET http://localhost:3000/api/participants?championshipId=1&academyId=1&page=1&limit=10
+
+### 🆕 LISTAR INSCRIPCIONES - Filtro combinado: academia + categoría
+# Muestra los participantes de una academia en una categoría específica
+GET http://localhost:3000/api/participants?championshipId=1&academyId=1&categoryId=1&page=1&limit=10
+
+### -------------------------------------------
 
 ### 2. CREAR MÚLTIPLES INSCRIPCIONES (POST /participants)
 # Propósito: Inscribir un estudiante en una o más categorías.
 # El backend debe ejecutar una transacción para los categoryIds.
 # Reemplaza IDs con valores reales.
 
-POST http://localhost:3000/api/participants HTTP/1.1
+POST http://localhost:3000/api/participants
 Content-Type: application/json
 
 {
@@ -23,12 +39,12 @@ Content-Type: application/json
 }
 
 
-### 3. EDICIÓN INDIVIDUAL (PUT /participants/:id)
+### 3. EDICIÓN INDIVIDUAL (PATCH /participants/:id)
 # Propósito: Corregir/reemplazar la categoría de una ÚNICA inscripción.
 # El backend usa el ID de la URL (Participant ID) y el JSON (Nuevo Category ID).
 # Reemplaza '101' (Participant ID) y '47' (Nuevo Category ID).
 
-PUT http://localhost:3000/api/participants/101 HTTP/1.1
+PATCH http://localhost:3000/api/participants/101
 Content-Type: application/json
 
 {
@@ -40,11 +56,61 @@ Content-Type: application/json
 # Propósito: Verificar los detalles de un registro específico.
 # Reemplaza '5' por un ID de la tabla Participant.
 
-GET http://localhost:3000/api/participants/5 HTTP/1.1
+GET http://localhost:3000/api/participants/5
 
 
 ### 5. ELIMINAR UNA INSCRIPCIÓN (DELETE /participants/:id)
 # Propósito: Eliminar una fila de inscripción individual.
 # Reemplaza '102' por un ID de la tabla Participant.
 
-DELETE http://localhost:3000/api/participants/102 HTTP/1.1
+DELETE http://localhost:3000/api/participants/102
+
+### -------------------------------------------
+
+### 📋 EJEMPLO DE USO DEL FILTRO POR ACADEMIA
+
+### Caso de uso 1: Entrenador ve sus participantes en un campeonato
+# El entrenador con academyId=1 quiere ver a todos sus estudiantes
+# inscritos en el campeonato ID=1
+GET http://localhost:3000/api/participants?championshipId=1&academyId=1&page=1&limit=20
+
+### Caso de uso 2: Entrenador ve participantes en una categoría específica
+# Ver solo los participantes de la academia 2 en la categoría Kata Masculino Senior
+GET http://localhost:3000/api/participants?championshipId=1&academyId=2&categoryId=1&page=1&limit=10
+
+### Caso de uso 3: Admin ve todos los participantes sin filtro de academia
+GET http://localhost:3000/api/participants?championshipId=1&page=1&limit=50
+
+### -------------------------------------------
+
+### 📊 EJEMPLO DE RESPUESTA CON FILTRO POR ACADEMIA
+### GET /api/participants?championshipId=1&academyId=1
+### {
+###   "data": [
+###     {
+###       "id": 1,
+###       "studentId": 1,
+###       "championshipCategoryId": 1,
+###       "studentName": "Juan Pérez",
+###       "academyName": "Academia Dojo 1",  ← Solo de esta academia
+###       "beltName": "Negro",
+###       "categoryName": "Kata Masculino Senior (18+ años)",
+###       "championshipName": "Campeonato Nacional Universitario de Karate",
+###       "student": {
+###         "id": 1,
+###         "firstname": "Juan",
+###         "lastname": "Pérez"
+###       },
+###       "category": {
+###         "id": 1,
+###         "code": "KMS"
+###       }
+###     }
+###   ],
+###   "meta": {
+###     "total": 5,
+###     "page": 1,
+###     "limit": 10,
+###     "totalPages": 1
+###   }
+### }

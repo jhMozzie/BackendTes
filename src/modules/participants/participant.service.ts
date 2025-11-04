@@ -77,7 +77,12 @@ export class ParticipantService {
   /**
    * Obtiene participantes paginados, con filtros.
    */
-  async getPaginated(params: PaginationParams & { championshipId?: number; categoryId?: number; studentId?: number }) {
+  async getPaginated(params: PaginationParams & { 
+    championshipId?: number; 
+    categoryId?: number; 
+    studentId?: number;
+    academyId?: number; // 🆕 Filtro por academia
+  }) {
     
     const whereClause: Prisma.ParticipantWhereInput = {};
 
@@ -90,6 +95,12 @@ export class ParticipantService {
     if (params.championshipId) {
       whereClause.championshipCategory = {
         championshipId: params.championshipId,
+      };
+    }
+    // 🆕 Filtrar por academia (para entrenadores)
+    if (params.academyId) {
+      whereClause.student = {
+        academyId: params.academyId
       };
     }
 

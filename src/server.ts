@@ -14,6 +14,7 @@ import beltRoutes from './modules/belts/belt.route';
 import authRoutes from './modules/auth/auth.route';
 import phaseRoutes from './modules/phases/phase.route';
 import matchRoutes from './modules/matches/match.route';
+import academyChampionshipRoutes from './academies-championships/academy-championships.routes';
 
 const app = express();
 
@@ -45,5 +46,6 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/belts', beltRoutes);
 app.use('/api/phases', phaseRoutes);
 app.use('/api/matches', matchRoutes);
+app.use('/api/academy-championships', academyChampionshipRoutes);
 
 export default app;

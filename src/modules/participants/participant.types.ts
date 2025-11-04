@@ -19,3 +19,15 @@ export interface CreateParticipantPayload {
 export interface UpdateParticipantPayload {
     championshipCategoryId: number; // El ID de la nueva categoría
 }
+
+/**
+ * Parámetros de filtrado para obtener participantes paginados
+ */
+export interface ParticipantFilterParams {
+    page: number;
+    limit: number;
+    championshipId?: number;
+    categoryId?: number;
+    studentId?: number;
+    academyId?: number; // 🆕 Filtrar por academia (para entrenadores)
+}

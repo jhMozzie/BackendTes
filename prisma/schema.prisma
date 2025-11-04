@@ -71,6 +71,7 @@ model AcademyOnChampionships {
   id              Int           @id @default(autoincrement())
   academyId       Int
   championshipId  Int
+  status          String        @default("Participar") // 👈 NUEVO CAMPO
 
   academy         Academy       @relation(fields: [academyId], references: [id])
   championship    Championship  @relation(fields: [championshipId], references: [id])

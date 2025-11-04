@@ -25,8 +25,19 @@ export interface UpdateMatchWinnerPayload {
 
 /**
  * Estructura de salida básica para un Combate/Match (lo que ve el frontend).
+ * Incluye información completa de la categoría (especialmente modality: "Kata" o "Kumite")
  */
 export interface MatchDetails extends PrismaMatch {
+    championshipCategory: {
+        id: number;
+        code: string | null;
+        modality: string;  // ← CRÍTICO: "Kata" o "Kumite"
+        gender: string;
+        weight: string | null;
+        beltMin: { id: number; name: string; kyuLevel: number };
+        beltMax: { id: number; name: string; kyuLevel: number };
+        ageRange: { id: number; label: string; minAge: number; maxAge: number };
+    };
     phase: { description: string; order: number };
     participantAkka: BracketParticipant | null;
     participantAo: BracketParticipant | null;
