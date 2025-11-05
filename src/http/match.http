@@ -1,5 +1,7 @@
 ### GENERAR BRACKETS PARA UN CAMPEONATO
 # Genera automáticamente todos los brackets (combates) para todas las categorías de un campeonato.
+# ⚠️ IMPORTANTE: Este endpoint ELIMINA los brackets existentes antes de regenerar
+# Esto permite regenerar brackets si cambias participantes o configuración
 # Reemplaza '1' con el ID del campeonato.
 POST http://localhost:3000/api/matches/generate/1
 Content-Type: application/json
@@ -16,15 +18,47 @@ Content-Type: application/json
 GET http://localhost:3000/api/matches/1
 
 ### OBTENER BRACKETS - Categoría 2
-GET http://localhost:3000/api/matches/2
+GET http://localhost:3000/api/matches/3
 
 ### -------------------------------------------
+
+### ⭐ ACTUALIZAR MARCADOR Y DETERMINAR GANADOR AUTOMÁTICAMENTE (RECOMENDADO)
+# Este es el endpoint principal que debes usar
+# Envías los scores y automáticamente:
+# 1. Guarda los scores
+# 2. Determina el ganador (quien tenga más puntos)
+# 3. Marca el match como "Completado"
+# 4. Promueve al ganador al siguiente match
+
+### KATA - Actualizar banderas (3 vs 2)
+PUT http://localhost:3000/api/matches/2/score
+Content-Type: application/json
+
+{
+  "scoreAkka": 3,
+  "scoreAo": 2
+}
+
+### KUMITE - Actualizar puntos (8 vs 5)
+PUT http://localhost:3000/api/matches/3/score
+Content-Type: application/json
+
+{
+  "scoreAkka": 8,
+  "scoreAo": 5
+}
+
+### -------------------------------------------
+
+### ACTUALIZAR GANADOR MANUALMENTE (Uso Avanzado)
+# Solo usar si necesitas especificar el ganador manualmente
+# Por ejemplo: descalificación, abandono, etc.
 
 ### ACTUALIZAR GANADOR DE UN COMBATE (KATA)
 # Actualiza el ganador y los scores de un combate específico.
 # Para KATA: scoreAkka y scoreAo son las puntuaciones del jurado (ej: 7.5, 8.2)
 # Reemplaza '1' con el ID del Match.
-PATCH http://localhost:3000/api/matches/1/winner
+PUT http://localhost:3000/api/matches/1/winner
 Content-Type: application/json
 
 {
@@ -35,7 +69,7 @@ Content-Type: application/json
 
 ### ACTUALIZAR GANADOR DE UN COMBATE (KUMITE)
 # Para KUMITE: scoreAkka y scoreAo son los puntos anotados (ej: 5, 2)
-PATCH http://localhost:3000/api/matches/2/winner
+PUT http://localhost:3000/api/matches/2/winner
 Content-Type: application/json
 
 {
@@ -45,7 +79,7 @@ Content-Type: application/json
 }
 
 ### ACTUALIZAR GANADOR - Victoria por Ippon
-PATCH http://localhost:3000/api/matches/3/winner
+PUT http://localhost:3000/api/matches/3/winner
 Content-Type: application/json
 
 {
@@ -56,7 +90,7 @@ Content-Type: application/json
 
 ### ACTUALIZAR GANADOR - Solo ganador (sin scores)
 # Si no envías scores, solo se marca el ganador
-PATCH http://localhost:3000/api/matches/4/winner
+PUT http://localhost:3000/api/matches/4/winner
 Content-Type: application/json
 
 {

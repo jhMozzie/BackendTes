@@ -1,4 +1,4 @@
-// src/academies-championships/academy-championships.controller.ts
+// src/modules/academies-championships/academy-championships.controller.ts
 
 import { Request, Response } from 'express';
 import { AcademyChampionshipService } from './academy-championships.service';

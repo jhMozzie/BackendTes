@@ -1,4 +1,4 @@
-// src/academies-championships/academy-championships.types.ts
+// src/modules/academies-championships/academy-championships.types.ts
 
 /**
  * Estados posibles de participación de una academia en un campeonato

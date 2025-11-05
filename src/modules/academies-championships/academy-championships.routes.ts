@@ -1,4 +1,4 @@
-// src/academies-championships/academy-championships.routes.ts
+// src/modules/academies-championships/academy-championships.routes.ts
 
 import { Router } from 'express';
 import { AcademyChampionshipController } from './academy-championships.controller';

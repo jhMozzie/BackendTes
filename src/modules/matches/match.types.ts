@@ -24,6 +24,14 @@ export interface UpdateMatchWinnerPayload {
 }
 
 /**
+ * Payload para actualizar solo el marcador (sin declarar ganador)
+ */
+export interface UpdateMatchScorePayload {
+    scoreAkka: number;
+    scoreAo: number;
+}
+
+/**
  * Estructura de salida básica para un Combate/Match (lo que ve el frontend).
  * Incluye información completa de la categoría (especialmente modality: "Kata" o "Kumite")
  */

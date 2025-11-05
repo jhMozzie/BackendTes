@@ -1,4 +1,4 @@
-// src/academies-championships/academy-championships.service.ts
+// src/modules/academies-championships/academy-championships.service.ts
 
 import { PrismaClient } from '@/generated/prisma';
 import { 

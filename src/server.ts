@@ -14,7 +14,7 @@ import beltRoutes from './modules/belts/belt.route';
 import authRoutes from './modules/auth/auth.route';
 import phaseRoutes from './modules/phases/phase.route';
 import matchRoutes from './modules/matches/match.route';
-import academyChampionshipRoutes from './academies-championships/academy-championships.routes';
+import academyChampionshipRoutes from './modules/academies-championships/academy-championships.routes';
 
 const app = express();
 
