@@ -57,6 +57,25 @@ export class MatchController {
             });
         }
     }
+
+    /**
+     * GET /matches/:championshipCategoryId/podium
+     * Devuelve el podio (1ro, 2do, 3ro(s)) para la categoría indicada
+     */
+    getPodium = async (req: Request, res: Response) => {
+        try {
+            const championshipCategoryId = parseInt(req.params.championshipCategoryId, 10);
+            if (isNaN(championshipCategoryId)) {
+                return res.status(400).json({ message: "ID de categoría inválido." });
+            }
+
+            const podium = await this.matchService.getPodiumByCategory(championshipCategoryId);
+            return res.status(200).json(podium);
+        } catch (error: any) {
+            console.error('❌ Error obteniendo podio:', error);
+            return res.status(500).json({ message: 'Error al obtener podio', details: error.message });
+        }
+    }
     
     /**
      * 💥 MÉTODO IMPLEMENTADO: Actualiza el ganador y puntaje de un combate

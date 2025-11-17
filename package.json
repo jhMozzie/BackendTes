@@ -7,7 +7,9 @@
     "dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register ./src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "seed:simulate": "ts-node prisma/seed-simulate.ts",
+    "db:install-unaccent": "ts-node prisma/install-unaccent.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +22,8 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "openai": "^6.8.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",

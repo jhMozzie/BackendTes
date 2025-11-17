@@ -11,6 +11,8 @@ export interface CreateChampionshipPayload {
   image?: string;
   status?: string;
   academyId: number;
+  referees?: number;  // 🧑‍⚖️ Número de árbitros
+  tatamis?: number;   // 🥋 Número de tatamis
 }
 
 export interface UpdateChampionshipPayload {
@@ -24,6 +26,8 @@ export interface UpdateChampionshipPayload {
   image?: string;
   status?: string;
   academyId?: number; // (Este probablemente no debería estar aquí si no permites cambiar la academia organizadora)
+  referees?: number;  // 🧑‍⚖️ Número de árbitros
+  tatamis?: number;   // 🥋 Número de tatamis
 }
 
 // Opcional pero recomendado: Define el tipo de dato que SÍ envías al frontend
@@ -40,4 +44,6 @@ export interface ChampionshipPaginatedDto {
     image: string;
     status: string;
     academy: string;
+    referees: number | null;  // 🧑‍⚖️ Número de árbitros
+    tatamis: number | null;   // 🥋 Número de tatamis
 }

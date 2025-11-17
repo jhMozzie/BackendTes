@@ -1,6 +1,32 @@
 ### championships-categories.http
 # Pruebas para el módulo de categorías (con campo 'weight')
 
+### 📋 REFERENCIA DE IDs DISPONIBLES (Desde seed.ts)
+# 
+# 🥋 CINTURONES (Belt):
+#   ID: 1  - Blanco 10mo Kyu (kyuLevel: 10)
+#   ID: 2  - Amarillo 9no Kyu (kyuLevel: 9)
+#   ID: 3  - Naranja 8vo Kyu (kyuLevel: 8)
+#   ID: 4  - Naranja Punta Verde 7mo Kyu (kyuLevel: 7)
+#   ID: 5  - Verde 6to Kyu (kyuLevel: 6)
+#   ID: 6  - Azul 5to Kyu (kyuLevel: 5)
+#   ID: 7  - Azul Punta Marrón 4to Kyu (kyuLevel: 4)
+#   ID: 8  - Marrón 3er Kyu (kyuLevel: 3)
+#   ID: 9  - Marrón 2do Kyu (kyuLevel: 2)
+#   ID: 10 - Marrón 1er Kyu (kyuLevel: 1)
+#   ID: 11 - Negro (kyuLevel: 0) ⭐ Más común en competencias
+#
+# 📅 RANGOS DE EDAD (AgeRange):
+#   ID: 1 - Senior (18-35 años)
+#   ID: 2 - Junior (16-17 años)
+#   ID: 3 - Cadete (14-15 años)
+#   ID: 4 - Infantil (12-13 años)
+#
+# 🏆 CAMPEONATOS:
+#   ID: 1 - Campeonato Nacional Universitario de Karate 2025
+#   ID: 2 - (Crea más según necesites)
+#
+
 ### -------------------------------------------
 ### GET All Categories (Simple List)
 # Obtiene todas las categorías (sin paginar) para el campeonato con ID=1
@@ -12,51 +38,95 @@ GET http://localhost:3000/api/championships/1/categories/all
 GET http://localhost:3000/api/championships/1/categories?page=1&limit=5
 
 ### -------------------------------------------
-### CREATE a New Category (KATA - Sin peso / weight: null)
-# Crea una categoría de Kata (weight es null o no se envía)
-POST http://localhost:3000/api/championships/1/categories
+### CREATE - Categoría KATA Masculino Senior (Sin peso)
+# 📝 Crea una categoría de KATA para Senior Masculino
+# 🥋 Cinturones: Negro (ID: 11)
+# 📅 Rango de edad: Senior (ID: 1)
+POST http://localhost:3000/api/championships/2/categories
 Content-Type: application/json
 
 {
-  "code": "A1_TEST_KUMITE",
-  "modality": "Kumite",
+  "code": "KATA_M_SENIOR_001",
+  "modality": "Kata",
   "gender": "Masculino",
-  "beltMinId": 9,
-  "beltMaxId": 12,
+  "beltMinId": 11,
+  "beltMaxId": 11,
   "ageRangeId": 1,
   "weight": null
 }
 
 ### -------------------------------------------
-### CREATE a New Category (KUMITE - Con peso)
-# Crea una categoría de Kumite (weight tiene valor)
+### CREATE - Categoría KATA Femenino Senior (Sin peso)
+# 📝 Crea una categoría de KATA para Senior Femenino
+# 🥋 Cinturones: Negro (ID: 11)
+# 📅 Rango de edad: Senior (ID: 1)
 POST http://localhost:3000/api/championships/1/categories
 Content-Type: application/json
 
 {
-  "code": "B1_TEST_KUMITE",
-  "modality": "Kumite",
-  "gender": "Masculino",
-  "weight": "-40kg",
-  "beltMinId": 9,
-  "beltMaxId": 12,
-  "ageRangeId": 1
+  "code": "KATA_F_SENIOR_001",
+  "modality": "Kata",
+  "gender": "Femenino",
+  "beltMinId": 11,
+  "beltMaxId": 11,
+  "ageRangeId": 1,
+  "weight": null
 }
 
 ### -------------------------------------------
-### CREATE a New Category (KUMITE - Open / Sin peso)
-# Crea una categoría de Kumite Open (weight es null)
+### CREATE - Categoría KUMITE Masculino Senior -67kg
+# 📝 Crea una categoría de KUMITE para Senior Masculino -67kg
+# 🥋 Cinturones: Negro (ID: 11)
+# 📅 Rango de edad: Senior (ID: 1)
+# ⚖️ Peso: -67kg
 POST http://localhost:3000/api/championships/1/categories
 Content-Type: application/json
 
 {
-  "code": "KUM_OPEN_TEST",
+  "code": "KUM_M_SENIOR_67",
   "modality": "Kumite",
   "gender": "Masculino",
-  "weight": null,
-  "beltMinId": 7,
-  "beltMaxId": 10,
-  "ageRangeId": 5
+  "beltMinId": 11,
+  "beltMaxId": 11,
+  "ageRangeId": 1,
+  "weight": "-67kg"
+}
+
+### -------------------------------------------
+### CREATE - Categoría KUMITE Femenino Senior -55kg
+# 📝 Crea una categoría de KUMITE para Senior Femenino -55kg
+# 🥋 Cinturones: Negro (ID: 11)
+# 📅 Rango de edad: Senior (ID: 1)
+# ⚖️ Peso: -55kg
+POST http://localhost:3000/api/championships/1/categories
+Content-Type: application/json
+
+{
+  "code": "KUM_F_SENIOR_55",
+  "modality": "Kumite",
+  "gender": "Femenino",
+  "beltMinId": 11,
+  "beltMaxId": 11,
+  "ageRangeId": 1,
+  "weight": "-55kg"
+}
+
+### -------------------------------------------
+### CREATE - Categoría KUMITE Open (Sin límite de peso)
+# 📝 Crea una categoría de KUMITE Open (cualquier peso)
+# 🥋 Cinturones: Marrón 3er Kyu (ID: 8) a Negro (ID: 11)
+# 📅 Rango de edad: Senior (ID: 1)
+POST http://localhost:3000/api/championships/1/categories
+Content-Type: application/json
+
+{
+  "code": "KUM_M_SENIOR_OPEN",
+  "modality": "Kumite",
+  "gender": "Masculino",
+  "beltMinId": 8,
+  "beltMaxId": 11,
+  "ageRangeId": 1,
+  "weight": null
 }
 
 ### -------------------------------------------
@@ -65,14 +135,46 @@ Content-Type: application/json
 GET http://localhost:3000/api/championship-categories/10
 
 ### -------------------------------------------
-### UPDATE a Category
-# Actualiza la categoría con ID=10 (AJUSTA ESTE ID)
-PUT http://localhost:3000/api/championship-categories/10
+### UPDATE - Cambiar código de categoría
+# 📝 Actualiza solo el código de la categoría con ID=1
+PUT http://localhost:3000/api/championship-categories/1
 Content-Type: application/json
 
 {
-  "code": "KATA_UPDATED_CODE",
-  "weight": "-65kg"
+  "code": "KATA_M_SENIOR_UPDATED"
+}
+
+### -------------------------------------------
+### UPDATE - Cambiar peso de categoría KUMITE
+# ⚖️ Actualiza el peso de la categoría con ID=2
+PUT http://localhost:3000/api/championship-categories/2
+Content-Type: application/json
+
+{
+  "weight": "-75kg"
+}
+
+### -------------------------------------------
+### UPDATE - Cambiar cinturones permitidos
+# 🥋 Actualiza el rango de cinturones de la categoría con ID=3
+PUT http://localhost:3000/api/championship-categories/3
+Content-Type: application/json
+
+{
+  "beltMinId": 6,
+  "beltMaxId": 11
+}
+
+### -------------------------------------------
+### UPDATE - Cambiar modalidad y género
+# 🔄 Actualiza la modalidad y género de la categoría con ID=4
+PUT http://localhost:3000/api/championship-categories/4
+Content-Type: application/json
+
+{
+  "modality": "Kata",
+  "gender": "Femenino",
+  "weight": null
 }
 
 ### -------------------------------------------

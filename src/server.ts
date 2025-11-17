@@ -15,6 +15,7 @@ import authRoutes from './modules/auth/auth.route';
 import phaseRoutes from './modules/phases/phase.route';
 import matchRoutes from './modules/matches/match.route';
 import academyChampionshipRoutes from './modules/academies-championships/academy-championships.routes';
+import aiQueryRoutes from './modules/ai-query/ai-query.route';
 
 const app = express();
 
@@ -47,5 +48,6 @@ app.use('/api/belts', beltRoutes);
 app.use('/api/phases', phaseRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/academy-championships', academyChampionshipRoutes);
+app.use('/api/ai-query', aiQueryRoutes);
 
 export default app;

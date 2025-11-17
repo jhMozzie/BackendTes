@@ -16,10 +16,13 @@ export class ParticipantController {
    */
   create = async (req: Request, res: Response) => {
     try {
+      console.log("📝 Intentando crear participante con datos:", JSON.stringify(req.body, null, 2));
       const newParticipant = await this.participantService.create(req.body as CreateParticipantPayload);
       return res.status(201).json(newParticipant);
     } catch (error: any) {
       console.error("❌ Error creating participant:", error);
+      console.error("❌ Mensaje de error completo:", error.message);
+      console.error("❌ Stack trace:", error.stack);
       
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
           return res.status(400).json({

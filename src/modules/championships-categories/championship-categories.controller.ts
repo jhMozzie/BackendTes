@@ -156,4 +156,22 @@ export class ChampionshipCategoryController {
       });
     }
   };
+
+  /**
+   * 🆕 GET /championship-categories/form-data
+   * Obtiene los datos auxiliares necesarios para el formulario de categorías
+   * (rangos de edad, cinturones, modalidades, géneros)
+   */
+  getFormData = async (req: Request, res: Response) => {
+    try {
+      const formData = await this.championshipCategoryService.getCategoryFormData();
+      return res.status(200).json(formData);
+    } catch (error: any) {
+      console.error("❌ Error fetching form data:", error);
+      return res.status(500).json({
+        message: "Error fetching form data",
+        details: error.message,
+      });
+    }
+  };
 } // Fin de la clase

@@ -1,6 +1,13 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+enum Gender {
+  M
+  F
+  OTRO
+  PREFIERO_NO_DECIR
+}
+
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -25,6 +32,7 @@ model User {
   phone      String?
   birthdate  DateTime? // 👈 Nuevo campo: fecha de nacimiento opcional
   status     String    @default("Activo") // Activo | Inactivo
+  gender     Gender?
 
   roleId     Int
   role       Role      @relation(fields: [roleId], references: [id])
@@ -56,9 +64,13 @@ model Championship {
   district    String?        // 🏙️ Distrito o ciudad (ej. "Jesús María")
   province    String?        // 🌆 Provincia o región (ej. "Lima")
   country     String?        // 🌎 País (ej. "Perú")
-  description String?        // 👈 AÑADE ESTA LÍNEA (Texto opcional)
+  description String?        // 👈 Texto opcional
   image       String?        // 🖼️ Ruta de imagen (frontend o bucket)
   status      String @default("Planificación") // 📊 Estado del campeonato
+
+  // Campos agregados
+  referees    Int?                           // 🧑‍⚖️ Número de árbitros
+  tatamis     Int?                           // 🥋 Número de tatamis
 
   // 🔗 Relaciones
   academyId   Int
@@ -84,6 +96,7 @@ model Student {
   firstname  String
   lastname   String
   birthdate  DateTime
+  gender     Gender     // 👈 Género del estudiante (M, F, OTRO, PREFIERO_NO_DECIR)
   beltId     Int        // 👈 Nuevo: referencia al cinturón (kyu)
   belt       Belt       @relation(fields: [beltId], references: [id])
 

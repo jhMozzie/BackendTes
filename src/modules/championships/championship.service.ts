@@ -74,6 +74,8 @@ export class ChampionshipService {
       image: champ.image ?? "",
       status: champ.status,
       academy: champ.academy ? champ.academy.name : "Sin academia",
+      referees: champ.referees ?? null,
+      tatamis: champ.tatamis ?? null,
     }))
 
     return { data, meta: result.meta }

@@ -147,13 +147,233 @@ function distributeParticipantsOptimally(
 }
 
 // -------------------------------------------------------------------
+// 💥 ALGORITMO DE SEEDING SIMÉTRICO CON POOLS (Minimiza enfrentamientos de misma academia)
+// -------------------------------------------------------------------
+
+/**
+ * Agrupa participantes por academia
+ */
+function groupByAcademy(participants: ParticipantWithAcademy[]): Map<number, ParticipantWithAcademy[]> {
+    const academyGroups = new Map<number, ParticipantWithAcademy[]>();
+    
+    for (const p of participants) {
+        const academyId = p.student?.academy?.id ?? 0; // 0 para independientes
+        if (!academyGroups.has(academyId)) {
+            academyGroups.set(academyId, []);
+        }
+        academyGroups.get(academyId)!.push(p);
+    }
+    
+    return academyGroups;
+}
+
+/**
+ * Ordena grupos de academia por tamaño (mayor a menor)
+ */
+function sortBySize(academyGroups: Map<number, ParticipantWithAcademy[]>): [number, ParticipantWithAcademy[]][] {
+    return Array.from(academyGroups.entries())
+        .sort((a, b) => b[1].length - a[1].length);
+}
+
+/**
+ * Encuentra la mejor posición en un pool maximizando distancia a compañeros de academia
+ */
+function findBestPosition(
+    pool: (number | null)[],
+    academyId: number,
+    participantsMap: Map<number, ParticipantWithAcademy>
+): number {
+    // Estrategia: Buscar posición con máxima distancia a otros de misma academia
+    let bestPos = -1;
+    let maxMinDistance = -1;
+    
+    for (let pos = 0; pos < pool.length; pos++) {
+        if (pool[pos] !== null) continue; // Posición ocupada
+        
+        // Calcular distancia mínima a otros de misma academia
+        let minDist = pool.length;
+        for (let checkPos = 0; checkPos < pool.length; checkPos++) {
+            if (pool[checkPos] === null) continue;
+            const checkParticipant = participantsMap.get(pool[checkPos]!);
+            if (checkParticipant?.student?.academy?.id === academyId && academyId !== 0) {
+                minDist = Math.min(minDist, Math.abs(pos - checkPos));
+            }
+        }
+        
+        if (minDist > maxMinDistance) {
+            maxMinDistance = minDist;
+            bestPos = pos;
+        }
+    }
+    
+    // Si no encontramos posición óptima, usar primera disponible
+    return bestPos !== -1 ? bestPos : pool.findIndex(p => p === null);
+}
+
+/**
+ * Seeding con simetría: Divide participantes en dos pools (A y B) balanceados
+ * REGLA CLAVE: Participantes de la misma academia deben estar en POOLS OPUESTOS
+ * para que solo se enfrenten en semifinal o final (nunca en primera ronda)
+ */
+function seedWithSymmetry(
+    participants: ParticipantWithAcademy[],
+    bracketSize: number
+): { poolA: number[], poolB: number[] } {
+    
+    // 1. Agrupar por academia y ordenar por cantidad (mayor a menor)
+    const academyGroups = groupByAcademy(participants);
+    const sortedAcademies = sortBySize(academyGroups);
+    
+    console.log(`📊 Distribución de academias en seeding:`);
+    for (const [academyId, students] of sortedAcademies) {
+        const academyName = students[0]?.student?.academy?.name ?? 'Independiente';
+        console.log(`   ${academyName}: ${students.length} participantes`);
+    }
+    
+    // 2. Calcular slots por pool (división simétrica)
+    const totalParticipants = participants.length;
+    const poolASize = Math.ceil(totalParticipants / 2);
+    const poolBSize = Math.floor(totalParticipants / 2);
+    
+    const poolA: number[] = [];
+    const poolB: number[] = [];
+    
+    // 3. ESTRATEGIA SERPENTINA: Alternar academias entre pools
+    // Esto garantiza que cada academia tenga participantes en ambos pools
+    // y evita enfrentamientos de misma academia en primera ronda
+    
+    let toPoolA = true; // Empezar asignando a Pool A
+    
+    for (const [academyId, students] of sortedAcademies) {
+        const count = students.length;
+        
+        // Si la academia tiene varios participantes, dividirlos entre pools
+        if (count > 1) {
+            const halfCount = Math.ceil(count / 2);
+            
+            // Primera mitad al pool actual
+            for (let i = 0; i < halfCount; i++) {
+                if (toPoolA && poolA.length < poolASize) {
+                    poolA.push(students[i].id);
+                } else if (!toPoolA && poolB.length < poolBSize) {
+                    poolB.push(students[i].id);
+                } else {
+                    // Si el pool está lleno, cambiar al otro
+                    if (poolA.length < poolASize) {
+                        poolA.push(students[i].id);
+                    } else {
+                        poolB.push(students[i].id);
+                    }
+                }
+            }
+            
+            // Segunda mitad al pool opuesto
+            for (let i = halfCount; i < count; i++) {
+                if (!toPoolA && poolB.length < poolBSize) {
+                    poolB.push(students[i].id);
+                } else if (toPoolA && poolA.length < poolASize) {
+                    poolA.push(students[i].id);
+                } else {
+                    // Si el pool está lleno, usar el otro
+                    if (poolB.length < poolBSize) {
+                        poolB.push(students[i].id);
+                    } else {
+                        poolA.push(students[i].id);
+                    }
+                }
+            }
+        } else {
+            // Si solo hay 1 participante, asignar alternando pools
+            if (toPoolA && poolA.length < poolASize) {
+                poolA.push(students[0].id);
+            } else if (!toPoolA && poolB.length < poolBSize) {
+                poolB.push(students[0].id);
+            } else {
+                // Usar el pool que tenga espacio
+                if (poolA.length < poolASize) {
+                    poolA.push(students[0].id);
+                } else {
+                    poolB.push(students[0].id);
+                }
+            }
+        }
+        
+        // Alternar pool para la siguiente academia
+        toPoolA = !toPoolA;
+    }
+    
+    console.log(`   ✅ Pool A (${poolA.length}): [${poolA.join(', ')}]`);
+    console.log(`   ✅ Pool B (${poolB.length}): [${poolB.join(', ')}]`);
+    
+    // 4. Validar distribución: Verificar que no haya academias con todos en un solo pool
+    const participantsMap = new Map(participants.map(p => [p.id, p]));
+    const academyInPoolA = new Map<number, number>();
+    const academyInPoolB = new Map<number, number>();
+    
+    for (const pId of poolA) {
+        const p = participantsMap.get(pId);
+        const academyId = p?.student?.academy?.id ?? 0;
+        academyInPoolA.set(academyId, (academyInPoolA.get(academyId) || 0) + 1);
+    }
+    
+    for (const pId of poolB) {
+        const p = participantsMap.get(pId);
+        const academyId = p?.student?.academy?.id ?? 0;
+        academyInPoolB.set(academyId, (academyInPoolB.get(academyId) || 0) + 1);
+    }
+    
+    console.log(`   📋 Verificación de distribución:`);
+    for (const [academyId, students] of academyGroups.entries()) {
+        const academyName = students[0]?.student?.academy?.name ?? 'Independiente';
+        const inA = academyInPoolA.get(academyId) || 0;
+        const inB = academyInPoolB.get(academyId) || 0;
+        console.log(`      ${academyName}: Pool A=${inA}, Pool B=${inB}`);
+        
+        if (students.length > 1 && (inA === 0 || inB === 0)) {
+            console.warn(`      ⚠️ ${academyName} tiene todos sus participantes en un solo pool!`);
+        }
+    }
+    
+    return { poolA, poolB };
+}
+
+// -------------------------------------------------------------------
 // 💥 ALGORITMO DE SEEDING (Sorteo) CON RESTRICCIÓN DE ACADEMIA + ALEATORIZACIÓN
 // -------------------------------------------------------------------
 function seedParticipants(
     participants: ParticipantWithAcademy[],
     numByes: number,
-    numToFight: number
+    numToFight: number,
+    bracketSize: number
 ): { participantsToFight: number[], participantsWithBye: number[] } {
+    
+    console.log(`\n🎲 SEEDING: ${participants.length} participantes, BYEs: ${numByes}, Play-In: ${numToFight}`);
+    
+    // CASO 1: Bracket perfecto (potencia de 2) - usar seeding simétrico con pools
+    if (numToFight === 0 && numByes === participants.length) {
+        console.log(`✨ Usando seeding SIMÉTRICO (bracket perfecto de ${bracketSize})`);
+        
+        const { poolA, poolB } = seedWithSymmetry(participants, bracketSize);
+        
+        // Intercalar pools: [A1, B1, A2, B2, A3, B3, ...]
+        // Esto garantiza que Pool A juega contra Pool B en primera ronda
+        const participantsWithBye: number[] = [];
+        const maxLength = Math.max(poolA.length, poolB.length);
+        
+        for (let i = 0; i < maxLength; i++) {
+            if (i < poolA.length) participantsWithBye.push(poolA[i]);
+            if (i < poolB.length) participantsWithBye.push(poolB[i]);
+        }
+        
+        console.log(`   Pool A (${poolA.length}): [${poolA.join(', ')}]`);
+        console.log(`   Pool B (${poolB.length}): [${poolB.join(', ')}]`);
+        console.log(`   Intercalado: [${participantsWithBye.join(', ')}]`);
+        
+        return { participantsToFight: [], participantsWithBye };
+    }
+    
+    // CASO 2: Bracket con Play-In (no es potencia de 2) - usar algoritmo anterior
+    console.log(`🔄 Usando seeding ROUND-ROBIN (con Play-In)`);
     
     // 1. Agrupar por Academia
     const academyGroups = new Map<number, ParticipantWithAcademy[]>();
@@ -212,7 +432,7 @@ function seedParticipants(
         }
     }
     
-    // 7. Distribución óptima para evitar misma academia
+    // 7. Distribución óptima para evitar misma academia en Play-In
     const participantsMap = new Map(participants.map(p => [p.id, p]));
     const optimizedFights = distributeParticipantsOptimally(participantsToFight, participantsMap);
     
@@ -285,7 +505,20 @@ export class MatchService {
 
                 
                 // 2. Obtener los slots de Seeding (distribuir participantes)
-                const { participantsToFight, participantsWithBye } = seedParticipants(participants, numByes, numToFight);
+                console.log(`\n📋 Categoría ${category.code || category.id}:`);
+                console.log(`   Total participantes: ${numParticipants}`);
+                console.log(`   Bracket size: ${bracketSize}`);
+                console.log(`   Extras (Play-In): ${numExtras}`);
+                
+                const { participantsToFight, participantsWithBye } = seedParticipants(
+                    participants, 
+                    numByes, 
+                    numToFight, 
+                    bracketSize
+                );
+                
+                console.log(`   ✅ Con BYE: ${numByes} → IDs: [${participantsWithBye.join(', ')}]`);
+                console.log(`   ✅ A pelear Play-In: ${numToFight} → IDs: [${participantsToFight.join(', ')}]`);
                 
                 let previousRoundMatches: any[] = []; 
 
@@ -337,6 +570,51 @@ export class MatchService {
                             data: newMatchData
                         });
                         currentRoundMatches.push(createdMatch);
+                    }
+                    
+                    // 4B. Si NO hay Play-In y es la primera ronda, asignar participantes directamente
+                    if (r === 1 && numPlayInMatches === 0) {
+                        console.log(`📊 Categoría ${category.code || category.id}: Asignando ${participantsWithBye.length} participantes directos (sin Play-In)`);
+                        console.log(`   Matches en ronda 1: ${numMatchesInRound}`);
+                        console.log(`   Array participantsWithBye completo:`, participantsWithBye);
+                        
+                        let byeIdx = 0;
+                        for (let i = 0; i < numMatchesInRound; i++) {
+                            const currentMatchId = currentRoundMatches[i].id;
+                            const updatePayload: Prisma.MatchUpdateInput = {};
+                            
+                            // Asignar participantes con BYE
+                            if (byeIdx < participantsWithBye.length) {
+                                updatePayload.participantAkka = { connect: { id: participantsWithBye[byeIdx]! } };
+                                console.log(`     Match ${i+1}: Akka = Participant ID ${participantsWithBye[byeIdx]}`);
+                                byeIdx++;
+                            }
+                            if (byeIdx < participantsWithBye.length) {
+                                updatePayload.participantAo = { connect: { id: participantsWithBye[byeIdx]! } };
+                                console.log(`     Match ${i+1}: Ao = Participant ID ${participantsWithBye[byeIdx]}`);
+                                byeIdx++;
+                            }
+
+                            // Si solo un lado tiene participante, ese gana automáticamente
+                            if (updatePayload.participantAkka && !updatePayload.participantAo) {
+                                updatePayload.winner = updatePayload.participantAkka;
+                                updatePayload.status = "Completado";
+                                console.log(`     Match ${i+1}: Auto-win (solo un participante)`);
+                            }
+
+                            if (Object.keys(updatePayload).length > 0) {
+                                await tx.match.update({
+                                    where: { id: currentMatchId },
+                                    data: updatePayload
+                                });
+                            } else {
+                                console.warn(`     ⚠️ Match ${i+1}: No se asignaron participantes!`);
+                            }
+                        }
+                        
+                        if (byeIdx < participantsWithBye.length) {
+                            console.warn(`   ⚠️ Quedaron ${participantsWithBye.length - byeIdx} participantes sin asignar!`);
+                        }
                     }
                     
                     // 5. Conectar la ronda anterior con la ronda actual
@@ -466,37 +744,6 @@ export class MatchService {
                             console.log(`   Play-In: ${numPlayInMatches} matches (${numToFight} participantes)`);
                             console.log(`   BYEs: ${participantsWithBye.length} asignados`);
                         }
-                        // Si NO hay Play-In, los BYEs van a la primera ronda (r=1)
-                        else if (r === 1 && numPlayInMatches === 0) {
-                            let byeIdx = 0;
-                            for (let i = 0; i < numMatchesInRound; i++) {
-                                const currentMatchId = currentRoundMatches[i].id;
-                                const updatePayload: Prisma.MatchUpdateInput = {};
-                                
-                                // Asignar participantes con BYE
-                                if (byeIdx < participantsWithBye.length) {
-                                    updatePayload.participantAkka = { connect: { id: participantsWithBye[byeIdx]! } };
-                                    byeIdx++;
-                                }
-                                if (byeIdx < participantsWithBye.length) {
-                                    updatePayload.participantAo = { connect: { id: participantsWithBye[byeIdx]! } };
-                                    byeIdx++;
-                                }
-
-                                // Si solo un lado tiene participante, ese gana automáticamente
-                                if (updatePayload.participantAkka && !updatePayload.participantAo) {
-                                    updatePayload.winner = updatePayload.participantAkka;
-                                    updatePayload.status = "Completado";
-                                }
-
-                                if (Object.keys(updatePayload).length > 0) {
-                                    await tx.match.update({
-                                        where: { id: currentMatchId },
-                                        data: updatePayload
-                                    });
-                                }
-                            }
-                        }
                     }
                     
                     previousRoundMatches = currentRoundMatches;
@@ -565,6 +812,93 @@ export class MatchService {
             ]
         }) as unknown as Promise<MatchDetails[]>;
     }
+
+        /**
+         * Devuelve el podio (1ro, 2do, 3ro(s)) de una categoría.
+         * Retorna { gold, silver, bronze: [] } donde cada entrada puede ser null o un array vacío.
+         */
+        async getPodiumByCategory(championshipCategoryId: number) {
+            // 1) Encontrar el match final (fase de mayor order con winner)
+            const finalMatch = await prisma.match.findFirst({
+                where: { championshipCategoryId, winnerId: { not: null } },
+                include: { phase: true },
+                orderBy: [ { phase: { order: 'desc' } }, { matchNumber: 'desc' } ]
+            });
+
+            if (!finalMatch) {
+                return { gold: null, silver: null, bronze: [] };
+            }
+
+            // Helper para obtener datos del participante -> student + academy
+            const getStudentInfo = async (participantId: number | null) => {
+                if (!participantId) return null;
+                const participant = await prisma.participant.findUnique({
+                    where: { id: participantId },
+                    include: { student: { include: { academy: true } } }
+                });
+                if (!participant || !participant.student) return null;
+                return {
+                    participantId: participant.id,
+                    studentId: participant.student.id,
+                    firstname: participant.student.firstname,
+                    lastname: participant.student.lastname,
+                    academy: participant.student.academy ? { id: participant.student.academy.id, name: participant.student.academy.name } : null
+                };
+            };
+
+            // ORO
+            const gold = await getStudentInfo(finalMatch.winnerId as number);
+
+            // PLATA: el otro participante del match final (si existe)
+            let silver = null;
+            const akka = finalMatch.participantAkkaId;
+            const ao = finalMatch.participantAoId;
+            if (akka && ao) {
+                const loserId = (finalMatch.winnerId === akka) ? ao : akka;
+                silver = await getStudentInfo(loserId as number);
+            }
+
+            // BRONCE: buscar match(es) cuya fase tenga 'Bronce' en la descripción
+            const bronzeMatches = await prisma.match.findMany({
+                where: {
+                    championshipCategoryId,
+                    winnerId: { not: null },
+                    phase: { description: { contains: 'Bronce', mode: 'insensitive' } }
+                },
+                include: { phase: true }
+            });
+
+            let bronze: Array<any> = [];
+
+            if (bronzeMatches.length > 0) {
+                // Puede haber 1 o 2 matches de bronce
+                for (const bm of bronzeMatches) {
+                    const bWinner = await getStudentInfo(bm.winnerId as number);
+                    if (bWinner) bronze.push(bWinner);
+                }
+            } else {
+                // Si no hay match de bronce, usar los perdedores de semifinales como terceros lugares
+                // Encontrar la fase semifinal (order = finalOrder - 1)
+                const finalOrder = finalMatch.phase?.order ?? 0;
+                const semiOrder = finalOrder > 0 ? finalOrder - 1 : 0;
+
+                if (semiOrder > 0) {
+                    const semis = await prisma.match.findMany({
+                        where: { championshipCategoryId, phase: { order: semiOrder }, winnerId: { not: null } },
+                        include: { phase: true }
+                    });
+
+                    for (const sm of semis) {
+                        // El perdedor es el participante que NO sea winner
+                        const loserId = (sm.participantAkkaId === sm.winnerId) ? sm.participantAoId : sm.participantAkkaId;
+                        const loserInfo = await getStudentInfo(loserId as number);
+                        if (loserInfo) bronze.push(loserInfo);
+                    }
+                }
+            }
+
+            return { gold, silver, bronze };
+        }
     
     /**
      * Actualiza el ganador de un combate y promueve al ganador.

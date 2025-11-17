@@ -1,0 +1,30 @@
+### belts.http
+# Peticiones para el módulo `belts`
+# Nota: En el backend actualmente sólo está implementado el endpoint GET /api/belts (lista).
+# Los demás ejemplos (GET por id, POST, PUT, DELETE) son plantillas útiles si decides implementar esas rutas.
+
+### 📋 REFERENCIA DE CINTURONES (IDs según `prisma/seed.ts`)
+#  ID: 1  - Blanco 10mo Kyu (kyuLevel: 10)
+#  ID: 2  - Amarillo 9no Kyu (kyuLevel: 9)
+#  ID: 3  - Naranja 8vo Kyu (kyuLevel: 8)
+#  ID: 4  - Naranja Punta Verde 7mo Kyu (kyuLevel: 7)
+#  ID: 5  - Verde 6to Kyu (kyuLevel: 6)
+#  ID: 6  - Azul 5to Kyu (kyuLevel: 5)
+#  ID: 7  - Azul Punta Marrón 4to Kyu (kyuLevel: 4)
+#  ID: 8  - Marrón 3er Kyu (kyuLevel: 3)
+#  ID: 9  - Marrón 2do Kyu (kyuLevel: 2)
+#  ID: 10 - Marrón 1er Kyu (kyuLevel: 1)
+#  ID: 11 - Negro (kyuLevel: 0)
+
+### -------------------------------------------
+### GET - List all belts
+# Obtiene la lista de todos los cinturones (ordenados de mayor a menor nivel)
+GET http://localhost:3000/api/belts
+
+### -------------------------------------------
+### GET - Get belt by ID (plantilla)
+# Obtener detalle de un cinturón por su ID (si implementas esta ruta)
+GET http://localhost:3000/api/belts/1
+
+
+

@@ -1,0 +1,22 @@
+### CAMPEONATO PRUEBA NILTON - ENDPOINTS DE PRUEBA
+
+### 1. Obtener ID del campeonato
+GET http://localhost:3000/api/championships
+
+### 2. Generar brackets para el Campeonato Prueba Nilton (ID=3)
+POST http://localhost:3000/api/matches/generate/3
+Content-Type: application/json
+
+### 3. Ver brackets de KATA (8 participantes)
+# Reemplaza con el ID correcto de la categoría Kata
+GET http://localhost:3000/api/matches/26
+
+### 4. Ver brackets de KUMITE (12 participantes)
+# Reemplaza con el ID correcto de la categoría Kumite
+GET http://localhost:3000/api/matches/27
+
+### 5. Ver participantes de KATA
+GET http://localhost:3000/api/participants?categoryId=26
+
+### 6. Ver participantes de KUMITE
+GET http://localhost:3000/api/participants?categoryId=27

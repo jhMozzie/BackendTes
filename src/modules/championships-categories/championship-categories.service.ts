@@ -27,6 +27,23 @@ export class ChampionshipCategoryService {
   async createCategory(championshipId: number, data: CreateChampionshipCategoryPayload) {
     return prisma.$transaction(async (tx) => {
       
+      // ✅ VALIDAR QUE LOS CINTURONES EXISTAN
+      const beltMin = await tx.belt.findUnique({ where: { id: data.beltMinId } });
+      const beltMax = await tx.belt.findUnique({ where: { id: data.beltMaxId } });
+      
+      if (!beltMin) {
+        throw new Error(`El cinturón mínimo con ID ${data.beltMinId} no existe en la base de datos.`);
+      }
+      if (!beltMax) {
+        throw new Error(`El cinturón máximo con ID ${data.beltMaxId} no existe en la base de datos.`);
+      }
+      
+      // ✅ VALIDAR QUE EL RANGO DE EDAD EXISTA
+      const ageRange = await tx.ageRange.findUnique({ where: { id: data.ageRangeId } });
+      if (!ageRange) {
+        throw new Error(`El rango de edad con ID ${data.ageRangeId} no existe en la base de datos.`);
+      }
+      
       // Validar código si existe
       if (data.code) {
         const existingCode = await tx.championshipCategory.findFirst({
@@ -228,6 +245,30 @@ export class ChampionshipCategoryService {
         const deletedCategory = await tx.championshipCategory.delete({ where: { id: categoryId } });
         return deletedCategory;
      });
+  }
+
+  /**
+   * 🆕 Obtiene todos los datos auxiliares necesarios para crear/editar categorías
+   * (rangos de edad, cinturones, etc.)
+   */
+  async getCategoryFormData() {
+    const [ageRanges, belts] = await Promise.all([
+      prisma.ageRange.findMany({
+        orderBy: { minAge: 'asc' },
+        select: { id: true, label: true, minAge: true, maxAge: true }
+      }),
+      prisma.belt.findMany({
+        orderBy: { kyuLevel: 'desc' },
+        select: { id: true, name: true, kyuLevel: true }
+      })
+    ]);
+
+    return {
+      ageRanges,
+      belts,
+      modalities: ['Kata', 'Kumite'],
+      genders: ['Masculino', 'Femenino']
+    };
   }
 
 } // Fin de la clase
