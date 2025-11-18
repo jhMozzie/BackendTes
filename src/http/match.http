@@ -20,6 +20,12 @@ GET http://localhost:3000/api/matches/3
 ### OBTENER BRACKETS - Categoría 2
 GET http://localhost:3000/api/matches/3
 
+### OBTENER BRACKETS - Categoría 25 (KATA - 8 participantes)
+GET http://localhost:3000/api/matches/25
+
+### OBTENER BRACKETS - Categoría 26 (KUMITE - 12 participantes)
+GET http://localhost:3000/api/matches/26
+
 ### -------------------------------------------
 
 ### ⭐ ACTUALIZAR MARCADOR Y DETERMINAR GANADOR AUTOMÁTICAMENTE (RECOMENDADO)
