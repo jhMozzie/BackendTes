@@ -1,6 +1,6 @@
 // src/modules/academies-championships/academy-championships.service.ts
 
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { 
   ParticipationStatus,
   CreateParticipationDto,

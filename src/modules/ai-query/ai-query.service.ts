@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { PrismaClient } from "../../generated/prisma"; // ✅ Ruta correcta
+import { PrismaClient } from "@prisma/client";
 import type {
   ConvertToSQLResponse,
   ExecuteSQLResponse,

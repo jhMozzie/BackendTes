@@ -3,7 +3,7 @@ import { MatchService } from './match.service';
 // 💥 Importar los payloads necesarios
 import type { GenerateBracketsPayload, UpdateMatchWinnerPayload, UpdateMatchScorePayload } from './match.types';
 // 💥 Importar Prisma para manejo de errores
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 
 export class MatchController {
     private matchService = new MatchService();

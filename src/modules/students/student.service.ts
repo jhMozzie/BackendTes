@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Student } from "@/generated/prisma";
+import { Prisma, PrismaClient, Student } from "@prisma/client";
 import { paginate } from "@/modules/common/pagination/pagination.helper";
 import {
   PaginationParams,

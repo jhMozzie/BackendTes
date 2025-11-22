@@ -1,6 +1,6 @@
 // src/modules/matches/match.types.ts
 
-import type { Match as PrismaMatch, Participant, Student, Academy } from "@/generated/prisma";
+import type { Match as PrismaMatch, Participant, Student, Academy } from "@prisma/client";
 
 // El participante que se incluye en el bracket
 export type BracketParticipant = Participant & {

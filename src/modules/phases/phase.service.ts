@@ -1,7 +1,7 @@
 // src/modules/phases/phase.service.ts
 
-import { PrismaClient, Phase as PrismaPhase } from "@/generated/prisma";
-import type { Phase, CreatePhaseDto, UpdatePhaseDto } from "./phase.types";
+import { PrismaClient, Phase } from "@prisma/client";
+import type { CreatePhaseDto, UpdatePhaseDto } from "./phase.types";
 
 const prisma = new PrismaClient();
 

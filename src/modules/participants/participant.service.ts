@@ -1,7 +1,7 @@
 // src/modules/participants/participant.service.ts
 
 // 1. Importaciones de Prisma
-import { Prisma, PrismaClient, Participant, ChampionshipCategory, Championship, Student } from "@/generated/prisma";
+import { Prisma, PrismaClient, Participant, ChampionshipCategory, Championship, Student } from "@prisma/client";
 // 2. Importación del helper paginate
 import { paginate } from "@/modules/common/pagination/pagination.helper";
 // 3. Importación de PaginationParams y Payloads (asumiendo que están en @/types)

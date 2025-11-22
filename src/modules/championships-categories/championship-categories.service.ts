@@ -1,5 +1,5 @@
 // 1. Importaciones (corregidas)
-import { Prisma, PrismaClient, ChampionshipCategory } from "@/generated/prisma";
+import { Prisma, PrismaClient, ChampionshipCategory } from "@prisma/client";
 import { paginate } from "@/modules/common/pagination/pagination.helper";
 import { PaginationParams } from "@/types"; // Asumiendo que esta es tu ruta correcta
 import {

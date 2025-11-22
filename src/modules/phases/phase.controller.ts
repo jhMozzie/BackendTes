@@ -3,7 +3,7 @@
 import { Request, Response } from 'express';
 import { PhaseService } from './phase.service';
 import type { CreatePhaseDto, UpdatePhaseDto } from './phase.types';
-import { Prisma } from '@/generated/prisma'; 
+import { Prisma } from '@prisma/client'; 
 
 export class PhaseController {
   private phaseService = new PhaseService();

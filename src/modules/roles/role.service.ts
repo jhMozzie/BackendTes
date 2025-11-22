@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { CreateRolePayload, UpdateRolePayload } from "./role.types";
 
 const prisma = new PrismaClient();

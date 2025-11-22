@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma"
+import { PrismaClient } from "@prisma/client"
 import { PaginationParams, PaginationResult } from "./pagination.types"
 
 const prisma = new PrismaClient()

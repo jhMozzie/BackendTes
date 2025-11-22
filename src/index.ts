@@ -1,7 +1,7 @@
 // src/index.ts
 
 import dotenv from 'dotenv';
-import { PrismaClient } from './generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import app from './server';
 
 dotenv.config();

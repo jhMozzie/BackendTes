@@ -3,7 +3,7 @@
 import { Request, Response } from 'express';
 import { AcademyChampionshipService } from './academy-championships.service';
 import { CreateParticipationDto, UpdateParticipationStatusDto } from './academy-championships.types';
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 
 export class AcademyChampionshipController {
   private service = new AcademyChampionshipService();

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { CreateUserPayload, UpdateUserPayload } from "./user.types";
 import { PaginationParams } from "../common/pagination/pagination.types";

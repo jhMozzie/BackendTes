@@ -5,7 +5,7 @@ import { ParticipantService } from './participant.service';
 import { CreateParticipantPayload, UpdateParticipantPayload } from './participant.types';
 import { PaginationParams } from '@/types'; 
 // 💥 CORRECCIÓN: Importamos Prisma desde la generación de Prisma
-import { Prisma } from '@/generated/prisma'; 
+import { Prisma } from '@prisma/client'; 
 
 
 export class ParticipantController {
