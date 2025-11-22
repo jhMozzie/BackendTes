@@ -22,6 +22,7 @@ export class StudentService {
       beltId,
       academyId,
       userId: userId ?? null,
+      gender: "M"
     };
 
     return prisma.student.create({

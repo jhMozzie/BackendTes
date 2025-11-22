@@ -20,7 +20,7 @@ const upperPowerOfTwo = (n: number): number => {
 };
 
 // -------------------------------------------------------------------
-// 🎯 ALGORITMO DE SEMBRADO INTELIGENTE MEJORADO
+// 🎯 ALGORITMO DE SEMBRADO MEJORADO - DISTRIBUCIÓN EQUILIBRADA
 // -------------------------------------------------------------------
 
 /**
@@ -42,8 +42,7 @@ function getParticipantAcademyId(participant: ParticipantWithAcademy): number {
 }
 
 /**
- * 🧠 LÓGICA PRINCIPAL MEJORADA: Distribución Estratégica + Previas
- * Genera el array final de Participant IDs o nulls (BYEs) para la Ronda 1.
+ * 🧠 LÓGICA PRINCIPAL CORREGIDA: Distribución equilibrada entre pools
  */
 function seedParticipants(
     participants: ParticipantWithAcademy[],
@@ -52,10 +51,12 @@ function seedParticipants(
     
     const numParticipants = participants.length;
     const numByes = tournamentSize - numParticipants;
+    const numMatchesR1 = tournamentSize / 2;
     
     console.log(`🎯 Sembrado: ${numParticipants} participantes, ${tournamentSize} slots, ${numByes} BYEs`);
+    console.log(`   Matches en R1: ${numMatchesR1}`);
 
-    // 1. Agrupar por academia y detectar academia mayoritaria
+    // 1. Agrupar por academia y contar
     const academyGroups = new Map<number, ParticipantWithAcademy[]>();
     for (const p of participants) {
         const aid = getParticipantAcademyId(p);
@@ -67,206 +68,191 @@ function seedParticipants(
     const sortedAcademies = Array.from(academyGroups.entries())
         .sort((a, b) => b[1].length - a[1].length);
     
-    const largestAcademyId = sortedAcademies[0]?.[0] ?? 0;
-    const largestAcademyCount = sortedAcademies[0]?.[1]?.length ?? 0;
-    const isMajorityAcademy = largestAcademyCount > numParticipants * 0.5;
-    
-    console.log(`   Academia más grande: ID ${largestAcademyId} con ${largestAcademyCount} participantes`);
-    console.log(`   ¿Es mayoría? (>50%): ${isMajorityAcademy}`);
+    console.log(`   Distribución academias:`, sortedAcademies.map(([id, parts]) => 
+        `Academia ${id}: ${parts.length} participantes`));
 
-    // 2. Separar participantes en dos grupos: los que pelean y los que tienen BYE
-    let participantsWithBye: ParticipantWithAcademy[] = [];
-    let participantsToFight: ParticipantWithAcademy[] = [];
-    
-    // Asignar BYEs estratégicamente a las academias más grandes primero
-    let remainingByes = numByes;
-    for (const [academyId, academyParticipants] of sortedAcademies) {
-        if (remainingByes <= 0) break;
-        
-        const byesToAssign = Math.min(
-            Math.ceil(academyParticipants.length * (numByes / numParticipants)),
-            remainingByes,
-            academyParticipants.length
-        );
-        
-        if (byesToAssign > 0) {
-            const byeReceivers = academyParticipants.slice(0, byesToAssign);
-            participantsWithBye.push(...byeReceivers);
-            remainingByes -= byesToAssign;
-            
-            // Los restantes de esta academia pelean
-            const fighters = academyParticipants.slice(byesToAssign);
-            participantsToFight.push(...fighters);
-        } else {
-            // Todos pelean si no hay BYEs para esta academia
-            participantsToFight.push(...academyParticipants);
-        }
-    }
-    
-    // Si aún quedan BYEs, distribuirlos entre los que quedan
-    if (remainingByes > 0) {
-        const allRemaining = sortedAcademies.flatMap(([_, parts]) => parts)
-            .filter(p => !participantsWithBye.includes(p));
-        
-        const additionalByes = allRemaining.slice(0, remainingByes);
-        participantsWithBye.push(...additionalByes);
-        participantsToFight = allRemaining.slice(remainingByes);
-    }
-    
-    console.log(`   BYEs asignados: ${participantsWithBye.length}`);
-    console.log(`   Participantes que pelean: ${participantsToFight.length}`);
-
-    // 3. Preparar slots del bracket
+    // 2. Estrategia: Distribuir equilibradamente entre pools superior e inferior
     const bracketSlots: (number | null)[] = new Array(tournamentSize).fill(null);
-    const numMatchesR1 = tournamentSize / 2;
     
-    // 4. Estrategia de asignación mejorada
-    const assignedParticipants = new Set<number>();
-    const availableFighters = [...participantsToFight];
+    // Contadores para distribución equilibrada
+    const poolCounts = {
+        upper: { total: 0, byAcademy: new Map<number, number>() },
+        lower: { total: 0, byAcademy: new Map<number, number>() }
+    };
     
-    // Primera pasada: intentar asignar sin conflictos de academia
-    for (let matchIndex = 0; matchIndex < numMatchesR1; matchIndex++) {
-        const slotAkka = matchIndex * 2;
-        const slotAo = matchIndex * 2 + 1;
+    // Función para determinar el mejor pool para un participante
+    const getBestPool = (participant: ParticipantWithAcademy): 'upper' | 'lower' => {
+        const academyId = getParticipantAcademyId(participant);
         
-        // Si ambos slots ya están asignados, continuar
-        if (bracketSlots[slotAkka] !== null && bracketSlots[slotAo] !== null) {
-            continue;
-        }
+        const upperCount = poolCounts.upper.byAcademy.get(academyId) || 0;
+        const lowerCount = poolCounts.lower.byAcademy.get(academyId) || 0;
+        
+        // Si hay diferencia significativa, elegir el pool con menos de esa academia
+        if (upperCount > lowerCount) return 'lower';
+        if (lowerCount > upperCount) return 'upper';
+        
+        // Si están iguales, elegir el pool con menos participantes totales
+        return poolCounts.upper.total <= poolCounts.lower.total ? 'upper' : 'lower';
+    };
+    
+    // 3. Primera fase: Asignar participantes a combates reales
+    const availableParticipants = [...participants];
+    const assignedIds = new Set<number>();
+    
+    // Crear lista de matches disponibles
+    const availableMatches = Array.from({ length: numMatchesR1 }, (_, i) => ({
+        index: i,
+        upperSlot: i * 2,
+        lowerSlot: i * 2 + 1,
+        assigned: false
+    }));
+    
+    // Asignar combates evitando misma academia
+    for (const match of availableMatches) {
+        if (availableParticipants.length < 2) break;
         
         // Buscar el mejor par disponible
         let bestPair: [ParticipantWithAcademy, ParticipantWithAcademy] | null = null;
+        let bestMatchIndex = -1;
         
-        for (let i = 0; i < availableFighters.length && !bestPair; i++) {
-            const fighter1 = availableFighters[i];
-            if (assignedParticipants.has(fighter1.id)) continue;
+        for (let i = 0; i < availableParticipants.length && !bestPair; i++) {
+            const participant1 = availableParticipants[i];
+            const academy1 = getParticipantAcademyId(participant1);
             
-            for (let j = i + 1; j < availableFighters.length && !bestPair; j++) {
-                const fighter2 = availableFighters[j];
-                if (assignedParticipants.has(fighter2.id)) continue;
+            for (let j = i + 1; j < availableParticipants.length && !bestPair; j++) {
+                const participant2 = availableParticipants[j];
+                const academy2 = getParticipantAcademyId(participant2);
                 
-                const academy1 = getParticipantAcademyId(fighter1);
-                const academy2 = getParticipantAcademyId(fighter2);
-                
-                // Si no son de la misma academia, es un buen par
                 if (!wouldViolateEarlyMatchRule(academy1, academy2)) {
-                    bestPair = [fighter1, fighter2];
+                    bestPair = [participant1, participant2];
+                    bestMatchIndex = j;
                     break;
                 }
             }
         }
         
-        // Si encontramos un buen par, asignarlo
         if (bestPair) {
-            const [fighter1, fighter2] = bestPair;
-            bracketSlots[slotAkka] = fighter1.id;
-            bracketSlots[slotAo] = fighter2.id;
+            const [p1, p2] = bestPair;
             
-            assignedParticipants.add(fighter1.id);
-            assignedParticipants.add(fighter2.id);
+            // Determinar qué participante va en cada pool
+            const pool1 = getBestPool(p1);
+            const pool2 = getBestPool(p2);
+            
+            if (pool1 === 'upper' && pool2 === 'lower') {
+                bracketSlots[match.upperSlot] = p1.id;
+                bracketSlots[match.lowerSlot] = p2.id;
+            } else if (pool1 === 'lower' && pool2 === 'upper') {
+                bracketSlots[match.upperSlot] = p2.id;
+                bracketSlots[match.lowerSlot] = p1.id;
+            } else {
+                // Si ambos quieren el mismo pool, forzar distribución
+                bracketSlots[match.upperSlot] = p1.id;
+                bracketSlots[match.lowerSlot] = p2.id;
+            }
+            
+            // Actualizar contadores
+            const finalP1Pool = bracketSlots[match.upperSlot] === p1.id ? 'upper' : 'lower';
+            const finalP2Pool = bracketSlots[match.lowerSlot] === p2.id ? 'lower' : 'upper';
+            
+            poolCounts[finalP1Pool].total++;
+            poolCounts[finalP2Pool].total++;
+            
+            const academy1 = getParticipantAcademyId(p1);
+            const academy2 = getParticipantAcademyId(p2);
+            
+            poolCounts[finalP1Pool].byAcademy.set(academy1, (poolCounts[finalP1Pool].byAcademy.get(academy1) || 0) + 1);
+            poolCounts[finalP2Pool].byAcademy.set(academy2, (poolCounts[finalP2Pool].byAcademy.get(academy2) || 0) + 1);
+            
+            assignedIds.add(p1.id);
+            assignedIds.add(p2.id);
             
             // Remover de disponibles
-            availableFighters.splice(availableFighters.indexOf(fighter1), 1);
-            availableFighters.splice(availableFighters.indexOf(fighter2), 1);
+            availableParticipants.splice(availableParticipants.indexOf(p1), 1);
+            availableParticipants.splice(availableParticipants.indexOf(p2), 1);
+            
+            match.assigned = true;
+            console.log(`   ✅ Match ${match.index + 1}: ${p1.student?.firstname} (${academy1}) vs ${p2.student?.firstname} (${academy2})`);
         }
     }
     
-    // Segunda pasada: asignar los participantes restantes (pueden generar conflictos)
-    let remainingIndex = 0;
-    for (let matchIndex = 0; matchIndex < numMatchesR1; matchIndex++) {
-        const slotAkka = matchIndex * 2;
-        const slotAo = matchIndex * 2 + 1;
-        
-        // Asignar al slot Akka si está vacío
-        if (bracketSlots[slotAkka] === null && remainingIndex < availableFighters.length) {
-            const fighter = availableFighters[remainingIndex];
-            bracketSlots[slotAkka] = fighter.id;
-            assignedParticipants.add(fighter.id);
-            remainingIndex++;
-        }
-        
-        // Asignar al slot Ao si está vacío
-        if (bracketSlots[slotAo] === null && remainingIndex < availableFighters.length) {
-            const fighter = availableFighters[remainingIndex];
-            bracketSlots[slotAo] = fighter.id;
-            assignedParticipants.add(fighter.id);
-            remainingIndex++;
-        }
-    }
-    
-    // 5. Distribuir BYEs estratégicamente
-    const byeParticipants = participantsWithBye.map(p => p.id);
-    let byeIndex = 0;
-    
-    for (let matchIndex = 0; matchIndex < numMatchesR1; matchIndex++) {
-        const slotAkka = matchIndex * 2;
-        const slotAo = matchIndex * 2 + 1;
-        
-        const hasAkka = bracketSlots[slotAkka] !== null;
-        const hasAo = bracketSlots[slotAo] !== null;
-        
-        // Si un match tiene solo un participante, asignar BYE al otro lado
-        if (hasAkka && !hasAo && byeIndex < byeParticipants.length) {
-            bracketSlots[slotAo] = byeParticipants[byeIndex];
-            byeIndex++;
-        } else if (!hasAkka && hasAo && byeIndex < byeParticipants.length) {
-            bracketSlots[slotAkka] = byeParticipants[byeIndex];
-            byeIndex++;
-        }
-        // Si ambos slots están vacíos y quedan BYEs, crear un match BYE vs BYE
-        else if (!hasAkka && !hasAo && byeIndex + 1 < byeParticipants.length) {
-            bracketSlots[slotAkka] = byeParticipants[byeIndex];
-            bracketSlots[slotAo] = byeParticipants[byeIndex + 1];
-            byeIndex += 2;
+    // 4. Segunda fase: Asignar participantes restantes (pueden generar conflictos)
+    for (const match of availableMatches) {
+        if (!match.assigned && availableParticipants.length >= 2) {
+            const p1 = availableParticipants[0];
+            const p2 = availableParticipants[1];
+            
+            const academy1 = getParticipantAcademyId(p1);
+            const academy2 = getParticipantAcademyId(p2);
+            
+            // Determinar pools
+            const pool1 = getBestPool(p1);
+            const pool2 = getBestPool(p2);
+            
+            if (pool1 === 'upper' && pool2 === 'lower') {
+                bracketSlots[match.upperSlot] = p1.id;
+                bracketSlots[match.lowerSlot] = p2.id;
+            } else {
+                bracketSlots[match.upperSlot] = p2.id;
+                bracketSlots[match.lowerSlot] = p1.id;
+            }
+            
+            // Actualizar contadores
+            const finalP1Pool = bracketSlots[match.upperSlot] === p1.id ? 'upper' : 'lower';
+            const finalP2Pool = bracketSlots[match.lowerSlot] === p2.id ? 'lower' : 'upper';
+            
+            poolCounts[finalP1Pool].total++;
+            poolCounts[finalP2Pool].total++;
+            
+            poolCounts[finalP1Pool].byAcademy.set(academy1, (poolCounts[finalP1Pool].byAcademy.get(academy1) || 0) + 1);
+            poolCounts[finalP2Pool].byAcademy.set(academy2, (poolCounts[finalP2Pool].byAcademy.get(academy2) || 0) + 1);
+            
+            assignedIds.add(p1.id);
+            assignedIds.add(p2.id);
+            
+            availableParticipants.splice(0, 2);
+            match.assigned = true;
+            
+            console.warn(`   ⚠️  Match ${match.index + 1}: MISMA ACADEMIA FORZADO - ${p1.student?.firstname} vs ${p2.student?.firstname}`);
         }
     }
     
-    // 6. Validación final y limpieza
+    // 5. Tercera fase: Asignar participantes individuales restantes
+    for (const match of availableMatches) {
+        if (!match.assigned && availableParticipants.length > 0) {
+            const p = availableParticipants[0];
+            const pool = getBestPool(p);
+            
+            if (pool === 'upper') {
+                bracketSlots[match.upperSlot] = p.id;
+                bracketSlots[match.lowerSlot] = null; // BYE
+            } else {
+                bracketSlots[match.upperSlot] = null; // BYE
+                bracketSlots[match.lowerSlot] = p.id;
+            }
+            
+            poolCounts[pool].total++;
+            const academyId = getParticipantAcademyId(p);
+            poolCounts[pool].byAcademy.set(academyId, (poolCounts[pool].byAcademy.get(academyId) || 0) + 1);
+            
+            assignedIds.add(p.id);
+            availableParticipants.splice(0, 1);
+            match.assigned = true;
+            
+            console.log(`   ✅ Match ${match.index + 1}: ${p.student?.firstname} vs BYE`);
+        }
+    }
+    
+    // 6. Validación final
     const finalAssignedCount = bracketSlots.filter(slot => slot !== null).length;
     
-    // Asegurar que todos los participantes estén asignados
-    if (finalAssignedCount !== numParticipants) {
-        console.warn(`⚠️  Asignación incompleta: ${finalAssignedCount}/${numParticipants}`);
-        
-        // Forzar asignación de participantes faltantes
-        const allParticipantIds = new Set(participants.map(p => p.id));
-        const assignedIds = new Set(bracketSlots.filter(id => id !== null) as number[]);
-        const missingIds = Array.from(allParticipantIds).filter(id => !assignedIds.has(id));
-        
-        let missingIndex = 0;
-        for (let i = 0; i < bracketSlots.length && missingIndex < missingIds.length; i++) {
-            if (bracketSlots[i] === null) {
-                bracketSlots[i] = missingIds[missingIndex];
-                missingIndex++;
-            }
-        }
-    }
+    console.log(`   ✅ Asignación final: ${finalAssignedCount}/${numParticipants} participantes`);
+    console.log(`   📊 Distribución pools: Superior ${poolCounts.upper.total}, Inferior ${poolCounts.lower.total}`);
     
-    // Log de resultados para debugging
-    console.log(`   ✅ Asignación final: ${bracketSlots.filter(slot => slot !== null).length}/${numParticipants}`);
-    
-    // Contar enfrentamientos entre misma academia
-    let sameAcademyMatches = 0;
-    for (let i = 0; i < numMatchesR1; i++) {
-        const akkaId = bracketSlots[i * 2];
-        const aoId = bracketSlots[i * 2 + 1];
-        
-        if (akkaId && aoId) {
-            const akkaAcademy = participants.find(p => p.id === akkaId)?.student?.academy?.id ?? 0;
-            const aoAcademy = participants.find(p => p.id === aoId)?.student?.academy?.id ?? 0;
-            
-            if (akkaAcademy === aoAcademy && akkaAcademy !== 0) {
-                sameAcademyMatches++;
-                console.warn(`   ⚠️  Match ${i + 1}: Misma academia (${akkaAcademy})`);
-            }
-        }
-    }
-    
-    if (sameAcademyMatches > 0) {
-        console.warn(`   ⚠️  Total enfrentamientos misma academia: ${sameAcademyMatches}`);
-        if (isMajorityAcademy) {
-            console.log(`   ℹ️  Academia mayoritaria detectada - conflictos inevitables`);
-        }
+    // Log distribución por academia
+    for (const [academyId, count] of sortedAcademies) {
+        const upperCount = poolCounts.upper.byAcademy.get(academyId) || 0;
+        const lowerCount = poolCounts.lower.byAcademy.get(academyId) || 0;
+        console.log(`   📊 Academia ${academyId}: Superior ${upperCount}, Inferior ${lowerCount}`);
     }
     
     return { 
@@ -278,7 +264,7 @@ function seedParticipants(
 export class MatchService {
     
     /**
-     * GENERA BRACKETS: Algoritmo optimizado y adaptado
+     * GENERA BRACKETS: Algoritmo corregido con distribución equilibrada
      */
     async generateBrackets(payload: GenerateBracketsPayload) {
         const { championshipId } = payload;
@@ -323,20 +309,22 @@ export class MatchService {
                     const bracketSize = upperPowerOfTwo(numParticipants);
                     const totalRounds = Math.log2(bracketSize);
 
-                    // SELECCIÓN DE FASES: Ajustar el mapeo para usar solo las fases necesarias.
+                    console.log(`   📊 Bracket size: ${bracketSize}, Rounds: ${totalRounds}`);
+
+                    // SELECCIÓN DE FASES
                     const sortedPhases = allPhases.sort((a, b) => a.order - b.order);
                     
                     if (sortedPhases.length < totalRounds) {
                          throw new Error(`Categoría ${category.code} requiere ${totalRounds} fases, solo hay ${sortedPhases.length}.`);
                     }
 
-                    // Seleccionar solo las 'totalRounds' fases necesarias
+                    // Seleccionar solo las fases necesarias
                     const requiredPhases = sortedPhases.slice(sortedPhases.length - totalRounds);
 
                     // SEEDING INTELIGENTE
                     const { result: seededParticipants, assignedCount } = seedParticipants(participants, bracketSize);
                     
-                    // MANEJO DE ERRORES: VALIDACIÓN CRÍTICA DE CONTEO
+                    // VALIDACIÓN CRÍTICA
                     if (assignedCount !== numParticipants) {
                         throw new Error(
                             `❌ Error Crítico: La Categoría ${category.code} ingresó ${numParticipants} participantes, ` +
@@ -344,14 +332,14 @@ export class MatchService {
                         );
                     }
                     
-                    let previousRoundMatches: any[] = [];
+                    let previousRoundMatches: Prisma.MatchGetPayload<{}>[] = [];
 
                     // Generar todas las rondas
                     for (let r = 0; r < totalRounds; r++) {
                         
                         const phase = requiredPhases[r];
                         const numMatchesInRound = bracketSize / Math.pow(2, r + 1);
-                        const currentRoundMatches: any[] = [];
+                        const currentRoundMatches: Prisma.MatchGetPayload<{}>[] = [];
                         
                         console.log(`   📍 Ronda ${r + 1} (${phase.description}): ${numMatchesInRound} matches`);
 
@@ -368,7 +356,7 @@ export class MatchService {
                                 nextMatchSide: null
                             };
 
-                            // Asignar participantes en la PRIMERA ronda del bracket (cuando r=0)
+                            // Asignar participantes SOLO en la PRIMERA ronda
                             if (r === 0) {
                                 const idxAkka = i * 2;
                                 const idxAo = i * 2 + 1;
@@ -382,35 +370,26 @@ export class MatchService {
                                 // LÓGICA DE BYE AUTOMÁTICO
                                 if (akkaId && !aoId) {
                                     newMatchData.winnerId = akkaId;
-                                    newMatchData.status = "Completado"; 
+                                    newMatchData.status = "Completado";
+                                    console.log(`      ✅ BYE: ${participants.find(p => p.id === akkaId)?.student?.firstname} avanza automáticamente`);
                                 } 
                                 else if (!akkaId && aoId) {
                                     newMatchData.winnerId = aoId;
-                                    newMatchData.status = "Completado"; 
+                                    newMatchData.status = "Completado";
+                                    console.log(`      ✅ BYE: ${participants.find(p => p.id === aoId)?.student?.firstname} avanza automáticamente`);
                                 }
-                                
-                                // Logging para verificar choques
-                                if (akkaId !== null && aoId !== null) {
-                                    const p1Acad = participants.find(p => p.id === akkaId)?.student?.academy?.id ?? 0;
-                                    const p2Acad = participants.find(p => p.id === aoId)?.student?.academy?.id ?? 0;
-                                    
-                                    if (p1Acad === p2Acad && p1Acad !== 0) {
-                                        console.warn(`      ⚠️ Choque Academia: Match ${i + 1} (${p1Acad} vs ${p2Acad})`);
-                                    }
+                                else if (akkaId && aoId) {
+                                    const p1 = participants.find(p => p.id === akkaId);
+                                    const p2 = participants.find(p => p.id === aoId);
+                                    console.log(`      ⚔️ Combate: ${p1?.student?.firstname} vs ${p2?.student?.firstname}`);
                                 }
-
-                                const p1 = participants.find(x => x.id === newMatchData.participantAkkaId);
-                                const p2 = participants.find(x => x.id === newMatchData.participantAoId);
-                                const p1Name = p1 ? `${p1.student?.firstname} ${p1.student?.lastname}` : 'BYE';
-                                const p2Name = p2 ? `${p2.student?.firstname} ${p2.student?.lastname}` : 'BYE';
-                                console.log(`      ⚔️ Match ${i + 1}: ${p1Name} vs ${p2Name} (${newMatchData.status})`);
                             }
                             
                             const createdMatch = await tx.match.create({ data: newMatchData });
                             currentRoundMatches.push(createdMatch);
                         }
                         
-                        // Conectar rondas
+                        // Conectar rondas (para r > 0)
                         if (r > 0) { 
                             for (let i = 0; i < numMatchesInRound; i++) {
                                 const currentMatchId = currentRoundMatches[i].id;
@@ -418,42 +397,53 @@ export class MatchService {
                                 const prevMatch1 = previousRoundMatches[i * 2];
                                 const prevMatch2 = previousRoundMatches[i * 2 + 1];
                                 
-                                // Establecer Punteros nextMatchId
+                                // Establecer nextMatchId en los matches anteriores
                                 if (prevMatch1) {
                                     await tx.match.update({
                                         where: { id: prevMatch1.id },
                                         data: { nextMatchId: currentMatchId, nextMatchSide: 'Akka' }
                                     });
-                                    
-                                    // Promover ganador de BYE automáticamente
-                                    if (prevMatch1.status === "Completado" && prevMatch1.winnerId) {
-                                        await tx.match.update({
-                                            where: { id: currentMatchId },
-                                            data: { participantAkkaId: prevMatch1.winnerId }
-                                        });
-                                    }
                                 }
                                 if (prevMatch2) {
                                     await tx.match.update({
                                         where: { id: prevMatch2.id },
                                         data: { nextMatchId: currentMatchId, nextMatchSide: 'Ao' }
                                     });
-                                    
-                                    // Promover ganador de BYE automáticamente
-                                    if (prevMatch2.status === "Completado" && prevMatch2.winnerId) {
-                                        await tx.match.update({
-                                            where: { id: currentMatchId },
-                                            data: { participantAoId: prevMatch2.winnerId }
-                                        });
-                                    }
                                 }
                             }
                         }
                         previousRoundMatches = currentRoundMatches;
                     }
+                    
+                    // PROMOCIÓN AUTOMÁTICA DE BYES DESPUÉS de crear todos los matches
+                    console.log(`   🔄 Aplicando promoción automática de BYEs...`);
+                    const allMatches = await tx.match.findMany({
+                        where: { championshipCategoryId: category.id },
+                        orderBy: [{ phaseId: 'asc' }, { matchNumber: 'asc' }]
+                    });
+                    
+                    // Para cada match completado (BYE), promover al ganador
+                    for (const match of allMatches) {
+                        if (match.status === "Completado" && match.winnerId && match.nextMatchId) {
+                            const updateData: Prisma.MatchUpdateInput = {};
+                            
+                            if (match.nextMatchSide === 'Akka') {
+                                updateData.participantAkka = { connect: { id: match.winnerId } };
+                            } else if (match.nextMatchSide === 'Ao') {
+                                updateData.participantAo = { connect: { id: match.winnerId } };
+                            }
+                            
+                            await tx.match.update({
+                                where: { id: match.nextMatchId },
+                                data: updateData
+                            });
+                            
+                            console.log(`      ⬆️  Promovido: ${participants.find(p => p.id === match.winnerId)?.student?.firstname} -> Match ${match.nextMatchId} (${match.nextMatchSide})`);
+                        }
+                    }
                 }
                 
-                return { message: `Brackets generados con sembrado adaptado.` };
+                return { message: `Brackets generados correctamente con distribución equilibrada.` };
             }, { timeout: 60000 });
             
         } catch (error) {
@@ -462,6 +452,7 @@ export class MatchService {
         }
     }
 
+    // ... (los demás métodos se mantienen igual)
     /**
      * Obtiene los brackets (lista de combates) de una categoría
      */
