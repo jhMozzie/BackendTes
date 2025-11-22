@@ -51,3 +51,4 @@ export interface MatchDetails extends PrismaMatch {
     participantAo: BracketParticipant | null;
     winner: { student: { firstname: string; lastname: string } } | null;
 }
+

@@ -12,7 +12,7 @@ type ParticipantWithAcademy = Participant & {
     student: (Student & { academy: Academy | null }) | null 
 };
 
-// 💥 Helper para calcular la potencia de 2 SUPERIOR más cercana
+// Helper para calcular la potencia de 2 SUPERIOR más cercana
 const upperPowerOfTwo = (n: number): number => {
     if (n <= 0) return 1;
     if (n <= 2) return 2;
@@ -20,291 +20,260 @@ const upperPowerOfTwo = (n: number): number => {
 };
 
 // -------------------------------------------------------------------
-// 🎯 ALGORITMO DE SEMBRADO INTELIGENTE (PREVIAS, DISPERSIÓN, ANTI-REPETICIÓN)
+// 🎯 ALGORITMO DE SEMBRADO INTELIGENTE MEJORADO
 // -------------------------------------------------------------------
 
-interface SeedingSlot {
-    round: number;
-    matchNumber: number;
-    side: 'Akka' | 'Ao';
-    pool: 'A' | 'B';
-    type: 'PLAY_IN' | 'BYE_SLOT'; 
-    participantId: number | null;
-    academyId: number;
-    priorityScore: number; 
-}
-
 /**
- * Genera el patrón de distribución (Play-in vs Bye) de forma generalizable.
- */
-function getPlayInPattern(totalMatchesInRound: number, activeMatchesNeeded: number): boolean[] {
-    const pattern = new Array(totalMatchesInRound).fill(false);
-    
-    if (activeMatchesNeeded === totalMatchesInRound) return pattern.fill(true);
-    if (activeMatchesNeeded === 0) return pattern;
-
-    // Lógica de dispersión de peleas activas
-    const step = totalMatchesInRound / activeMatchesNeeded;
-    for (let i = 0; i < activeMatchesNeeded; i++) {
-        const index = Math.floor(i * step);
-        pattern[index] = true;
-    }
-    
-    return pattern;
-}
-
-/**
- * Crea la estructura virtual del bracket marcando slots de Pelea y slots de Bye
- */
-function generateBracketStructure(
-    bracketSize: number, 
-    numParticipants: number
-): Map<string, SeedingSlot> {
-    const numRounds = Math.log2(bracketSize);
-    const slots = new Map<string, SeedingSlot>();
-    
-    const matchesInR1 = bracketSize / 2;
-    // Cálculo de Previas: N - (Size/2). Se asegura que no sea negativo.
-    const activeMatchesNeeded = Math.max(0, numParticipants - matchesInR1);
-    
-    const matchPattern = getPlayInPattern(matchesInR1, activeMatchesNeeded);
-
-    console.log(`   🧩 Patrón de Previas (R1): ${matchPattern.map(x => x ? '⚔️' : '🛡️').join(' ')}`);
-
-    for (let r = 1; r <= numRounds; r++) {
-        const numMatchesInRound = bracketSize / Math.pow(2, r);
-        const matchesPerPool = Math.ceil(numMatchesInRound / 2);
-        
-        for (let m = 0; m < numMatchesInRound; m++) {
-            const pool = m < matchesPerPool ? 'A' : 'B';
-            
-            let slotType: 'PLAY_IN' | 'BYE_SLOT' = 'PLAY_IN';
-            
-            if (r === 1) {
-                if (!matchPattern[m]) {
-                    slotType = 'BYE_SLOT';
-                }
-            }
-
-            slots.set(`${r}-${m + 1}-Akka`, {
-                round: r, matchNumber: m + 1, side: 'Akka', pool, type: slotType,
-                participantId: null, academyId: 0, priorityScore: 0
-            });
-            slots.set(`${r}-${m + 1}-Ao`, {
-                round: r, matchNumber: m + 1, side: 'Ao', pool, type: slotType,
-                participantId: null, academyId: 0, priorityScore: 0
-            });
-        }
-    }
-    return slots;
-}
-
-/**
- * Encuentra slots disponibles (Solo Akka para BYE_SLOT)
- */
-function findAvailableSlots(
-    slots: Map<string, SeedingSlot>,
-    typeNeeded: 'PLAY_IN' | 'BYE_SLOT',
-    totalMatchesInR1: number,
-    pool?: 'A' | 'B'
-): SeedingSlot[] {
-    const available: SeedingSlot[] = [];
-    
-    for (const slot of slots.values()) {
-        if (slot.round === 1 && slot.participantId === null && (!pool || slot.pool === pool)) {
-            
-            if (typeNeeded === 'PLAY_IN' && slot.type === 'PLAY_IN') {
-                available.push(slot);
-            } 
-            else if (typeNeeded === 'BYE_SLOT' && slot.type === 'BYE_SLOT' && slot.side === 'Akka') {
-                // REGLA DE EXTREMOS para BYE
-                const distFromStart = slot.matchNumber - 1;
-                const distFromEnd = totalMatchesInR1 - slot.matchNumber;
-                const minEdgeDist = Math.min(distFromStart, distFromEnd);
-                
-                slot.priorityScore = 100 - minEdgeDist; 
-                available.push(slot);
-            }
-        }
-    }
-    return available;
-}
-
-/**
- * Verifica conflicto de choque directo O repetición de enfrentamiento en el mismo pool.
+ * Verifica conflicto de choque directo.
  */
 function wouldViolateEarlyMatchRule(
-    slots: Map<string, SeedingSlot>,
-    slotToAssign: SeedingSlot,
-    academyId: number,
-    targetOpponentAcademyId: number // 0 si el slot par está vacío
+    academyIdA: number,
+    academyIdB: number 
 ): boolean {
-    if (academyId === 0) return false;
-    
-    // 1. Conflicto directo (misma academia vs misma academia)
-    if (targetOpponentAcademyId === academyId) {
-        return true; 
-    }
-    
-    // 2. REGLA DE ANTI-REPETICIÓN DE ENFRENTAMIENTO EN EL MISMO POOL
-    if (targetOpponentAcademyId !== 0) {
-        const targetPool = slotToAssign.pool;
-        
-        for (const slot of slots.values()) {
-            if (slot.round === 1 && slot.pool === targetPool && slot.participantId !== null) {
-                
-                const opponentSlot = slots.get(`${slot.round}-${slot.matchNumber}-${slot.side === 'Akka' ? 'Ao' : 'Akka'}`);
-                
-                if (opponentSlot && opponentSlot.participantId !== null) {
-                    const existingAcad1 = slot.academyId;
-                    const existingAcad2 = opponentSlot.academyId;
-
-                    // Si la combinación de IDs de academia es la misma que la que estamos intentando asignar, rechazar.
-                    const newPair = [academyId, targetOpponentAcademyId].sort().join('-');
-                    const existingPair = [existingAcad1, existingAcad2].sort().join('-');
-                    
-                    if (newPair === existingPair) {
-                        return true; 
-                    }
-                }
-            }
-        }
-    }
-    
-    return false;
+    if (academyIdA === 0 || academyIdB === 0) return false;
+    return academyIdA === academyIdB; 
 }
 
 /**
- * 🧠 LÓGICA PRINCIPAL: Distribución Estratégica + Previas
+ * Obtiene la academia de un participante
  */
-function seedParticipantsWithSymmetry(
+function getParticipantAcademyId(participant: ParticipantWithAcademy): number {
+    return participant.student?.academy?.id ?? 0;
+}
+
+/**
+ * 🧠 LÓGICA PRINCIPAL MEJORADA: Distribución Estratégica + Previas
+ * Genera el array final de Participant IDs o nulls (BYEs) para la Ronda 1.
+ */
+function seedParticipants(
     participants: ParticipantWithAcademy[],
-    bracketSize: number
+    tournamentSize: number
 ): { result: (number | null)[], assignedCount: number } { 
     
-    console.log(`\n🎲 SEMBRADO ESTRATÉGICO (${participants.length} pax / Bracket ${bracketSize})`);
+    const numParticipants = participants.length;
+    const numByes = tournamentSize - numParticipants;
     
-    // 1. Agrupar y Ordenar Academias (Grandes -> Pequeñas)
+    console.log(`🎯 Sembrado: ${numParticipants} participantes, ${tournamentSize} slots, ${numByes} BYEs`);
+
+    // 1. Agrupar por academia y detectar academia mayoritaria
     const academyGroups = new Map<number, ParticipantWithAcademy[]>();
     for (const p of participants) {
-        const aid = p.student?.academy?.id ?? 0;
+        const aid = getParticipantAcademyId(p);
         if (!academyGroups.has(aid)) academyGroups.set(aid, []);
         academyGroups.get(aid)!.push(p);
     }
     
+    // Ordenar academias por tamaño (mayor a menor)
     const sortedAcademies = Array.from(academyGroups.entries())
         .sort((a, b) => b[1].length - a[1].length);
     
-    const largestAcademyId = sortedAcademies[0][0];
+    const largestAcademyId = sortedAcademies[0]?.[0] ?? 0;
+    const largestAcademyCount = sortedAcademies[0]?.[1]?.length ?? 0;
+    const isMajorityAcademy = largestAcademyCount > numParticipants * 0.5;
     
-    // 2. Estructura del Bracket y Slots
-    const slots = generateBracketStructure(bracketSize, participants.length);
-    const totalMatchesR1 = bracketSize / 2;
+    console.log(`   Academia más grande: ID ${largestAcademyId} con ${largestAcademyCount} participantes`);
+    console.log(`   ¿Es mayoría? (>50%): ${isMajorityAcademy}`);
 
-    const activeMatchesCount = participants.length - totalMatchesR1; 
-    const activeSlotsCount = activeMatchesCount * 2; 
+    // 2. Separar participantes en dos grupos: los que pelean y los que tienen BYE
+    let participantsWithBye: ParticipantWithAcademy[] = [];
+    let participantsToFight: ParticipantWithAcademy[] = [];
     
-    let allParticipantsSorted: ParticipantWithAcademy[] = [];
-    sortedAcademies.forEach(([_, stu]) => allParticipantsSorted.push(...stu));
-
-    // DIVISIÓN DE POBLACIÓN:
-    const gladiators = allParticipantsSorted.slice(0, activeSlotsCount);
-    const seeds = allParticipantsSorted.slice(activeSlotsCount).reverse(); 
-
-    console.log(`   📊 Distribución: ${gladiators.length} a Previas, ${seeds.length} a Byes (Total ${gladiators.length + seeds.length})`);
-
-    // --- FASE A: ASIGNACIÓN ESTRATÉGICA (BYES) ---
-    const byeSlots = findAvailableSlots(slots, 'BYE_SLOT', totalMatchesR1);
-    byeSlots.sort((a, b) => b.priorityScore - a.priorityScore);
-
-    for (const p of seeds) {
-        const aid = p.student?.academy?.id ?? 0;
-        for (const slot of byeSlots) {
-            if (slot.participantId === null) {
-                slot.participantId = p.id;
-                slot.academyId = aid;
-                break;
-            }
-        }
-    }
-
-    // --- FASE B: ASIGNACIÓN ESTRATÉGICA (COMBATES) ---
-    const activeSlots = findAvailableSlots(slots, 'PLAY_IN', totalMatchesR1);
-    
-    // 4. Dispersar Academia Más Grande (Regla de Semifinal/Final)
-    const largestAcademyFighters = gladiators.filter(p => (p.student?.academy?.id ?? 0) === largestAcademyId);
-    
-    for (const p of largestAcademyFighters) {
-        let assigned = false;
+    // Asignar BYEs estratégicamente a las academias más grandes primero
+    let remainingByes = numByes;
+    for (const [academyId, academyParticipants] of sortedAcademies) {
+        if (remainingByes <= 0) break;
         
-        for (const slot of activeSlots.filter(s => s.participantId === null)) {
-            const pairSlot = slots.get(`${slot.round}-${slot.matchNumber}-${slot.side === 'Akka' ? 'Ao' : 'Akka'}`);
-            const targetOpponentAcademyId = pairSlot?.academyId ?? 0;
+        const byesToAssign = Math.min(
+            Math.ceil(academyParticipants.length * (numByes / numParticipants)),
+            remainingByes,
+            academyParticipants.length
+        );
+        
+        if (byesToAssign > 0) {
+            const byeReceivers = academyParticipants.slice(0, byesToAssign);
+            participantsWithBye.push(...byeReceivers);
+            remainingByes -= byesToAssign;
             
-            if (!wouldViolateEarlyMatchRule(slots, slot, largestAcademyId, targetOpponentAcademyId)) {
-                slot.participantId = p.id;
-                slot.academyId = largestAcademyId;
-                assigned = true;
-                break;
-            }
-        }
-        
-        // Fallback: Asignar al primer slot activo disponible si no se puede cumplir la regla.
-        if (!assigned) {
-             const fallbackSlot = activeSlots.find(s => s.participantId === null);
-             if (fallbackSlot) {
-                fallbackSlot.participantId = p.id;
-                fallbackSlot.academyId = largestAcademyId;
-             }
+            // Los restantes de esta academia pelean
+            const fighters = academyParticipants.slice(byesToAssign);
+            participantsToFight.push(...fighters);
+        } else {
+            // Todos pelean si no hay BYEs para esta academia
+            participantsToFight.push(...academyParticipants);
         }
     }
     
-    // 5. Llenar Slots Activos Restantes (Gladiadores sobrantes)
-    const assignedIds = new Set(Array.from(slots.values()).map(s => s.participantId).filter(id => id !== null) as number[]);
-    const remainingGladiatorsToAssign = gladiators.filter(p => !assignedIds.has(p.id));
-
-    for (const p of remainingGladiatorsToAssign) {
-        const aid = p.student?.academy?.id ?? 0;
-        let assigned = false;
+    // Si aún quedan BYEs, distribuirlos entre los que quedan
+    if (remainingByes > 0) {
+        const allRemaining = sortedAcademies.flatMap(([_, parts]) => parts)
+            .filter(p => !participantsWithBye.includes(p));
         
-        for (const slot of activeSlots.filter(s => s.participantId === null)) {
-            const pairSlot = slots.get(`${slot.round}-${slot.matchNumber}-${slot.side === 'Akka' ? 'Ao' : 'Akka'}`);
-            const targetOpponentAcademyId = pairSlot?.academyId ?? 0;
+        const additionalByes = allRemaining.slice(0, remainingByes);
+        participantsWithBye.push(...additionalByes);
+        participantsToFight = allRemaining.slice(remainingByes);
+    }
+    
+    console.log(`   BYEs asignados: ${participantsWithBye.length}`);
+    console.log(`   Participantes que pelean: ${participantsToFight.length}`);
+
+    // 3. Preparar slots del bracket
+    const bracketSlots: (number | null)[] = new Array(tournamentSize).fill(null);
+    const numMatchesR1 = tournamentSize / 2;
+    
+    // 4. Estrategia de asignación mejorada
+    const assignedParticipants = new Set<number>();
+    const availableFighters = [...participantsToFight];
+    
+    // Primera pasada: intentar asignar sin conflictos de academia
+    for (let matchIndex = 0; matchIndex < numMatchesR1; matchIndex++) {
+        const slotAkka = matchIndex * 2;
+        const slotAo = matchIndex * 2 + 1;
+        
+        // Si ambos slots ya están asignados, continuar
+        if (bracketSlots[slotAkka] !== null && bracketSlots[slotAo] !== null) {
+            continue;
+        }
+        
+        // Buscar el mejor par disponible
+        let bestPair: [ParticipantWithAcademy, ParticipantWithAcademy] | null = null;
+        
+        for (let i = 0; i < availableFighters.length && !bestPair; i++) {
+            const fighter1 = availableFighters[i];
+            if (assignedParticipants.has(fighter1.id)) continue;
             
-            if (!wouldViolateEarlyMatchRule(slots, slot, aid, targetOpponentAcademyId)) {
-                slot.participantId = p.id;
-                slot.academyId = aid;
-                assigned = true;
-                break;
+            for (let j = i + 1; j < availableFighters.length && !bestPair; j++) {
+                const fighter2 = availableFighters[j];
+                if (assignedParticipants.has(fighter2.id)) continue;
+                
+                const academy1 = getParticipantAcademyId(fighter1);
+                const academy2 = getParticipantAcademyId(fighter2);
+                
+                // Si no son de la misma academia, es un buen par
+                if (!wouldViolateEarlyMatchRule(academy1, academy2)) {
+                    bestPair = [fighter1, fighter2];
+                    break;
+                }
             }
         }
         
-        // Fallback
-        if (!assigned) {
-             const fallbackSlot = activeSlots.find(s => s.participantId === null);
-             if (fallbackSlot) {
-                fallbackSlot.participantId = p.id;
-                fallbackSlot.academyId = aid;
-             }
+        // Si encontramos un buen par, asignarlo
+        if (bestPair) {
+            const [fighter1, fighter2] = bestPair;
+            bracketSlots[slotAkka] = fighter1.id;
+            bracketSlots[slotAo] = fighter2.id;
+            
+            assignedParticipants.add(fighter1.id);
+            assignedParticipants.add(fighter2.id);
+            
+            // Remover de disponibles
+            availableFighters.splice(availableFighters.indexOf(fighter1), 1);
+            availableFighters.splice(availableFighters.indexOf(fighter2), 1);
         }
     }
     
-    // 6. Generar Array Alineado (incluyendo NULLs)
-    const alignedResult: (number | null)[] = [];
-    for (let m = 1; m <= totalMatchesR1; m++) {
-        const akka = slots.get(`1-${m}-Akka`);
-        const ao = slots.get(`1-${m}-Ao`);
+    // Segunda pasada: asignar los participantes restantes (pueden generar conflictos)
+    let remainingIndex = 0;
+    for (let matchIndex = 0; matchIndex < numMatchesR1; matchIndex++) {
+        const slotAkka = matchIndex * 2;
+        const slotAo = matchIndex * 2 + 1;
         
-        alignedResult.push(akka?.participantId ?? null);
-        alignedResult.push(ao?.participantId ?? null);
+        // Asignar al slot Akka si está vacío
+        if (bracketSlots[slotAkka] === null && remainingIndex < availableFighters.length) {
+            const fighter = availableFighters[remainingIndex];
+            bracketSlots[slotAkka] = fighter.id;
+            assignedParticipants.add(fighter.id);
+            remainingIndex++;
+        }
+        
+        // Asignar al slot Ao si está vacío
+        if (bracketSlots[slotAo] === null && remainingIndex < availableFighters.length) {
+            const fighter = availableFighters[remainingIndex];
+            bracketSlots[slotAo] = fighter.id;
+            assignedParticipants.add(fighter.id);
+            remainingIndex++;
+        }
     }
     
-    // VALIDACIÓN CRÍTICA
-    const totalAssignedInSlots = Array.from(slots.values()).filter(s => s.participantId !== null).length;
-
-    return { result: alignedResult, assignedCount: totalAssignedInSlots };
+    // 5. Distribuir BYEs estratégicamente
+    const byeParticipants = participantsWithBye.map(p => p.id);
+    let byeIndex = 0;
+    
+    for (let matchIndex = 0; matchIndex < numMatchesR1; matchIndex++) {
+        const slotAkka = matchIndex * 2;
+        const slotAo = matchIndex * 2 + 1;
+        
+        const hasAkka = bracketSlots[slotAkka] !== null;
+        const hasAo = bracketSlots[slotAo] !== null;
+        
+        // Si un match tiene solo un participante, asignar BYE al otro lado
+        if (hasAkka && !hasAo && byeIndex < byeParticipants.length) {
+            bracketSlots[slotAo] = byeParticipants[byeIndex];
+            byeIndex++;
+        } else if (!hasAkka && hasAo && byeIndex < byeParticipants.length) {
+            bracketSlots[slotAkka] = byeParticipants[byeIndex];
+            byeIndex++;
+        }
+        // Si ambos slots están vacíos y quedan BYEs, crear un match BYE vs BYE
+        else if (!hasAkka && !hasAo && byeIndex + 1 < byeParticipants.length) {
+            bracketSlots[slotAkka] = byeParticipants[byeIndex];
+            bracketSlots[slotAo] = byeParticipants[byeIndex + 1];
+            byeIndex += 2;
+        }
+    }
+    
+    // 6. Validación final y limpieza
+    const finalAssignedCount = bracketSlots.filter(slot => slot !== null).length;
+    
+    // Asegurar que todos los participantes estén asignados
+    if (finalAssignedCount !== numParticipants) {
+        console.warn(`⚠️  Asignación incompleta: ${finalAssignedCount}/${numParticipants}`);
+        
+        // Forzar asignación de participantes faltantes
+        const allParticipantIds = new Set(participants.map(p => p.id));
+        const assignedIds = new Set(bracketSlots.filter(id => id !== null) as number[]);
+        const missingIds = Array.from(allParticipantIds).filter(id => !assignedIds.has(id));
+        
+        let missingIndex = 0;
+        for (let i = 0; i < bracketSlots.length && missingIndex < missingIds.length; i++) {
+            if (bracketSlots[i] === null) {
+                bracketSlots[i] = missingIds[missingIndex];
+                missingIndex++;
+            }
+        }
+    }
+    
+    // Log de resultados para debugging
+    console.log(`   ✅ Asignación final: ${bracketSlots.filter(slot => slot !== null).length}/${numParticipants}`);
+    
+    // Contar enfrentamientos entre misma academia
+    let sameAcademyMatches = 0;
+    for (let i = 0; i < numMatchesR1; i++) {
+        const akkaId = bracketSlots[i * 2];
+        const aoId = bracketSlots[i * 2 + 1];
+        
+        if (akkaId && aoId) {
+            const akkaAcademy = participants.find(p => p.id === akkaId)?.student?.academy?.id ?? 0;
+            const aoAcademy = participants.find(p => p.id === aoId)?.student?.academy?.id ?? 0;
+            
+            if (akkaAcademy === aoAcademy && akkaAcademy !== 0) {
+                sameAcademyMatches++;
+                console.warn(`   ⚠️  Match ${i + 1}: Misma academia (${akkaAcademy})`);
+            }
+        }
+    }
+    
+    if (sameAcademyMatches > 0) {
+        console.warn(`   ⚠️  Total enfrentamientos misma academia: ${sameAcademyMatches}`);
+        if (isMajorityAcademy) {
+            console.log(`   ℹ️  Academia mayoritaria detectada - conflictos inevitables`);
+        }
+    }
+    
+    return { 
+        result: bracketSlots, 
+        assignedCount: numParticipants 
+    };
 }
-
 
 export class MatchService {
     
@@ -354,18 +323,18 @@ export class MatchService {
                     const bracketSize = upperPowerOfTwo(numParticipants);
                     const totalRounds = Math.log2(bracketSize);
 
-                    // 🛑 SELECCIÓN DE FASES: Ajustar el mapeo para usar solo las fases necesarias.
+                    // SELECCIÓN DE FASES: Ajustar el mapeo para usar solo las fases necesarias.
                     const sortedPhases = allPhases.sort((a, b) => a.order - b.order);
                     
                     if (sortedPhases.length < totalRounds) {
                          throw new Error(`Categoría ${category.code} requiere ${totalRounds} fases, solo hay ${sortedPhases.length}.`);
                     }
 
-                    // Seleccionar solo las 'totalRounds' fases necesarias del FINAL de la lista.
+                    // Seleccionar solo las 'totalRounds' fases necesarias
                     const requiredPhases = sortedPhases.slice(sortedPhases.length - totalRounds);
 
                     // SEEDING INTELIGENTE
-                    const { result: seededParticipants, assignedCount } = seedParticipantsWithSymmetry(participants, bracketSize);
+                    const { result: seededParticipants, assignedCount } = seedParticipants(participants, bracketSize);
                     
                     // MANEJO DE ERRORES: VALIDACIÓN CRÍTICA DE CONTEO
                     if (assignedCount !== numParticipants) {
@@ -404,22 +373,37 @@ export class MatchService {
                                 const idxAkka = i * 2;
                                 const idxAo = i * 2 + 1;
                                 
-                                if (seededParticipants[idxAkka]) newMatchData.participantAkkaId = seededParticipants[idxAkka] as number;
-                                if (seededParticipants[idxAo]) newMatchData.participantAoId = seededParticipants[idxAo] as number;
+                                const akkaId = seededParticipants[idxAkka];
+                                const aoId = seededParticipants[idxAo];
+
+                                if (akkaId) newMatchData.participantAkkaId = akkaId;
+                                if (aoId) newMatchData.participantAoId = aoId;
                                 
                                 // LÓGICA DE BYE AUTOMÁTICO
-                                if (newMatchData.participantAkkaId && !newMatchData.participantAoId) {
-                                    newMatchData.winnerId = newMatchData.participantAkkaId;
-                                    newMatchData.status = "Completado"; // Marca como completado para el pase
-                                    
-                                    const p = participants.find(x => x.id === newMatchData.participantAkkaId);
-                                    console.log(`      ✅ Match ${i + 1}: ${p?.student?.firstname} avanza directo (BYE)`);
+                                if (akkaId && !aoId) {
+                                    newMatchData.winnerId = akkaId;
+                                    newMatchData.status = "Completado"; 
                                 } 
-                                else if (newMatchData.participantAkkaId && newMatchData.participantAoId) {
-                                    const p1 = participants.find(x => x.id === newMatchData.participantAkkaId);
-                                    const p2 = participants.find(x => x.id === newMatchData.participantAoId);
-                                    console.log(`      ⚔️ Match ${i + 1}: ${p1?.student?.firstname} vs ${p2?.student?.firstname}`);
+                                else if (!akkaId && aoId) {
+                                    newMatchData.winnerId = aoId;
+                                    newMatchData.status = "Completado"; 
                                 }
+                                
+                                // Logging para verificar choques
+                                if (akkaId !== null && aoId !== null) {
+                                    const p1Acad = participants.find(p => p.id === akkaId)?.student?.academy?.id ?? 0;
+                                    const p2Acad = participants.find(p => p.id === aoId)?.student?.academy?.id ?? 0;
+                                    
+                                    if (p1Acad === p2Acad && p1Acad !== 0) {
+                                        console.warn(`      ⚠️ Choque Academia: Match ${i + 1} (${p1Acad} vs ${p2Acad})`);
+                                    }
+                                }
+
+                                const p1 = participants.find(x => x.id === newMatchData.participantAkkaId);
+                                const p2 = participants.find(x => x.id === newMatchData.participantAoId);
+                                const p1Name = p1 ? `${p1.student?.firstname} ${p1.student?.lastname}` : 'BYE';
+                                const p2Name = p2 ? `${p2.student?.firstname} ${p2.student?.lastname}` : 'BYE';
+                                console.log(`      ⚔️ Match ${i + 1}: ${p1Name} vs ${p2Name} (${newMatchData.status})`);
                             }
                             
                             const createdMatch = await tx.match.create({ data: newMatchData });
@@ -430,43 +414,38 @@ export class MatchService {
                         if (r > 0) { 
                             for (let i = 0; i < numMatchesInRound; i++) {
                                 const currentMatchId = currentRoundMatches[i].id;
-                                // Necesitamos los matches de la ronda anterior (r-1)
+                                
                                 const prevMatch1 = previousRoundMatches[i * 2];
                                 const prevMatch2 = previousRoundMatches[i * 2 + 1];
                                 
-                                // 🛑 COMENTARIO: Lógica de promoción de BYE
-                                // Si el match anterior está COMPLETO (es un BYE), promovemos el ganador inmediatamente
-                                // al match actual, sin esperar a un evento. Esto corrige el error reportado.
-                                
-                                // Promover ganador del Match Anterior 1 (Lado Akka)
-                                if (prevMatch1 && prevMatch1.status === "Completado" && prevMatch1.winnerId) {
-                                    await tx.match.update({
-                                        where: { id: currentMatchId },
-                                        data: { participantAkka: { connect: { id: prevMatch1.winnerId } } }
-                                    });
-                                    console.log(`      ⬆️  BYE Promovido: ${prevMatch1.winnerId} -> Match ${currentMatchId} (Akka)`);
-                                }
-                                // Promover ganador del Match Anterior 2 (Lado Ao)
-                                if (prevMatch2 && prevMatch2.status === "Completado" && prevMatch2.winnerId) {
-                                     await tx.match.update({
-                                        where: { id: currentMatchId },
-                                        data: { participantAo: { connect: { id: prevMatch2.winnerId } } }
-                                    });
-                                     console.log(`      ⬆️  BYE Promovido: ${prevMatch2.winnerId} -> Match ${currentMatchId} (Ao)`);
-                                }
-                                
-                                // Establecer Punteros nextMatchId (Lógica original de conexión)
+                                // Establecer Punteros nextMatchId
                                 if (prevMatch1) {
                                     await tx.match.update({
                                         where: { id: prevMatch1.id },
                                         data: { nextMatchId: currentMatchId, nextMatchSide: 'Akka' }
                                     });
+                                    
+                                    // Promover ganador de BYE automáticamente
+                                    if (prevMatch1.status === "Completado" && prevMatch1.winnerId) {
+                                        await tx.match.update({
+                                            where: { id: currentMatchId },
+                                            data: { participantAkkaId: prevMatch1.winnerId }
+                                        });
+                                    }
                                 }
                                 if (prevMatch2) {
                                     await tx.match.update({
                                         where: { id: prevMatch2.id },
                                         data: { nextMatchId: currentMatchId, nextMatchSide: 'Ao' }
                                     });
+                                    
+                                    // Promover ganador de BYE automáticamente
+                                    if (prevMatch2.status === "Completado" && prevMatch2.winnerId) {
+                                        await tx.match.update({
+                                            where: { id: currentMatchId },
+                                            data: { participantAoId: prevMatch2.winnerId }
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -474,7 +453,7 @@ export class MatchService {
                     }
                 }
                 
-                return { message: `Brackets generados con sembrado adaptado y doble bronce.` };
+                return { message: `Brackets generados con sembrado adaptado.` };
             }, { timeout: 60000 });
             
         } catch (error) {
@@ -482,10 +461,6 @@ export class MatchService {
             throw error;
         }
     }
-
-    // =================================================================
-    // MÉTODOS EXISTENTES CONSERVADOS INTACTOS
-    // =================================================================
 
     /**
      * Obtiene los brackets (lista de combates) de una categoría

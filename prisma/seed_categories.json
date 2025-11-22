@@ -1,0 +1,222 @@
+[
+  {
+    "code": "A1",
+    "modality": "Kata",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 5,
+    "weight": null
+  },
+  {
+    "code": "A2",
+    "modality": "Kata",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 5,
+    "weight": null
+  },
+  {
+    "code": "B1",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B2",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B3",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B4",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B5",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B6",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B7",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B8",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B9",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B10",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 7,
+    "beltMaxKyu": 4,
+    "weight": null
+  },
+  {
+    "code": "B11",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B12",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B13",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B14",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B15",
+    "modality": "Kumite",
+    "gender": "Femenino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B16",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B17",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B18",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B19",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  },
+  {
+    "code": "B20",
+    "modality": "Kumite",
+    "gender": "Masculino",
+    "ageMin": 18,
+    "ageMax": 25,
+    "beltMinKyu": 3,
+    "beltMaxKyu": 0,
+    "weight": null
+  }
+]

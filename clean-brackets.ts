@@ -6,7 +6,7 @@ async function clean() {
   const result = await prisma.match.deleteMany({
     where: {
       championshipCategory: {
-        championshipId: 3
+        championshipId: 1
       }
     }
   });

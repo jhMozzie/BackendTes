@@ -1,0 +1,1495 @@
+{
+    "total_inscripciones_consolidadas": 145,
+    "inscripciones": [
+        {
+            "NOMBRE": "ROXANA DIANA",
+            "APELLIDOS": "MOSCOSO BUENDIA",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "FEMENINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "CHRISTOPHER JOAQUIN",
+            "APELLIDOS": "VALDIVIA LOPEZ",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "MASCULINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "JEFFERSON RODOLFO",
+            "APELLIDOS": "AVALOS PONCE",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "MASCULINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "JHAREN PAOLO",
+            "APELLIDOS": "CCANTO CHAUCA",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "MASCULINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "YUDITH ESTELA",
+            "APELLIDOS": "RAMIREZ DAVILA",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "FEMENINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "JHAROL MATIAS JOSE",
+            "APELLIDOS": "OSCCO ENCISO",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "MASCULINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "RAFAEL ALEJANDRO",
+            "APELLIDOS": "SCHMUCKE MENDOZA",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "MASCULINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "LESLIE ANTUANET",
+            "APELLIDOS": "ZEGARRA ELLIOT",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "FEMENINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B1",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "JILARY XIOMARA",
+            "APELLIDOS": "HUERTA CHILINGANO",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "FEMENINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "CRISTELL ",
+            "APELLIDOS": "HUAMANI MACAVILCA",
+            "CELULAR": "900",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "FEMENINO",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UA"
+        },
+        {
+            "NOMBRE": "Nelly Adriana ",
+            "APELLIDOS": "Tejeda Arias",
+            "CELULAR": "977466032",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Avanzado",
+            "CATEGORIA": "B13",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Milagros del Carmen ",
+            "APELLIDOS": "Zenozain Carbajal ",
+            "CELULAR": "935474560",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Amy keylith ",
+            "APELLIDOS": "Gómez López ",
+            "CELULAR": "925274991",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B1",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Sebastián Josue ",
+            "APELLIDOS": "Maytahuari Carmona ",
+            "CELULAR": "902461137",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Luis Jesús",
+            "APELLIDOS": "Salazar Carreño",
+            "CELULAR": "987346210",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Jordan Manuel",
+            "APELLIDOS": "Rosa Gabonal",
+            "CELULAR": "924568833",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Avanzado",
+            "CATEGORIA": "B18",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Britney Zayetsy ",
+            "APELLIDOS": "Rondan Rodríguez ",
+            "CELULAR": "928168444",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Avanzado",
+            "CATEGORIA": "B11",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "willian",
+            "APELLIDOS": "Rodriguez Bustamante ",
+            "CELULAR": "904913970",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Otoniel Axel ",
+            "APELLIDOS": "Estupiñan Zevallos ",
+            "CELULAR": "937013634",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Otoniel Axel ",
+            "APELLIDOS": "Estupiñan Zevallos ",
+            "CELULAR": "937013634",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Sebastián Alonso ",
+            "APELLIDOS": "Riguetti Villanueva ",
+            "CELULAR": "936996098",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Fabrizio Alejandro",
+            "APELLIDOS": "Cerna Rivas",
+            "CELULAR": "968644746",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Miguel Angel ",
+            "APELLIDOS": "Lluen Poma ",
+            "CELULAR": "924620108",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Jhasmin ",
+            "APELLIDOS": "Liñan Santos",
+            "CELULAR": "948653269",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "intermedio ",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Jhasmin ",
+            "APELLIDOS": "Liñan Santos",
+            "CELULAR": "948653269",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "intermedio ",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Ariana Nellsy",
+            "APELLIDOS": "Palma Jimenez",
+            "CELULAR": "903360331",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "intermedio",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Aarom Hiroshi",
+            "APELLIDOS": "Romero Rivera ",
+            "CELULAR": "907328459",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Jade Fernanda",
+            "APELLIDOS": "Vargas Correa",
+            "CELULAR": "60822762",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B5",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Andrea Valentina",
+            "APELLIDOS": "Arce Barrientos ",
+            "CELULAR": "922529593",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Avanzado",
+            "CATEGORIA": "B12",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Carol Cristal ",
+            "APELLIDOS": "Cuadra Arana ",
+            "CELULAR": "934986172",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Carol Cristal ",
+            "APELLIDOS": "Cuadra Arana ",
+            "CELULAR": "934986172",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Intermedio ",
+            "CATEGORIA": "B4",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Raquel Alexandra",
+            "APELLIDOS": "Calderon Acuña",
+            "CELULAR": "972438067",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B1",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Sebastián ",
+            "APELLIDOS": "Ramírez  Ángel ",
+            "CELULAR": "922132674",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Daniel ",
+            "APELLIDOS": "Rosales Villafuerte ",
+            "CELULAR": "906949940",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "intermedio ",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Jamil",
+            "APELLIDOS": "Segura Soto ",
+            "CELULAR": "903233180",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Sebastian ",
+            "APELLIDOS": "Pereyra Catacora",
+            "CELULAR": "974381572",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "Rodrigo Sebastian Antonio ",
+            "APELLIDOS": "Guillen Giral",
+            "CELULAR": "963111442",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UCV"
+        },
+        {
+            "NOMBRE": "César",
+            "APELLIDOS": "Mendoza Pastor ",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Luis",
+            "APELLIDOS": "Villanueva Alejos",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Iván",
+            "APELLIDOS": "Portal Janampa",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Jefferson",
+            "APELLIDOS": "Ayme Ttupa",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Matías",
+            "APELLIDOS": "Vegas Carbajal",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Brandon",
+            "APELLIDOS": "Pomacayo Chamba",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "André",
+            "APELLIDOS": "Sandoval Munenaka",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Diego",
+            "APELLIDOS": "Peralta Villegas",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Mateo ",
+            "APELLIDOS": "Malca Untama",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Alejandro",
+            "APELLIDOS": "Cervera Morán",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M ",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Michael",
+            "APELLIDOS": "Quiña Brack",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B1 ",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Mía ",
+            "APELLIDOS": "Solano Lorenzo",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B1",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Mía ",
+            "APELLIDOS": "Solano Lorenzo",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Melissa",
+            "APELLIDOS": "Gutierrez Paz",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Nicole ",
+            "APELLIDOS": "López Orihuela ",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Camila",
+            "APELLIDOS": "Chávez Aedo",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Jimena",
+            "APELLIDOS": "Zegarra Vera",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Ximena",
+            "APELLIDOS": "Gómez Tello",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B4",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Ximena",
+            "APELLIDOS": "Gómez Tello",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Camila",
+            "APELLIDOS": "Málaga Bello",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B5",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Milena ",
+            "APELLIDOS": "Navarro Alfaro",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B5",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Antuanet",
+            "APELLIDOS": "Butilier Chávez",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B4",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Nicolás",
+            "APELLIDOS": "Talledo Vásquez",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Matías",
+            "APELLIDOS": "Heredia Mercado",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Matías",
+            "APELLIDOS": "Heredia Mercado",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Matías",
+            "APELLIDOS": "Martínez Bernal",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Matías",
+            "APELLIDOS": "Martínez Bernal",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Iago",
+            "APELLIDOS": "Huasi Rosas",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Roldy",
+            "APELLIDOS": "Carrión Rivera",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Salett",
+            "APELLIDOS": "Pascual Munarriz",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Matías",
+            "APELLIDOS": "Santander Garazatua",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B16",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Gianmarco",
+            "APELLIDOS": "Calderónn Huamán",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B16",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Ricardo",
+            "APELLIDOS": "Arriaga ",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B17",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Piero ",
+            "APELLIDOS": "Solano Lorenzo",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B17",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Giusseppe",
+            "APELLIDOS": "Raffo Vitto",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B18",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Sergio ",
+            "APELLIDOS": "Málaga Ramírez",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B18",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Said",
+            "APELLIDOS": "Castillo Hurtado",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B19",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Pedro",
+            "APELLIDOS": "Dongo Santos",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B20",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Matías ",
+            "APELLIDOS": "Montero Aguilar",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B19",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Claudia ",
+            "APELLIDOS": "De la Cruz Ñañez",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B11",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "Jade",
+            "APELLIDOS": "Donayre Espinoza",
+            "CELULAR": "nan",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B13",
+            "ACADEMY NAME": "UL"
+        },
+        {
+            "NOMBRE": "FERNANDO ALEXANDER",
+            "APELLIDOS": "CURI ENRIQUEZ ",
+            "CELULAR": "926247889",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "FERNANDO ALEXANDER",
+            "APELLIDOS": "CURI ENRIQUEZ ",
+            "CELULAR": "926247889",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "SEBASTIAN WILLIAMS",
+            "APELLIDOS": "MENDOZA RAMIREZ",
+            "CELULAR": "903214283",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B20",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "JUAN STEVEN",
+            "APELLIDOS": "REYES FABIAN",
+            "CELULAR": "9339055595",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "MIJAIL ALEXANDER",
+            "APELLIDOS": "POLLERI MIGUEL",
+            "CELULAR": "993079764",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "NIDIA",
+            "APELLIDOS": "ATAPOMA ARELLANO",
+            "CELULAR": "904081255",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B14",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "RODRIGO ALEXANDER",
+            "APELLIDOS": "TORRES ESCUDERO ",
+            "CELULAR": "980661903",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "GRETTY ",
+            "APELLIDOS": "FLORES LLACSAHUANGA",
+            "CELULAR": "932452059",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B5",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "IGNACIO",
+            "APELLIDOS": "ACHALLMA DIAZ",
+            "CELULAR": "925651135",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B16",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "JOSUE ASDRUBAL",
+            "APELLIDOS": "ARRIBASPLATA REYNA",
+            "CELULAR": "900564604",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "SAMIR ALCIDES",
+            "APELLIDOS": "MESIAS SILVA",
+            "CELULAR": "975516491",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "ARAMIS DASHYEL",
+            "APELLIDOS": "WONG CAMPOS",
+            "CELULAR": "907891007",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "RENATO SEBASTIAN",
+            "APELLIDOS": "HUARACA GONZALES",
+            "CELULAR": "942666149",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "JESUS ADRIAN ",
+            "APELLIDOS": "HINOJOSA ROSPIGLIOSI",
+            "CELULAR": "937275471",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "DIEGO ABRAHAM",
+            "APELLIDOS": "ACUÑA SIHUE",
+            "CELULAR": "929682721",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "LEE ALEXANDER",
+            "APELLIDOS": "CHAMBI COLQUE ",
+            "CELULAR": "961311081",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "ISAAC",
+            "APELLIDOS": "LEANDRO BRIONES",
+            "CELULAR": "950742468",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "JOSHEP JESUS",
+            "APELLIDOS": "VALENCIA ALARCON",
+            "CELULAR": "934414263",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "STEVEN",
+            "APELLIDOS": "QUIROZ NAVARRO",
+            "CELULAR": "903340251",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "DAHANNA GABRIELA",
+            "APELLIDOS": "RAMOS DE LA CRUZ",
+            "CELULAR": "929861242",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B11",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "SAMARI PIERINA",
+            "APELLIDOS": "VALVERDE YLLESCAS",
+            "CELULAR": "904950260",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B13",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "MISS GETHSUIN KATHERIN",
+            "APELLIDOS": "ALARCÓN DIAZ",
+            "CELULAR": "963195998",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B4",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "FERNANDO BENJAMIN",
+            "APELLIDOS": "VILLEGAS REYES",
+            "CELULAR": "945951179",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B18",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "LIA GABRIELA",
+            "APELLIDOS": "JUAREZ PACHECO",
+            "CELULAR": "967397869",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "F",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "JOSE",
+            "APELLIDOS": "JEMPETS MACAHUACHI",
+            "CELULAR": "931441107",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "ABEL",
+            "APELLIDOS": "INCAPUIÑO CHILENO",
+            "CELULAR": "922228847",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "AVANZADO",
+            "CATEGORIA": "B18",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "CARLOS",
+            "APELLIDOS": "SANTILLAN RENGIFO",
+            "CELULAR": "932534836",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "M",
+            "NIVEL": "INTERMEDIO ",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "UNFV"
+        },
+        {
+            "NOMBRE": "SASHA",
+            "APELLIDOS": "CHAVEZ UREÑA",
+            "CELULAR": "988336201",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B1",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "RICARDO MARTIN",
+            "APELLIDOS": "MORENO BLAS",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ANY MILENY",
+            "APELLIDOS": "OBLITAS CHAVEZ",
+            "CELULAR": "991339117",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "GABRIELA PATRICIA",
+            "APELLIDOS": "BRAVO BARRERA",
+            "CELULAR": "997723195",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B12",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ANA PAZ",
+            "APELLIDOS": "CARDENAS DAVILA",
+            "CELULAR": "999490718",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ANDREE AGUSTIN",
+            "APELLIDOS": "WONG CABRERA",
+            "CELULAR": "914516625",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B8",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "AIXA MIREYA",
+            "APELLIDOS": "PORTAL LAYNES",
+            "CELULAR": "926242277",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ROYBERT JHAIR",
+            "APELLIDOS": "NOVILLO HUSCAPI",
+            "CELULAR": "936788292",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ANGIE NICOLLE",
+            "APELLIDOS": "HOYOS MENDOZA",
+            "CELULAR": "988336201",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "LUIS",
+            "APELLIDOS": "BALAREZO VELA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B19",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "DIEGO",
+            "APELLIDOS": "SUAZO",
+            "CELULAR": "988336201",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B20",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "LYA",
+            "APELLIDOS": "CAMPUSANO",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B12",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "FARAD",
+            "APELLIDOS": "VARGAS",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B11",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ANTHONY",
+            "APELLIDOS": "SANTILLAN ROMUALDO",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B20",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "DANIEL",
+            "APELLIDOS": "DELGADO",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B17",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "CRISTINA",
+            "APELLIDOS": "ALOSILLA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B15",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "KEYLA",
+            "APELLIDOS": "PEREZ",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B13",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "FABRIZIO",
+            "APELLIDOS": "VEGA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B20",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "RODRIGO",
+            "APELLIDOS": "HUERTA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B17",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "EMILIO",
+            "APELLIDOS": "BALBUENA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B16",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "RAYI",
+            "APELLIDOS": "URIA MORALES",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B9",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "GONZALO",
+            "APELLIDOS": "SOLIS CHACON",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B7",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "LEONEL",
+            "APELLIDOS": "TITO",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "FLAVIO",
+            "APELLIDOS": "ARMAS",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B10",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "YULIANA",
+            "APELLIDOS": "YUPA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B11",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "LETICIA",
+            "APELLIDOS": "TERAN",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B1",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "SEBASTIAN",
+            "APELLIDOS": "PORRAS",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B17",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "GABRIEL",
+            "APELLIDOS": "ARTEGA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B18",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ALEXIA",
+            "APELLIDOS": "VELAZQUEZ",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "BRENDA",
+            "APELLIDOS": "ESPINOZA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "KATIA",
+            "APELLIDOS": "CANALES",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B2",
+            "ACADEMY NAME": "UPC"
+        },
+        {
+            "NOMBRE": "ARIANA",
+            "APELLIDOS": "PALOMARES FARIAS ",
+            "CELULAR": "988336201",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "MIRZHA ",
+            "APELLIDOS": "ANCASSI CORDOVA",
+            "CELULAR": "929239009",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B3",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "LUCIA ",
+            "APELLIDOS": "ISMODES GAMARRA",
+            "CELULAR": "991339117",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "A1",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "HANS",
+            "APELLIDOS": "RAMIREZ CORONEL ",
+            "CELULAR": "997723195",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "HANS",
+            "APELLIDOS": "RAMIREZ CORONEL ",
+            "CELULAR": "997723195",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B6",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "MIRELLA ",
+            "APELLIDOS": "ARENAS ALBARRACIN ",
+            "CELULAR": "999490718",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B12",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "LUIS ",
+            "APELLIDOS": "TELLO  FRANCIA ",
+            "CELULAR": "914516625",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Masculino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "A2",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "JAMILE ",
+            "APELLIDOS": "BERROCAL OCHOA ",
+            "CELULAR": "926242277",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Avanzado ",
+            "CATEGORIA": "B13",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+            "NOMBRE": "PAULA ",
+            "APELLIDOS": "MIRANDA DURUAY ",
+            "CELULAR": "936788292",
+            "FECHA DE NACIMIENTO": "2006-11-22",
+            "GENERO": "Femenino",
+            "NIVEL": "Intermedio",
+            "CATEGORIA": "B4",
+            "ACADEMY NAME": "PUCP"
+        },
+        {
+              "NOMBRE": "FRANCISCO",
+              "APELLIDOS": "MORENO",
+              "CELULAR": "932534836",
+              "FECHA DE NACIMIENTO": "2006-11-21",
+              "GENERO": "M",
+              "NIVEL": "AVANZADO ",
+              "CATEGORIA": "B16",
+              "ACADEMY NAME": "DOJO EDWIN"
+            },
+            {
+              "NOMBRE": "JORGE",
+              "APELLIDOS": "BELTRAN",
+              "CELULAR": "932534836",
+              "FECHA DE NACIMIENTO": "2006-11-21",
+              "GENERO": "M",
+              "NIVEL": "AVANZADO",
+              "CATEGORIA": "B20",
+              "ACADEMY NAME": "DOJO EDWIN"
+            },
+            {
+              "NOMBRE": "GIANELLA",
+              "APELLIDOS": "LOZANO",
+              "CELULAR": "932534836",
+              "FECHA DE NACIMIENTO": "2006-11-21",
+              "GENERO": "F",
+              "NIVEL": "AVANZADO",
+              "CATEGORIA": "B15",
+              "ACADEMY NAME": "DOJO EDWIN"
+            },
+            {
+              "NOMBRE": "GONZALO",
+              "APELLIDOS": "CUADROS",
+              "CELULAR": "932534836",
+              "FECHA DE NACIMIENTO": "2006-11-21",
+              "GENERO": "M",
+              "NIVEL": "AVANZADO",
+              "CATEGORIA": "B18",
+              "ACADEMY NAME": "DOJO EDWIN"
+            }
+    ]
+}
