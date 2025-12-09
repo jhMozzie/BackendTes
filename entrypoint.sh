@@ -13,4 +13,18 @@ if [ "${SEED_ON_STARTUP}" = "true" ]; then
 fi
 
 echo "[entrypoint] starting server"
-exec node ./dist/server.js
+
+# Debug: list dist files to ensure expected entry exists
+echo "[entrypoint] dist contents:" 
+ls -la dist || true
+
+# Prefer starting the compiled index.js which runs the app and handles DB connect
+if [ -f ./dist/index.js ]; then
+  exec node ./dist/index.js
+elif [ -f ./dist/server.js ]; then
+  exec node ./dist/server.js
+else
+  echo "[entrypoint] ERROR: no dist entrypoint found (dist/index.js or dist/server.js)"
+  ls -la ./dist || true
+  exit 1
+fi

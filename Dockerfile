@@ -32,6 +32,7 @@ RUN npx tsc-alias -p tsconfig.json
 FROM node:20-slim AS production
 
 ENV NODE_ENV=production
+ENV SEED_ON_STARTUP=true
 
 # Instalar OpenSSL y curl (necesarios para Prisma y healthchecks)
 RUN apt-get update && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
