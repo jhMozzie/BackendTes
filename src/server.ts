@@ -48,8 +48,14 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Ensure preflight requests are handled explicitly
-app.options('*', cors(corsOptions));
+// Handle preflight OPTIONS requests explicitly without using a path pattern
+// which can trigger path-to-regexp errors for certain versions.
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        return cors(corsOptions)(req, res, next);
+    }
+    next();
+});
 
 // Log allowed origins for easier debugging in deployments
 console.info('CORS allowed origins:', allowedOrigins);
