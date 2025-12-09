@@ -36,17 +36,23 @@ const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
         // Permitir peticiones sin origin (Postman, curl, same-origin requests)
         if (!origin) return callback(null, true);
-
         if (allowedOrigins.includes(origin)) return callback(null, true);
 
+        // Log and gracefully deny CORS without throwing an error (avoid 500 responses on preflight)
         console.warn(`❌ Origin not allowed by CORS: ${origin}`);
-        return callback(new Error('Not allowed by CORS'));
+        return callback(null, false);
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
 };
 
 app.use(cors(corsOptions));
+
+// Ensure preflight requests are handled explicitly
+app.options('*', cors(corsOptions));
+
+// Log allowed origins for easier debugging in deployments
+console.info('CORS allowed origins:', allowedOrigins);
 
 // Health check
 app.get('/', (_req, res) => {
