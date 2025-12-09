@@ -55,13 +55,16 @@ RUN pnpm add -D prisma@6
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/prisma ./prisma
 
+# Copiamos el entrypoint que puede ejecutar el seeder compilado y luego iniciar la app
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
 # Generamos el cliente Prisma para el entorno de producción
 RUN npx prisma generate
 
 # No usamos EXPOSE (Render ignora esto, usa la variable PORT), pero está bien dejarlo como doc.
 EXPOSE 3000
 
-# COMANDO DE INICIO (Sin entrypoint.sh externo)
-# Usamos "sh -c" para poder encadenar comandos si quisieras correr migraciones antes.
-# Asegúrate de que tu build genera en ./dist/index.js (o cambia index.js por tu archivo principal app.js o server.js)
-CMD ["node", "dist/index.js"]
+# ENTRYPOINT: el script ejecuta opcionalmente el seeder compilado y luego arranca el servidor.
+# Para ejecutar el seeder al inicio, establece la variable de entorno: SEED_ON_STARTUP=true
+ENTRYPOINT ["sh", "./entrypoint.sh"]
