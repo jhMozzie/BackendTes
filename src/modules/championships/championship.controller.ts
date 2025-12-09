@@ -6,6 +6,7 @@ import {
   CreateChampionshipPayload,
   UpdateChampionshipPayload,
 } from "./championship.types"
+import { uploadBuffer } from "@/lib/cloudinary"
 
 export class ChampionshipController {
   private championshipService = new ChampionshipService()
@@ -13,7 +14,38 @@ export class ChampionshipController {
   // 🏆 CREATE
   create = async (req: Request<{}, {}, CreateChampionshipPayload>, res: Response) => {
     try {
-      const newChampionship = await this.championshipService.create(req.body)
+      // If a file was uploaded via multer, upload it to Cloudinary and set the image URL
+      const body = { ...req.body } as any
+
+      // Debug: log whether multer provided a file
+      console.log('create: req.file present?', !!(req as any).file)
+
+      if ((req as any).file && (req as any).file.buffer) {
+        const file = (req as any).file
+        const result = await uploadBuffer(file.buffer, file.originalname)
+        body.image = result.secure_url
+        console.log('create: uploaded to cloudinary:', result.secure_url)
+      } else if (body.image && typeof body.image === 'string' && body.image.trim().startsWith('{')) {
+        // Fallback: client may have sent a JSON string for image (e.g. "{}") — try to parse and extract secure_url
+        try {
+          const parsed = JSON.parse(body.image)
+          if (parsed && typeof parsed === 'object') {
+            const extracted = parsed.secure_url ?? parsed.url
+            if (extracted) {
+              body.image = extracted
+              console.log('create: extracted image from JSON body:', body.image)
+            } else {
+              // parsed object empty or doesn't include url -> clear image to avoid storing '{}'
+              body.image = null
+              console.log('create: parsed image JSON had no url, clearing image')
+            }
+          }
+        } catch (e) {
+          // ignore parse errors
+        }
+      }
+
+      const newChampionship = await this.championshipService.create(body)
       return res.status(201).json(newChampionship)
     } catch (error: any) {
       console.error("❌ Error creating championship:", error)
@@ -79,9 +111,34 @@ export class ChampionshipController {
   update = async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id, 10)
+      const body = { ...req.body } as any
+      console.log('update: req.file present?', !!(req as any).file)
+      if ((req as any).file && (req as any).file.buffer) {
+        const file = (req as any).file
+        const result = await uploadBuffer(file.buffer, file.originalname)
+        body.image = result.secure_url
+        console.log('update: uploaded to cloudinary:', result.secure_url)
+      } else if (body.image && typeof body.image === 'string' && body.image.trim().startsWith('{')) {
+        try {
+          const parsed = JSON.parse(body.image)
+          if (parsed && typeof parsed === 'object') {
+            const extracted = parsed.secure_url ?? parsed.url
+            if (extracted) {
+              body.image = extracted
+              console.log('update: extracted image from JSON body:', body.image)
+            } else {
+              body.image = null
+              console.log('update: parsed image JSON had no url, clearing image')
+            }
+          }
+        } catch (e) {
+          // ignore parse errors
+        }
+      }
+
       const updatedChampionship = await this.championshipService.update(
         id,
-        req.body as UpdateChampionshipPayload
+        body as UpdateChampionshipPayload
       )
 
       return res.status(200).json(updatedChampionship)

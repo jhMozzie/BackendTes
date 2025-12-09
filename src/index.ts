@@ -1,10 +1,12 @@
 // src/index.ts
 
 import dotenv from 'dotenv';
+
+// Cargar variables de entorno antes de importar el resto del app
+dotenv.config();
+
 import { PrismaClient } from '@prisma/client';
 import app from './server';
-
-dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 const prisma = new PrismaClient();
