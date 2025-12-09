@@ -1,7 +1,7 @@
 // SEED MAESTRO CONSOLIDADO - ORDEN CORRECTO
 // 1. Roles → 2. Admin/Academias → 3. Belts → 4. Students (desde inscriptions) → 5. Age Ranges → 6. Phases → 7. Championship → 8. Categories + Inscripciones
 
-import { PrismaClient, Gender } from "../src/generated/prisma";
+import { PrismaClient, Gender } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
