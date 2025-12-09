@@ -3,27 +3,34 @@
 # ----------------------------
 FROM node:20-slim AS build
 
-# Instalar OpenSSL (necesario para Prisma)
+# Instalar OpenSSL
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
 
-# Copiamos archivos de configuración primero para aprovechar el caché de Docker
+# Archivos de configuración
 COPY package.json pnpm-lock.yaml ./
 COPY tsconfig.json ./
 
-# Instalamos pnpm y las dependencias (incluyendo devDependencies para compilar)
+# Instalar dependencias completas (incluyendo TypeScript)
 RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
 
-# Copiamos el código fuente
+# Copiar código fuente
 COPY . .
 
-# Generamos el cliente de Prisma y compilamos
+# 1. Generar cliente Prisma
 RUN npx prisma generate
+
+# 2. Compilar la aplicación (src -> dist)
 RUN pnpm run build
 
-# Reemplazamos los alias en los archivos compilados
+# 3. [IMPORTANTE] Compilar MANUALMENTE el seeder
+# Esto toma tu archivo TS y crea el JS en ./dist/prisma/seed_master.js
+# Usamos flags para asegurar que sea compatible con Node
+RUN npx tsc prisma/seed_master.ts --outDir dist/prisma --skipLibCheck --module commonjs --target es2020 --esModuleInterop
+
+# 4. Resolver alias
 RUN npx tsc-alias -p tsconfig.json
 
 # ----------------------------
@@ -34,38 +41,33 @@ FROM node:20-slim AS production
 ENV NODE_ENV=production
 ENV SEED_ON_STARTUP=true
 
-# Instalar OpenSSL y curl (necesarios para Prisma y healthchecks)
+# Instalar OpenSSL y curl
 RUN apt-get update && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g pnpm
 
 WORKDIR /usr/src/app
 
-# Copiamos package.json y lockfile
 COPY package.json pnpm-lock.yaml ./
 
-# 1. Instalamos SOLO dependencias de producción
+# Instalar solo dependencias de producción
 RUN pnpm install --prod --frozen-lockfile
 
-# 2. Truco importante: Para correr "prisma generate" en producción, necesitamos la CLI de Prisma.
-#    Como instalamos solo "--prod", la CLI no está. La instalamos temporalmente o copiamos el cliente generado.
-#    La forma más segura en Render es instalar la CLI como dev dependency suelta aquí:
+# Instalar Prisma CLI para poder regenerar el cliente si es necesario
 RUN pnpm add -D prisma@6
 
-# Copiamos los artefactos de la compilación anterior
+# Copiar el código compilado (Ahora SÍ incluye dist/prisma/seed_master.js)
 COPY --from=build /usr/src/app/dist ./dist
+# Copiamos también la carpeta prisma original (para el schema)
 COPY --from=build /usr/src/app/prisma ./prisma
 
-# Copiamos el entrypoint que puede ejecutar el seeder compilado y luego iniciar la app
+# Copiar script de entrada
 COPY entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
-# Generamos el cliente Prisma para el entorno de producción
+# Generar cliente final
 RUN npx prisma generate
 
-# No usamos EXPOSE (Render ignora esto, usa la variable PORT), pero está bien dejarlo como doc.
 EXPOSE 3000
 
-# ENTRYPOINT: el script ejecuta opcionalmente el seeder compilado y luego arranca el servidor.
-# Para ejecutar el seeder al inicio, establece la variable de entorno: SEED_ON_STARTUP=true
 ENTRYPOINT ["sh", "./entrypoint.sh"]
