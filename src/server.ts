@@ -20,15 +20,33 @@ import aiQueryRoutes from './modules/ai-query/ai-query.route';
 const app = express();
 
 // Cors Configuration
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}))
-
 // Middlewares
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+// ✅ Configuración dinámica de CORS
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost',
+    ...((process.env.CORS_ORIGIN || '').split(',').map(o => o.trim())),
+].filter(Boolean);
+
+const corsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        // Permitir peticiones sin origin (Postman, curl, same-origin requests)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+
+        console.warn(`❌ Origin not allowed by CORS: ${origin}`);
+        return callback(new Error('Not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Health check
 app.get('/', (_req, res) => {
