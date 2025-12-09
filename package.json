@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register ./src/index.ts",
     "build": "tsc",
+    "build:seeds": "tsc -p tsconfig.seeds.json",
+    "seed:prod": "node ./dist/prisma/seed_master.js",
+    "seed:dev": "pnpm exec ts-node prisma/seed_master.ts",
     "start": "node dist/index.js",
     "generate": "prisma generate",
     "seed:phases": "ts-node prisma/seed_phases.ts",
