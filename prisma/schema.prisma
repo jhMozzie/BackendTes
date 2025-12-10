@@ -86,7 +86,7 @@ model AcademyOnChampionships {
   status          String        @default("Participar") // 👈 NUEVO CAMPO
 
   academy         Academy       @relation(fields: [academyId], references: [id])
-  championship    Championship  @relation(fields: [championshipId], references: [id])
+  championship    Championship  @relation(fields: [championshipId], references: [id], onDelete: Cascade)
 
   @@unique([academyId, championshipId])
 }
@@ -122,7 +122,7 @@ model ChampionshipCategory {
   beltMin        Belt      @relation("MinBelt", fields: [beltMinId], references: [id])
   beltMax        Belt      @relation("MaxBelt", fields: [beltMaxId], references: [id])
   ageRange       AgeRange  @relation(fields: [ageRangeId], references: [id])
-  championship   Championship @relation(fields: [championshipId], references: [id])
+  championship   Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
   participants   Participant[]
   matches        Match[]      // Matches (combates) de esta categoría
 
@@ -136,7 +136,7 @@ model Participant {
   championshipCategoryId  Int
 
   student              Student             @relation(fields: [studentId], references: [id])
-  championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id])
+  championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id], onDelete: Cascade)
 
   // Relaciones inversas para los diferentes roles en Match
   winsAsWinner         Match[] @relation("Winner")
@@ -200,7 +200,7 @@ model Match {
   nextMatchSide           String?    // 'Akka' o 'Ao' para indicar si el ganador es Akka o Ao en el nextMatch
 
   // Relaciones
-  championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id])
+  championshipCategory ChampionshipCategory @relation(fields: [championshipCategoryId], references: [id], onDelete: Cascade)
   phase                Phase              @relation(fields: [phaseId], references: [id])
   winner               Participant?       @relation("Winner", fields: [winnerId], references: [id])
   participantAkka      Participant?       @relation("AkkaParticipant", fields: [participantAkkaId], references: [id])
