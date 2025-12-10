@@ -208,9 +208,8 @@ async function main() {
     // =====================================================
     console.log("4️⃣  Creando Estudiantes desde seed_inscriptions.json...");
     
-    // Limpiar datos anteriores
-    await prisma.participant.deleteMany({});
-    await prisma.student.deleteMany({});
+    // ⚠️ NO usamos deleteMany - queremos preservar datos existentes (matches, participants, etc.)
+    // El seeder ahora es IDEMPOTENTE: solo crea lo que falta, no borra nada.
     
     console.log(`   📋 Total inscripciones a procesar: ${inscriptions.length}`);
 
@@ -292,23 +291,38 @@ async function main() {
 
         const birthDate = new Date(record["FECHA DE NACIMIENTO"]);
 
-        // Crear estudiante
-        const student = await prisma.student.create({
-            data: {
+        // Buscar si el estudiante ya existe (por nombre + apellido + academia)
+        const existingStudent = await prisma.student.findFirst({
+            where: {
                 firstname: record.NOMBRE,
                 lastname: record.APELLIDOS,
-                birthdate: birthDate,
-                gender: gender,
-                beltId: beltId,
                 academyId: academyId,
             },
         });
+
+        let student;
+        if (existingStudent) {
+            // Ya existe, solo lo registramos en el map
+            student = existingStudent;
+        } else {
+            // No existe, lo creamos
+            student = await prisma.student.create({
+                data: {
+                    firstname: record.NOMBRE,
+                    lastname: record.APELLIDOS,
+                    birthdate: birthDate,
+                    gender: gender,
+                    beltId: beltId,
+                    academyId: academyId,
+                },
+            });
+            totalStudentsCreated++;
+        }
         
         studentMap.set(studentKey, student.id);
-        totalStudentsCreated++;
     }
 
-    console.log(`   ✅ Estudiantes únicos creados: ${totalStudentsCreated}`);
+    console.log(`   ✅ Estudiantes nuevos creados: ${totalStudentsCreated}`);
     if (skippedStudents > 0) {
         console.log(`   ⚠️  Registros omitidos: ${skippedStudents}`);
         Object.entries(skippedReasons).forEach(([reason, count]) => {
@@ -352,12 +366,12 @@ async function main() {
     if (!organizingAcademyId) throw new Error("No hay academias disponibles");
 
     const championship = await prisma.championship.upsert({
-        where: { name: "Campeonato Importación Masiva" },
+        where: { name: "TORNEO DE KARATE DESAFÍO U LIMA 2025" },
         update: { status: "Planificación" },
         create: {
-            name: "Campeonato Importación Masiva",
+            name: "TORNEO DE KARATE DESAFÍO U LIMA 2025",
             startDate: new Date("2025-11-20"),
-            location: "Coliseo Central",
+            location: "Centro ",
             district: "Lima",
             country: "Perú",
             status: "Planificación",
@@ -484,7 +498,22 @@ async function main() {
             continue;
         }
 
-        // Crear inscripción (permitiendo duplicados de estudiante en diferentes categorías)
+        // Verificar si ya existe esta inscripción (studentId + championshipCategoryId es unique)
+        const existingParticipant = await prisma.participant.findUnique({
+            where: {
+                studentId_championshipCategoryId: {
+                    studentId: studentId,
+                    championshipCategoryId: categoryId,
+                },
+            },
+        });
+
+        if (existingParticipant) {
+            // Ya existe, no hacemos nada (preservamos datos existentes como matches)
+            continue;
+        }
+
+        // No existe, lo creamos
         await prisma.participant.create({
             data: {
                 studentId: studentId,
@@ -494,7 +523,7 @@ async function main() {
         totalParticipants++;
     }
     
-    console.log(`   ✅ ${totalParticipants} Inscripciones creadas`);
+    console.log(`   ✅ ${totalParticipants} Inscripciones nuevas creadas (las existentes se preservaron)`);
     if (skippedInscriptions > 0) {
         console.log(`   ⚠️  ${skippedInscriptions} inscripciones omitidas\n`);
     } else {
